@@ -97,3 +97,6 @@ scripts/liveaudit/
 scripts/*.png
 scripts/lh-*.json
 scripts/img/**/*.jpg
+
+# local deliverables
+download/
