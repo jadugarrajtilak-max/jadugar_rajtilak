@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+// Booking enquiry / lead (doc section 7.1 / 8.3)
+model Lead {
+  id         String   @id @default(cuid())
+  name       String
+  phone      String
+  email      String
+  eventType  String   // wedding | corporate | birthday | college | private | virtual
+  eventDate  String   // YYYY-MM-DD
+  city       String
+  guests     Int
+  budget     String   // budget range label
+  venueType  String?  // indoor | outdoor | stage
+  duration   String?  // show duration label
+  notes      String?
+  consent    Boolean  @default(false) // DPDP consent
+  status     String   @default("new") // new|contacted|quote|negotiation|advance|confirmed|completed|lost
+  lostReason String?
+  utmSource  String?
+  utmMedium  String?
+  utmCampaign String?
+  landingPage String?
+  referrer   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Availability calendar (doc section 7.1 step 1 / 8.3)
+model AvailabilityDay {
+  id     String @id @default(cuid())
+  date   String @unique // YYYY-MM-DD
+  status String @default("open") // open | blocked | booked
+  note   String?
+}
+
+// ── Live site customization (Master Admin → live site, no redeploy) ──
+// SiteAsset: every editable image slot (page-wise image manager).
+model SiteAsset {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g. home.hero.portrait
+  src       String   // current image URL (cache-busted with ?v= when replaced)
+  alt       String   // live alt text (SEO + accessibility)
+  updatedAt DateTime @updatedAt
+}
+
+// SiteText: every editable text line (page-wise content manager).
+model SiteText {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g. home.hero.h1a
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// SiteTheme: live theme color overrides (theme manager).
+model SiteTheme {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g. gold, crimson, plum
+  value     String   // hex color
+  updatedAt DateTime @updatedAt
+}
+
+// Contact form messages (real inbox — no more sandbox toasts).
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// MediaAsset: admin-uploaded images stored directly in Postgres.
+// This is the portable storage tier — works on Vercel/serverless hosts
+// where the filesystem is ephemeral. Served via /api/media/[id] with
+// immutable caching (unique id per upload = safe forever-cache).
+// When Neon Object Storage env vars are configured, uploads go to S3
+// instead and this table is only the fallback.
+model MediaAsset {
+  id        String   @id @default(cuid())
+  mime      String   // e.g. image/jpeg
+  data      String   // base64-encoded bytes
+  bytes     Int      // original size
+  createdAt DateTime @default(now())
+}
+
+// AdminUser — Master Admin credentials stored in the database with
+// scrypt-hashed passwords. First login bootstraps the row from the
+// MASTER_ADMIN_EMAIL / MASTER_ADMIN_PASSWORD env vars; after that the
+// owner can rotate email + password anytime from Settings → Security
+// (no redeploy, no public defaults, no plaintext anywhere).
+model AdminUser {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  passwordHash   String    // scrypt: salt:hash (hex)
+  failedAttempts Int       @default(0)
+  lockedUntil    DateTime?
+  lastLoginAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// PageView — privacy-light first-party analytics (path + referrer +
+// device class only; no cookies, no PII). Powers the Master Admin
+// Analytics tab alongside Google Analytics 4 (G-103JFH1Z6B).
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String?
+  device    String   @default("desktop") // desktop | mobile | tablet | bot
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
+}
+
+// BlogPost: admin-authored Journal articles with full SEO control.
+// sections JSON: [{ h: "H2 heading", paras: ["paragraph…"] }] where
+//   paragraph text supports inline hyperlinks as [label](https://url).
+// backlinks JSON: [{ text: "Anchor text", url: "https://partner" }] —
+//   rendered at the end of the article as a crawlable references list
+//   (visible, Google-safe — never display:none cloaking).
+// The public reader auto-generates the table of contents from `sections`
+// and computes readingTime when the editor leaves it blank.
+model BlogPost {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  title            String   // doubles as the article H1
+  metaTitle        String?  // SEO <title> — falls back to title
+  metaDescription  String?  // SEO meta description
+  keywords         String?  // comma-separated focus keywords
+  excerpt          String?  // card summary on the Journal index
+  category         String   @default("Guides")
+  featuredImage    String?  // hero image URL (/images/… or /api/media/…)
+  featuredImageAlt String?  // SEO alt text for the featured/H1 image
+  intro            String?  // opening paragraph (drop-cap typeset)
+  sections         Json     @default("[]")
+  closing          String?  // closing note
+  backlinks        Json     @default("[]")
+  readingTime      String?
+  status           String   @default("published") // draft | published
+  featured         Boolean  @default(false)
+  author           String   @default("Jadugar Rajtilak")
+  publishedAt      DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// ── Master Admin → AI Agents (2026-10-22) ─────────────────────────────
+// Run log for the four admin agents (rank / seo / bugfix / blog).
+// `output` is a JSON string with the full structured findings of a run;
+// `learnings` is appended to the agent's live skill.md (SiteText
+// key `agent.<id>.skill`) so every agent self-improves over time.
+model AgentRun {
+  id         String    @id @default(cuid())
+  agentId    String // rank | seo | bugfix | blog
+  status     String    @default("running") // running | success | error
+  trigger    String    @default("manual") // manual | scheduler | cron
+  summary    String    @default("")
+  output     String    @default("") // JSON string with run details
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  @@index([agentId, startedAt])
+}
+
+// White-hat backlink pipeline owned by the Rank agent.
+// Seeded from the 90-day roadmap (15 sources). Status moves
+// planned → drafted → submitted → live. The agent NEVER
+// auto-submits anything — it prepares outreach drafts and
+// tracks what the operator confirms.
+model BacklinkTask {
+  id        String   @id @default(cuid())
+  source    String
+  type      String
+  action    String
+  estDa     Int      @default(0)
+  week      String   @default("")
+  status    String   @default("planned") // planned | drafted | submitted | live | skipped
+  notes     String   @default("")
+  outreach  String   @default("") // JSON: { to, subject, body } draft
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}

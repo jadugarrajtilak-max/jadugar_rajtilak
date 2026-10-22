@@ -1,0 +1,29 @@
+# Build artifacts — Vercel rebuilds these remotely
+.next
+node_modules
+
+# Local data & deliverables — not part of the site build
+upload
+download
+agent-ctx
+db
+*.log
+dev.log
+server.log
+
+# Heavy local-only tooling
+scripts/img
+scripts/lh-*.json
+scripts/diag-chrome.cjs
+scripts/audit.sh
+scripts/qa-*.sh
+scripts/qa-*.js
+scripts/smoke-test.cjs
+scripts/start-prod.sh
+
+# Local-only environment & editor files
+.env
+.env.*
+.vercel
+.git
+.DS_Store

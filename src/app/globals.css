@@ -1,0 +1,468 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-cormorant);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  /* Royal Ivory Stage signature tokens (doc section 4) */
+  --color-gold: var(--gold);
+  --color-vermilion: var(--vermilion);
+  --color-teal: var(--teal);
+  --color-plum: var(--plum);
+  --color-sand: var(--sand);
+  --color-ivory: var(--ivory);
+  --color-dusk: var(--dusk);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  /* ── Live theme engine tokens (editable from Master Admin → Theme) ──
+     The customization provider overrides these on <html> at runtime;
+     these are the shipped defaults. Components consume them through
+     Tailwind arbitrary values (bg-[var(--jr-gold)]) and color-mix(). */
+  --jr-gold: #b8923a;        /* Champagne Gold — accents, borders, icons */
+  --jr-gold-light: #e6c477;  /* Light Gold */
+  --jr-gold-soft: #d9b666;   /* Soft Gold — nav highlight, gradients */
+  --jr-gold-dark: #8f6d27;   /* Deep Gold */
+  --jr-crimson: #b3263e;     /* Vermilion — primary CTA */
+  --jr-crimson-hover: #c2314c;
+  --jr-teal: #3e8e8a;        /* Mist Teal — success / availability */
+  --jr-plum: #2a1b3d;        /* Midnight Plum — dark bg, headings */
+  --jr-plum-mid: #35224d;    /* Plum mid — panels, gradients */
+  --jr-plum-deep: #150c20;   /* Plum deep — darkest stage bg */
+  --jr-ivory: #faf6ee;       /* Pearl Ivory — page background */
+  --jr-card: #fffdf7;        /* Card surface */
+  --jr-sand: #efe8da;        /* Soft Sand — band background */
+  --jr-sand-light: #f3ead3;  /* Champagne wash — hovers */
+  --jr-cream: #f3e7c8;       /* Cream — text on dark */
+  --jr-lavender: #e7def0;    /* Lavender — body text on dark */
+  --jr-ink: #5b5266;         /* Dusk Grey — body text on light */
+  --jr-line: #e3d9c6;        /* Border line */
+
+  /* Royal Ivory Stage (light theme only, per brief) */
+  --radius: 0.75rem;
+  --background: var(--jr-ivory);
+  --foreground: var(--jr-plum);
+  --card: var(--jr-card);
+  --card-foreground: var(--jr-plum);
+  --popover: var(--jr-card);
+  --popover-foreground: var(--jr-plum);
+  --primary: var(--jr-crimson);           /* Rajtilak Vermilion — primary CTA */
+  --primary-foreground: var(--jr-ivory);
+  --secondary: var(--jr-sand);         /* Soft Sand */
+  --secondary-foreground: var(--jr-plum);
+  --muted: var(--jr-sand);
+  --muted-foreground: var(--jr-ink);  /* Dusk Grey */
+  --accent: var(--jr-sand-light);            /* Champagne wash for hovers */
+  --accent-foreground: var(--jr-plum);
+  --destructive: var(--jr-crimson);
+  --border: var(--jr-line);
+  --input: #ddd2bc;
+  --ring: var(--jr-gold);              /* Champagne Gold focus */
+  --chart-1: var(--jr-gold);           /* Gold */
+  --chart-2: var(--jr-crimson);           /* Vermilion */
+  --chart-3: var(--jr-teal);           /* Mist Teal */
+  --chart-4: var(--jr-plum);           /* Plum */
+  --chart-5: var(--jr-ink);           /* Dusk */
+  --sidebar: var(--jr-sand);
+  --sidebar-foreground: var(--jr-plum);
+  --sidebar-primary: var(--jr-crimson);
+  --sidebar-primary-foreground: var(--jr-ivory);
+  --sidebar-accent: var(--jr-sand-light);
+  --sidebar-accent-foreground: var(--jr-plum);
+  --sidebar-border: var(--jr-line);
+  --sidebar-ring: var(--jr-gold);
+
+  /* Signature palette exposed as tokens */
+  --gold: var(--jr-gold);
+  --vermilion: var(--jr-crimson);
+  --teal: var(--jr-teal);
+  --plum: var(--jr-plum);
+  --sand: var(--jr-sand);
+  --ivory: var(--jr-ivory);
+  --dusk: var(--jr-ink);
+
+  /* Motion language: slow, weighted, cinematic (doc 4.2) */
+  --ease-cine: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-stage: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Fluid display type scale (doc 4.1, clamp()) */
+  --text-display-xl: clamp(2.75rem, 7vw, 5.5rem);
+  --text-display-lg: clamp(2.25rem, 5vw, 3.75rem);
+  --text-display-md: clamp(1.75rem, 3.5vw, 2.5rem);
+  --text-body-lg: clamp(1.05rem, 1.5vw, 1.2rem);
+}
+
+.dark {
+  --background: #2a1b3d;
+  --foreground: #faf6ee;
+  --card: #35224d;
+  --card-foreground: #faf6ee;
+  --popover: #35224d;
+  --popover-foreground: #faf6ee;
+  --primary: #e8b95a;
+  --primary-foreground: #2a1b3d;
+  --secondary: #3a2752;
+  --secondary-foreground: #faf6ee;
+  --muted: #3a2752;
+  --muted-foreground: #b7aec4;
+  --accent: #3a2752;
+  --accent-foreground: #faf6ee;
+  --destructive: #d05066;
+  --border: #4a3568;
+  --input: #4a3568;
+  --ring: #b8923a;
+  --chart-1: #b8923a;
+  --chart-2: #d05066;
+  --chart-3: #3e8e8a;
+  --chart-4: #8a7aa5;
+  --chart-5: #5b5266;
+  --sidebar: #35224d;
+  --sidebar-foreground: #faf6ee;
+  --sidebar-primary: #b8923a;
+  --sidebar-primary-foreground: #2a1b3d;
+  --sidebar-accent: #3a2752;
+  --sidebar-accent-foreground: #faf6ee;
+  --sidebar-border: #4a3568;
+  --sidebar-ring: #b8923a;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+    /* decorative frames/circles may extend a few px past cards —
+       clip instead of growing a horizontal scrollbar (safe for sticky) */
+    overflow-x: clip;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--gold) 30%, transparent);
+    color: var(--plum);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-cormorant), "Playfair Display", Georgia, "Times New Roman", serif;
+  }
+  .text-display-xl { font-size: var(--text-display-xl); line-height: 1.05; }
+  .text-display-lg { font-size: var(--text-display-lg); line-height: 1.1; }
+  .text-display-md { font-size: var(--text-display-md); line-height: 1.15; }
+  .text-body-lg { font-size: var(--text-body-lg); line-height: 1.7; }
+  .ease-cine { transition-timing-function: var(--ease-cine); }
+
+  /* Champagne gold display text (large text only — WCAG note in doc 4) */
+  .text-gold-gradient {
+    background: linear-gradient(105deg, var(--jr-gold-soft) 0%, var(--jr-gold) 45%, var(--jr-gold-dark) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Ornamental gold rule with tilak diamond */
+  .gold-rule {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .gold-rule::before,
+  .gold-rule::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .eyebrow {
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--gold);
+    /* trailing letter-space can push centered lines past their box on narrow screens */
+    padding-right: 0.32em;
+    margin-right: -0.32em;
+    overflow-wrap: break-word;
+  }
+
+  /* Card lift, cinematic (no bounce per doc 4.2) */
+  .card-cine {
+    transition: transform 0.6s var(--ease-cine), box-shadow 0.6s var(--ease-cine), border-color 0.6s var(--ease-cine);
+  }
+  .card-cine:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 60px -24px color-mix(in srgb, var(--plum) 35%, transparent);
+    border-color: color-mix(in srgb, var(--gold) 55%, var(--border));
+  }
+
+  /* Thin elegant scrollbar for admin panels */
+  .scroll-slim::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scroll-slim::-webkit-scrollbar-track { background: transparent; }
+  .scroll-slim::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--gold) 45%, var(--border));
+    border-radius: 8px;
+  }
+
+  /* Volumetric stage light */
+  .stage-light {
+    background: conic-gradient(from 180deg at 50% -10%,
+      transparent 40%,
+      color-mix(in srgb, var(--jr-gold-light) 14%, transparent) 47%,
+      color-mix(in srgb, var(--jr-gold-light) 30%, transparent) 50%,
+      color-mix(in srgb, var(--jr-gold-light) 14%, transparent) 53%,
+      transparent 60%);
+    filter: blur(2px);
+  }
+
+  @keyframes shimmer-sweep {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .animate-shimmer {
+    background: linear-gradient(110deg, transparent 30%, rgba(184, 146, 58, 0.25) 50%, transparent 70%);
+    background-size: 200% 100%;
+    animation: shimmer-sweep 2.2s linear infinite;
+  }
+
+  /* ── Scroll-reveal (CSS + IntersectionObserver — zero JS runtime cost).
+     Replaces the framer-motion Reveal wrapper on the home page so the
+     animation library stays out of the first-load bundle. ── */
+  .jr-reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0s);
+    will-change: opacity, transform;
+  }
+  .jr-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* No-JS / no-IO fallback: content must never stay invisible */
+  .no-js .jr-reveal { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .jr-reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Carousel slide enter — replaces AnimatePresence */
+  @keyframes jr-review-enter {
+    from { opacity: 0; transform: translateX(34px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .jr-review-enter { animation: jr-review-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  @media (prefers-reduced-motion: reduce) {
+    .jr-review-enter { animation: none; }
+  }
+
+  /* Floating playing cards */
+  @keyframes card-drift {
+    0% { transform: translate3d(0, 0, 0) rotate(var(--tilt, 8deg)); }
+    50% { transform: translate3d(var(--dx, 14px), -22px, 0) rotate(calc(var(--tilt, 8deg) + 6deg)); }
+    100% { transform: translate3d(0, 0, 0) rotate(var(--tilt, 8deg)); }
+  }
+  .animate-card-drift { animation: card-drift var(--dur, 9s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
+
+  /* Headline line rise */
+  @keyframes headline-rise {
+    from { opacity: 0; transform: translateY(0.8em); filter: blur(6px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  .animate-headline-rise { animation: headline-rise 1s var(--ease-cine) both; }
+
+  @keyframes fade-in-soft {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in-soft { animation: fade-in-soft 0.8s var(--ease-cine) both; }
+
+  @keyframes scroll-hint {
+    0%, 100% { transform: translateY(0); opacity: 0.9; }
+    50% { transform: translateY(8px); opacity: 0.4; }
+  }
+  .animate-scroll-hint { animation: scroll-hint 2s ease-in-out infinite; }
+
+  /* ── Contact-page motion (3D tilt/coin/float removed per client request — hat-sway kept) ── */
+  @keyframes hat-sway {
+    0%, 100% { transform: rotateZ(-6deg) translateY(0); }
+    50% { transform: rotateZ(5deg) translateY(-10px); }
+  }
+  .animate-hat-sway { animation: hat-sway 7.5s ease-in-out infinite; }
+
+  /* ── Engagement-page effects ─────────────────────────────────── */
+
+  /* Infinite marquee (applause wall / applause words). Two spans inside
+     a flex track, each width = content; translateX(-50%) loops seamlessly. */
+  @keyframes jr-marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+  .jr-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: jr-marquee var(--marquee-dur, 42s) linear infinite;
+    animation-direction: var(--marquee-dir, normal);
+  }
+  .jr-marquee-paused:hover .jr-marquee-track { animation-play-state: paused; }
+  /* subtle edge fade so words appear to emerge from the veil */
+  .jr-marquee-veil {
+    mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  }
+
+  /* 3D pick-a-card flip (gallery entry + FAQ myth cards).
+     Sizing comes from utility classes on .jr-flip-inner (h-44 w-32, h-full…)
+     — never hardcode width/height here or the wrapper collapses to 0. */
+  .jr-flip { perspective: 1100px; }
+  .jr-flip-inner {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.7s var(--ease-cine);
+  }
+  .jr-flip.is-flipped .jr-flip-inner,
+  .jr-flip.jr-flip-hover:hover .jr-flip-inner,
+  .jr-flip.jr-flip-hover:focus-visible .jr-flip-inner { transform: rotateY(180deg); }
+  .jr-flip-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Long truths must stay inside the card, never spill past the border */
+    overflow: hidden;
+  }
+  .jr-flip-back { transform: rotateY(180deg); }
+
+  /* crystal ball swirl glow (FAQ oracle) */
+  @keyframes orb-swirl {
+    0% { transform: translate3d(-8%, -4%, 0) scale(1); opacity: 0.75; }
+    50% { transform: translate3d(6%, 5%, 0) scale(1.18); opacity: 1; }
+    100% { transform: translate3d(-8%, -4%, 0) scale(1); opacity: 0.75; }
+  }
+  .animate-orb-swirl { animation: orb-swirl 3.2s ease-in-out infinite; }
+  @keyframes orb-ring {
+    0% { transform: rotate(0deg) scale(1); opacity: 0.0; }
+    25% { opacity: 0.8; }
+    100% { transform: rotate(360deg) scale(1.35); opacity: 0; }
+  }
+  .animate-orb-ring { animation: orb-ring 2.4s ease-out infinite; }
+
+  /* counting star dash fill for rating dashboard */
+  @keyframes star-draw {
+    from { opacity: 0.25; transform: scale(0.86); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .animate-star-draw { animation: star-draw 0.6s var(--ease-cine) both; }
+
+  /* handwritten green-room note underline */
+  .jr-ink-underline {
+    background-image: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--jr-gold) 55%, transparent),
+      transparent
+    );
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+  }
+
+  /* Reading Room article typography — printed-journal body text */
+  .jr-article {
+    font-family: Georgia, "Times New Roman", serif;
+    hyphens: auto;
+  }
+
+  /* wax seal — contact form success moment */
+  @keyframes seal-stamp {
+    0% { transform: scale(2.4) rotate(-16deg); opacity: 0; }
+    55% { transform: scale(0.92) rotate(3deg); opacity: 1; }
+    78% { transform: scale(1.06) rotate(-1deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  .animate-seal-stamp { animation: seal-stamp 0.7s var(--ease-cine) both; }
+
+  @keyframes seal-glow {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--jr-crimson) 45%, transparent); }
+    50% { box-shadow: 0 0 34px 6px color-mix(in srgb, var(--jr-crimson) 35%, transparent); }
+  }
+  .animate-seal-glow { animation: seal-glow 2.6s ease-in-out infinite 0.8s; }
+
+  @keyframes sparkle-twinkle {
+    0%, 100% { transform: scale(0.4) rotate(0deg); opacity: 0; }
+    50% { transform: scale(1) rotate(45deg); opacity: 1; }
+  }
+  .animate-sparkle-twinkle { animation: sparkle-twinkle 1.8s ease-in-out infinite; }
+  .animate-sparkle-twinkle-2 { animation: sparkle-twinkle 1.8s ease-in-out 0.6s infinite; }
+  .animate-sparkle-twinkle-3 { animation: sparkle-twinkle 1.8s ease-in-out 1.1s infinite; }
+
+  /* writing-pad ruled lines for the letter textarea */
+  .jr-letter-pad {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 30px,
+      color-mix(in srgb, var(--jr-line) 70%, transparent) 30px,
+      color-mix(in srgb, var(--jr-line) 70%, transparent) 31px
+    );
+    line-height: 31px;
+    background-attachment: local;
+  }
+
+}
+
+/* Respect prefers-reduced-motion (doc 4.2 + WCAG): replace animation with simple fades */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

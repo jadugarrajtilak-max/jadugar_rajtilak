@@ -1,0 +1,99 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+local-*
+.claude
+.z-ai-config
+*.log
+dev.log
+dev.out.log
+test
+prompt
+
+server.log
+# Skills directory
+/skills/
+# Local runtime data — never commit (real lead PII lives in the database)
+db/*.db
+db/*.db-journal
+/download/
+/upload/
+/tool-results/
+/worklog.md
+public/uploads/*
+!public/uploads/.gitkeep
+.neon
+
+# neon local link (contains org/project ids — machine-local)
+.neon
+
+# local sqlite (migrated to Neon Postgres)
+/db
+
+# dev/prod logs
+dev.log
+server.log
+nohup.out
+
+# agent tooling
+.claude/
+
+# runtime uploads (admin images live in Postgres/S3)
+/public/uploads/*
+!/public/uploads/.gitkeep
+scripts/prod-secrets.txt
+scripts/prod-secrets.txt
+prod-secrets*
+.scheduler-key
+.vercel/
+
+# ops secrets — local only
+scripts/.env.ops
+*.env.ops
+
+# build/QA artifacts — not for the deploy repo
+scripts/img/
+scripts/imgfix/
+scripts/liveaudit/
+scripts/*.png
+scripts/lh-*.json
+scripts/img/**/*.jpg
