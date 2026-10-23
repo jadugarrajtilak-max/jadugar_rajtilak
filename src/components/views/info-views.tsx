@@ -71,7 +71,7 @@ export function AboutView({ navigate }: { navigate: (r: RouteId) => void }) {
               <img
                 src={awardPhoto.src}
                 alt={awardPhoto.alt}
-                className="relative aspect-square w-full object-cover"
+                className={`${imageFrame("about.award.photo") ?? "aspect-square"} relative w-full object-cover`}
                 loading="lazy"
               />
               <div

@@ -91,8 +91,8 @@ export const IMAGE_SLOTS: ImageSlot[] = [
     defaultSrc: "/images/rajtilak-stage-confetti.webp",
     defaultAlt:
       "Jadugar Rajtilak performing live on stage in his maroon velvet blazer as gold confetti rains down around him",
-    hint: "Square 1:1",
-    frame: "aspect-square",
+    hint: "≈Square 1:1 (962×944)",
+    frame: "aspect-[962/944]",
   },
   {
     key: "home.reel.poster",
@@ -112,7 +112,8 @@ export const IMAGE_SLOTS: ImageSlot[] = [
     defaultSrc: "/images/rajtilak-stage-confetti.webp",
     defaultAlt:
       "Jadugar Rajtilak performing live on stage in his maroon velvet blazer as gold confetti rains down around him",
-    hint: "Square 1:1",
+    hint: "≈Square 1:1 (962×944)",
+    frame: "aspect-[962/944]",
   },
   {
     key: "about.certificate.photo",
@@ -123,24 +124,25 @@ export const IMAGE_SLOTS: ImageSlot[] = [
       "Jadugar Rajtilak holding his framed felicitation certificate bearing the LG emblem, flanked by his team and organisers on stage",
     hint: "Portrait 3:4",
   },
-  // Certificates — the recognition wall on Home + Gallery (client's two honours)
-  {
-    key: "certificates.lg",
-    page: "home",
-    label: "Certificate 1 — LG Felicitation",
-    defaultSrc: "/images/rajtilak-lg-certificate.webp",
-    defaultAlt:
-      "Jadugar Rajtilak holding his framed felicitation certificate bearing the LG emblem, flanked by his team and organisers on stage",
-    hint: "Portrait 3:4",
-    frame: "aspect-[3/4]",
-  },
+  // Certificates — the recognition wall on Home + Gallery (the client's
+  // two certificate scans: Certificate of Recognition + competition poster)
   {
     key: "certificates.intl",
     page: "home",
-    label: "Certificate 2 — International Magic Competition 2021",
+    label: "Certificate 1 — Certificate of Recognition (Intl. 2021)",
     defaultSrc: "/images/certificate-intl-2021.webp",
     defaultAlt:
       "Certificate of Recognition — Second Place won by Jadugar Rajtilak of India at the Online International Magic Competition (I.B.M.), March 2021",
+    hint: "Portrait 10:13",
+    frame: "aspect-[10/13]",
+  },
+  {
+    key: "certificates.competition",
+    page: "home",
+    label: "Certificate 2 — Competition Poster (Intl. 2021)",
+    defaultSrc: "/images/certificate-competition-2021.webp",
+    defaultAlt:
+      "Official poster of the Online International Magic Competition 2021 — category winners, the international jury and partner magic societies from around the world",
     hint: "Portrait 10:13",
     frame: "aspect-[10/13]",
   },
@@ -172,8 +174,8 @@ export const IMAGE_SLOTS: ImageSlot[] = [
     defaultSrc: "/images/rajtilak-stage-confetti.webp",
     defaultAlt:
       "Jadugar Rajtilak performing on stage in his maroon velvet blazer as confetti rains down — a birthday celebration in full swing",
-    hint: "Square 1:1",
-    frame: "aspect-square",
+    hint: "≈Square 1:1",
+    frame: "aspect-[962/944]",
   },
   {
     key: "services.college.photo",
@@ -192,10 +194,11 @@ export const IMAGE_SLOTS: ImageSlot[] = [
     defaultSrc: "/images/rajtilak-felicitation-hug.webp",
     defaultAlt:
       "Jadugar Rajtilak embracing a fellow performer on stage under green lights — an intimate felicitation evening",
-    hint: "Portrait 4:5",
-    frame: "aspect-[4/5]",
+    hint: "≈Portrait 4:5",
+    frame: "aspect-[1136/1384]",
   },
-  // Gallery (5 frames — the client's own uploaded photographs, nothing stock)
+  // Gallery (7 frames — every photo uploaded by the client, nothing stock.
+  // Frame classes match each photo's natural ratio so nothing is cropped.)
   {
     key: "gallery.item01",
     page: "gallery",
@@ -203,10 +206,10 @@ export const IMAGE_SLOTS: ImageSlot[] = [
     defaultSrc: "/images/rajtilak-stage-confetti.webp",
     defaultAlt:
       "Jadugar Rajtilak performing live on stage in his maroon velvet blazer as gold confetti rains down around him",
-    cat: "birthday",
+    cat: "stage",
     caption: "Confetti night — the stage erupts",
-    hint: "1:1",
-    frame: "aspect-square",
+    hint: "≈1:1",
+    frame: "aspect-[962/944]",
   },
   {
     key: "gallery.item02",
@@ -241,8 +244,8 @@ export const IMAGE_SLOTS: ImageSlot[] = [
       "Jadugar Rajtilak embracing a fellow performer on stage under green lights during a felicitation evening",
     cat: "corporate",
     caption: "Felicitation evening — an embrace from the hosts",
-    hint: "4:5",
-    frame: "aspect-[4/5]",
+    hint: "≈4:5",
+    frame: "aspect-[1136/1384]",
   },
   {
     key: "gallery.item05",
@@ -254,6 +257,30 @@ export const IMAGE_SLOTS: ImageSlot[] = [
     cat: "corporate",
     caption: "Felicitated by LG — the certificate moment",
     hint: "3:4",
+    frame: "aspect-[3/4]",
+  },
+  {
+    key: "gallery.item06",
+    page: "gallery",
+    label: "Gallery frame 6",
+    defaultSrc: "/images/gallery-arvanah.webp",
+    defaultAlt:
+      "Jadugar Rajtilak on the ARVANAH shopping-destination anniversary stage in his maroon velvet suit, presenting a commemorative album under a world-wonders backdrop",
+    cat: "corporate",
+    caption: "ARVANAH anniversary night — the mall stage",
+    hint: "1:1",
+    frame: "aspect-square",
+  },
+  {
+    key: "gallery.item07",
+    page: "gallery",
+    label: "Gallery frame 7",
+    defaultSrc: "/images/gallery-closeup-kids.webp",
+    defaultAlt:
+      "Jadugar Rajtilak in his black sequin jacket hosting a birthday celebration, surrounded by children and applauding families",
+    cat: "birthday",
+    caption: "Birthday party — the smallest guests, loudest cheers",
+    hint: "≈3:4",
     frame: "aspect-[3/4]",
   },
   // Meta
@@ -343,31 +370,36 @@ export const TEXT_LINES: TextLine[] = [
   { key: "home.story.cardName", page: "home", label: "Story card name", value: "Jadugar Rajtilak" },
   { key: "home.story.cardRole", page: "home", label: "Story card role", value: "Magician · Udaipur" },
   { key: "home.story.cta", page: "home", label: "Story CTA label", value: "Read the full story" },
-  // ── Home · certificates (the recognition wall) ──
+  // ── Home · certificates (the recognition wall — the client's two scans) ──
   { key: "home.cert.eyebrow", page: "home", label: "Certificates eyebrow", value: "Recognition Wall" },
   { key: "home.cert.title", page: "home", label: "Certificates heading", value: "Certificates & honours" },
   {
     key: "home.cert.sub",
     page: "home",
     label: "Certificates sub-line",
+    multiline: true,
     value:
-      "Two moments the craft was formally tipped its hat — felicitated on stage by LG, and a podium finish against performers from eight countries.",
+      "The paper behind the applause — an international Certificate of Recognition and the official competition poster, earned alongside an on-stage felicitation by LG.",
   },
-  { key: "home.cert.lgTag", page: "home", label: "LG certificate tag", value: "Corporate Felicitation" },
-  { key: "home.cert.lgTitle", page: "home", label: "LG certificate title", value: "Felicitated by LG" },
-  {
-    key: "home.cert.lgDetail",
-    page: "home",
-    label: "LG certificate detail",
-    value: "Awarded on stage with the framed certificate — the moment the whole team posed for.",
-  },
-  { key: "home.cert.intlTag", page: "home", label: "Intl certificate tag", value: "International · March 2021" },
-  { key: "home.cert.intlTitle", page: "home", label: "Intl certificate title", value: "International Magic Competition — 2nd Place" },
+  { key: "home.cert.intlTag", page: "home", label: "Recognition certificate tag", value: "International · March 2021" },
+  { key: "home.cert.intlTitle", page: "home", label: "Recognition certificate title", value: "Certificate of Recognition — 2nd Place" },
   {
     key: "home.cert.intlDetail",
     page: "home",
-    label: "Intl certificate detail",
-    value: "Online International Magic Competition (I.B.M.) — second place among 100 performers from 8 countries.",
+    label: "Recognition certificate detail",
+    multiline: true,
+    value:
+      "Online International Magic Competition (I.B.M.) — second place among 100 performers from 8 countries, signed by an international jury.",
+  },
+  { key: "home.cert.posterTag", page: "home", label: "Poster certificate tag", value: "I.B.M. · Official Poster" },
+  { key: "home.cert.posterTitle", page: "home", label: "Poster certificate title", value: "The competition wall — winners & judges" },
+  {
+    key: "home.cert.posterDetail",
+    page: "home",
+    label: "Poster certificate detail",
+    multiline: true,
+    value:
+      "The official 2021 competition poster — category winners, the seven-member international jury and partner magic societies from around the world.",
   },
   // ── Home · signature acts ──
   { key: "home.acts.eyebrow", page: "home", label: "Acts eyebrow", value: "Signature Acts" },
@@ -715,6 +747,8 @@ export const TEXT_LINES: TextLine[] = [
   { key: "gallery.item03.caption", page: "gallery", label: "Gallery frame 3 caption", value: "The umbrella act — props with a life of their own" },
   { key: "gallery.item04.caption", page: "gallery", label: "Gallery frame 4 caption", value: "Felicitation evening — an embrace from the hosts" },
   { key: "gallery.item05.caption", page: "gallery", label: "Gallery frame 5 caption", value: "Felicitated by LG — the certificate moment" },
+  { key: "gallery.item06.caption", page: "gallery", label: "Gallery frame 6 caption", value: "ARVANAH anniversary night — the mall stage" },
+  { key: "gallery.item07.caption", page: "gallery", label: "Gallery frame 7 caption", value: "Birthday party — the smallest guests, loudest cheers" },
   // ── Reviews page ──
   { key: "reviews.hero.eyebrow", page: "testimonials", label: "Reviews eyebrow", value: "Reviews" },
   { key: "reviews.hero.title", page: "testimonials", label: "Reviews heading", value: "What hosts say, in their words" },

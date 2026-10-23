@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/accordion";
 import { ReviewsCarousel } from "@/components/site/reviews-carousel";
 import { useSiteCustomization } from "@/components/site/customization-provider";
+import { imageFrame } from "@/lib/customization";
 import { CITIES, EVENT_TYPES, FAQS, PACKAGES, SIGNATURE_ACTS, SITE, TRUST_ITEMS, type RouteId } from "@/lib/content";
 
 // Scroll-reveal wrapper — CSS + IntersectionObserver (doc 4.2).
@@ -116,7 +117,7 @@ export function StorySection({ navigate }: { navigate: (r: RouteId) => void }) {
             <img
               src={storyPhoto.src}
               alt={storyPhoto.alt}
-              className="aspect-square w-full object-cover"
+              className={`${imageFrame("home.story.photo") ?? "aspect-square"} w-full object-cover`}
               loading="lazy"
             />
             <div
@@ -172,30 +173,32 @@ export function StorySection({ navigate }: { navigate: (r: RouteId) => void }) {
   );
 }
 
-// ── Certificates & honours — the recognition wall (client's 2 certificates) ──
-// Framed-document presentation: natural aspect ratios so the certificates are
-// never cropped, gold double-frame, award chip. Live-editable from Master
-// Admin → Images (certificates.lg / certificates.intl) and → Texts.
+// ── Certificates & honours — the recognition wall (the client's two
+// certificate scans) ──
+// Framed-document presentation: natural 10:13 aspect so the certificates
+// are never cropped, gold double-frame, award chip. Rendered on Home AND
+// at the bottom of the Gallery page. Live-editable from Master Admin →
+// Images (certificates.intl / certificates.competition) and → Texts.
 export function CertificatesSection() {
   const { text, asset } = useSiteCustomization();
-  const lg = asset("certificates.lg");
-  const intl = asset("certificates.intl");
+  const recognition = asset("certificates.intl");
+  const competition = asset("certificates.competition");
 
   const cards = [
     {
-      img: lg,
-      frame: "aspect-[3/4]",
-      tag: text("home.cert.lgTag"),
-      title: text("home.cert.lgTitle"),
-      detail: text("home.cert.lgDetail"),
-      tilt: "md:-rotate-1",
-    },
-    {
-      img: intl,
-      frame: "aspect-[10/13]",
+      img: recognition,
+      frame: imageFrame("certificates.intl") ?? "aspect-[10/13]",
       tag: text("home.cert.intlTag"),
       title: text("home.cert.intlTitle"),
       detail: text("home.cert.intlDetail"),
+      tilt: "md:-rotate-1",
+    },
+    {
+      img: competition,
+      frame: imageFrame("certificates.competition") ?? "aspect-[10/13]",
+      tag: text("home.cert.posterTag"),
+      title: text("home.cert.posterTitle"),
+      detail: text("home.cert.posterDetail"),
       tilt: "md:rotate-1",
     },
   ];

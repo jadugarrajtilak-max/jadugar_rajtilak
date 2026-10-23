@@ -215,6 +215,8 @@ const GALLERY_KEYS = [
   "gallery.item03",
   "gallery.item04",
   "gallery.item05",
+  "gallery.item06",
+  "gallery.item07",
 ] as const;
 
 type GalleryFrame = {

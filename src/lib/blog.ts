@@ -125,12 +125,47 @@ export function toPublicPost(row: DbRow): BlogPostRow {
   };
 }
 
+// Two seeded posts originally pointed at MediaAsset URLs that were later
+// removed from the DB — repoint them to the identical static WebP assets
+// so blog cards never render broken images.
+const MEDIA_FALLBACK: Record<string, string> = {
+  "magician-in-jaipur": "/images/rajtilak-mic-closeup.webp",
+  "virtual-magic-show-online-events": "/images/rajtilak-stage-confetti.webp",
+};
+
+let mediaRepaired = false;
+async function repairFeaturedImages(): Promise<void> {
+  if (mediaRepaired) return;
+  mediaRepaired = true;
+  try {
+    const posts = await db.blogPost.findMany({
+      where: { featuredImage: { startsWith: "/api/media/" } },
+      select: { slug: true, featuredImage: true },
+    });
+    for (const p of posts) {
+      const mediaId = (p.featuredImage ?? "").split("/").pop() ?? "";
+      const exists = mediaId ? await db.mediaAsset.findUnique({ where: { id: mediaId } }) : null;
+      if (!exists) {
+        const fixed = MEDIA_FALLBACK[p.slug];
+        if (fixed) {
+          await db.blogPost.update({ where: { slug: p.slug }, data: { featuredImage: fixed } });
+        }
+      }
+    }
+  } catch {
+    /* non-fatal — the blog renders with whatever it has */
+  }
+}
+
 // One-time (idempotent) seed: copies the static Journal entries into the
 // BlogPost table so the Master Admin can edit them like any other post.
 // Safe under concurrency — every row is an upsert keyed on the unique slug.
 export async function ensureBlogSeeded(): Promise<void> {
   const count = await db.blogPost.count();
-  if (count > 0) return;
+  if (count > 0) {
+    await repairFeaturedImages();
+    return;
+  }
   await Promise.all(
     BLOG_POSTS.map((p) =>
       db.blogPost.upsert({
@@ -152,4 +187,5 @@ export async function ensureBlogSeeded(): Promise<void> {
       })
     )
   );
+  await repairFeaturedImages();
 }
