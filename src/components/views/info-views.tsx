@@ -1,10 +1,10 @@
 "use client";
 
-import { Sparkles, MapPin, CalendarCheck, ArrowRight, Award } from "lucide-react";
+import { Sparkles, MapPin, CalendarCheck, ArrowRight, Award, Star, Quote } from "lucide-react";
 import { Reveal, SectionHeading } from "@/components/home/sections";
 import { useSiteCustomization } from "@/components/site/customization-provider";
 import { imageFrame } from "@/lib/customization";
-import { EVENT_TYPES, type RouteId } from "@/lib/content";
+import { EVENT_TYPES, SITE, type RouteId } from "@/lib/content";
 
 function PageHero({
   eyebrow,
@@ -54,13 +54,50 @@ export function AboutView({ navigate }: { navigate: (r: RouteId) => void }) {
         sub={text("about.hero.sub")}
       />
 
+      {/* ── The numbers band — one glance, twelve years of proof ── */}
+      <section aria-label="Career at a glance" className="border-b border-[var(--jr-line)] bg-[var(--jr-plum)]">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px overflow-hidden px-4 py-10 sm:px-6 lg:grid-cols-4">
+          {[
+            { value: "12+", label: "Years on stage", icon: CalendarCheck },
+            { value: "500+", label: "Housefull shows", icon: Sparkles },
+            { value: "40+", label: "Cities toured", icon: MapPin },
+            { value: `${SITE.rating}★`, label: `${SITE.reviewCount} Google reviews`, icon: Star },
+          ].map((s, i) => (
+            <Reveal key={s.label} delay={i * 0.08}>
+              <div className="relative flex flex-col items-center gap-1.5 px-3 py-5 text-center">
+                {i > 0 && <span aria-hidden="true" className="absolute left-0 top-1/2 hidden h-12 w-px -translate-y-1/2 bg-[var(--jr-gold)]/20 lg:block" />}
+                <s.icon className="h-5 w-5 text-[var(--jr-gold)]" aria-hidden="true" />
+                <p className="font-display text-4xl font-semibold text-[var(--jr-ivory)]">{s.value}</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-[var(--jr-lavender)]/75">{s.label}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
       <section className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.1fr_0.9fr]">
         <Reveal>
-          <h2 className="font-display text-display-md font-medium text-[var(--jr-plum)]">{text("about.story.title")}</h2>
-          <div className="mt-6 space-y-5 text-[16px] leading-8 text-[var(--jr-ink)]">
-            <p>{text("about.story.p1")}</p>
-            <p>{text("about.story.p2")}</p>
-            <p>{text("about.story.p3")}</p>
+          <div>
+            <h2 className="font-display text-display-md font-medium text-[var(--jr-plum)]">{text("about.story.title")}</h2>
+            <div className="mt-6 space-y-5 text-[16px] leading-8 text-[var(--jr-ink)]">
+              <p className="jr-article first-letter:float-left first-letter:mr-3 first-letter:font-display first-letter:text-6xl first-letter:font-semibold first-letter:leading-[0.85] first-letter:text-[var(--jr-gold)]">
+                {text("about.story.p1")}
+              </p>
+              <p>{text("about.story.p2")}</p>
+
+              {/* pull quote — the craft in the performer's own voice */}
+              <figure className="relative my-8 rounded-2xl border border-[var(--jr-gold)]/40 bg-[var(--jr-sand-light)]/60 px-8 py-7">
+                <Quote className="absolute -top-3.5 left-6 h-7 w-7 rounded-full bg-[var(--jr-card)] p-1 text-[var(--jr-gold)]" aria-hidden="true" />
+                <blockquote className="font-display text-xl font-medium italic leading-relaxed text-[var(--jr-plum)]">
+                  “{text("about.philosophy1d") ? text("about.philosophy1d").slice(0, 180) : "The trick is the easy part — the moment it creates in the room is the real performance."}”
+                </blockquote>
+                <figcaption className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--jr-gold-dark)]">
+                  Jadugar Rajtilak · {text("about.card.role")}
+                </figcaption>
+              </figure>
+
+              <p>{text("about.story.p3")}</p>
+            </div>
           </div>
         </Reveal>
 
@@ -115,24 +152,24 @@ export function AboutView({ navigate }: { navigate: (r: RouteId) => void }) {
         </Reveal>
       </section>
 
-      {/* milestones timeline */}
+      {/* milestones timeline — gold plates on the runway */}
       <section className="bg-[var(--jr-sand)] py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <SectionHeading eyebrow={text("about.milestones.eyebrow")} title={text("about.milestones.title")} />
-          <ol className="mt-12 space-y-0">
+          <ol className="mt-12 space-y-4">
             {milestones.map((m, i) => (
               <Reveal key={i} delay={i * 0.1}>
-                <li className="relative flex gap-6 pb-10 last:pb-0">
+                <li className="relative flex gap-6">
                   <div className="flex flex-col items-center">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--jr-gold)]/60 bg-[var(--jr-card)] font-display text-sm font-semibold text-[var(--jr-gold)]">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[var(--jr-gold)]/60 bg-gradient-to-br from-[var(--jr-card)] to-[var(--jr-sand-light)] font-display text-sm font-semibold text-[var(--jr-gold-dark)] shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--jr-gold)_65%,transparent)]">
                       {m.year}
                     </span>
                     {i < milestones.length - 1 && (
                       <span className="mt-1 w-px flex-1 bg-gradient-to-b from-[var(--jr-gold)]/50 to-transparent" />
                     )}
                   </div>
-                  <div className="pt-1.5">
-                    <p className="mt-1 max-w-xl text-[15px] leading-7 text-[var(--jr-ink)]">{m.text}</p>
+                  <div className="card-cine flex-1 rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-card)] px-6 py-5">
+                    <p className="text-[15px] leading-7 text-[var(--jr-ink)]">{m.text}</p>
                   </div>
                 </li>
               </Reveal>
@@ -165,21 +202,41 @@ export function AboutView({ navigate }: { navigate: (r: RouteId) => void }) {
           ].map((p, i) => (
             <Reveal key={p.t} delay={i * 0.12}>
               <article className="card-cine h-full rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-card)] p-7">
-                <Sparkles className="h-6 w-6 text-[var(--jr-gold)]" aria-hidden="true" />
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--jr-sand-light)] text-[var(--jr-gold)]">
+                  <Sparkles className="h-5 w-5" aria-hidden="true" />
+                </span>
                 <h3 className="font-display mt-4 text-2xl font-semibold text-[var(--jr-plum)]">{p.t}</h3>
                 <p className="mt-3 text-[15px] leading-7 text-[var(--jr-ink)]">{p.d}</p>
               </article>
             </Reveal>
           ))}
         </div>
-        <Reveal className="mt-12 text-center">
-          <button
-            onClick={() => navigate("booking")}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--jr-crimson)] px-8 py-3 text-[15px] font-semibold text-[var(--jr-ivory)] shadow-[0_16px_35px_-14px_color-mix(in_srgb,var(--jr-crimson)_70%,transparent)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-[var(--jr-crimson-hover)]"
-          >
-            Book a Show <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </button>
-        </Reveal>
+      </section>
+
+      {/* touring strip + CTA */}
+      <section className="border-t border-[var(--jr-line)] bg-[var(--jr-sand)] py-16">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
+          <Reveal>
+            <div className="flex items-center justify-center gap-2.5">
+              <MapPin className="h-5 w-5 text-[var(--jr-gold)]" aria-hidden="true" />
+              <p className="font-display text-2xl font-semibold text-[var(--jr-plum)]">Udaipur home stage · touring pan-India</p>
+            </div>
+            <p className="mx-auto mt-3 max-w-xl text-[15px] leading-7 text-[var(--jr-ink)]">{text("services.cityNote")}</p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+              {["Udaipur", "Jaipur", "Jodhpur", "Delhi NCR", "Mumbai", "Ahmedabad", "Bengaluru"].map((c) => (
+                <span key={c} className="rounded-full border border-[var(--jr-gold)]/40 bg-[var(--jr-card)] px-4 py-1.5 text-[13px] font-medium text-[var(--jr-plum)]">
+                  {c}
+                </span>
+              ))}
+            </div>
+            <button
+              onClick={() => navigate("booking")}
+              className="mt-9 inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--jr-crimson)] px-8 py-3 text-[15px] font-semibold text-[var(--jr-ivory)] shadow-[0_16px_35px_-14px_color-mix(in_srgb,var(--jr-crimson)_70%,transparent)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-[var(--jr-crimson-hover)]"
+            >
+              Book a Show <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </Reveal>
+        </div>
       </section>
     </div>
   );

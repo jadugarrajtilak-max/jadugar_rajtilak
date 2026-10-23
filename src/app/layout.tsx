@@ -217,6 +217,45 @@ export default async function RootLayout({
       <body
         className={`${cormorant.variable} ${inter.variable} antialiased bg-background text-foreground`}
       >
+        {/* Pre-hydration mobile menu fallback. On slow phones a tap on the
+            3-dot button in the first seconds after load did nothing —
+            React had not hydrated yet, so no click handler existed. This
+            tiny native listener (registered before anything else in the
+            body) toggles data-jr-menu on <html>; globals.css shows the
+            server-rendered panel from that attribute, and nav buttons
+            carry data-jr-nav paths so they navigate via a full page load.
+            The moment React hydrates, Navbar sets window.__jrHydrated and
+            this listener steps aside — React owns the menu from then on. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+  document.addEventListener('click', function(e){
+    if (window.__jrHydrated) return;
+    var t = e.target && e.target.closest ? e.target.closest('[data-jr-menu-toggle]') : null;
+    if (t) {
+      var root = document.documentElement;
+      if (root.getAttribute('data-jr-menu') === 'open') {
+        root.removeAttribute('data-jr-menu');
+        document.body.style.overflow = '';
+      } else {
+        root.setAttribute('data-jr-menu', 'open');
+        document.body.style.overflow = 'hidden';
+      }
+      return;
+    }
+    var nav = e.target && e.target.closest ? e.target.closest('[data-jr-nav]') : null;
+    if (nav) {
+      var href = nav.getAttribute('data-jr-nav');
+      if (href) {
+        document.documentElement.removeAttribute('data-jr-menu');
+        document.body.style.overflow = '';
+        window.location.assign(href);
+      }
+    }
+  }, true);
+})();`,
+          }}
+        />
         {/* Google Analytics 4 — deferred until the first real user signal
             (pointerdown / keydown / wheel / touchstart) with an 8s idle
             fallback. A ~180 KB third-party script otherwise sits on

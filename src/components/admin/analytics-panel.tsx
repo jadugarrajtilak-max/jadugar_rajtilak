@@ -51,6 +51,9 @@ export function AnalyticsPanel() {
   };
 
   useEffect(() => {
+    // setState happens after await → safe; disable the compiler's
+    // conservative sync-setState warning for this mount-time load
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load();
   }, []);
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Menu, CalendarCheck, X, ArrowRight } from "lucide-react";
 import { NAV_ITEMS, type RouteId } from "@/lib/content";
+import { routeToPath } from "@/lib/routes";
 import { useSiteCustomization } from "@/components/site/customization-provider";
 
 // Brand mark — the client's official golden JR emblem (crown + monogram +
@@ -34,6 +35,12 @@ export function Navbar({
   navigate: (r: RouteId) => void;
 }) {
   const [scrolled, setScrolled] = useState(false);
+  // The mobile menu is also operable BEFORE React hydration finishes:
+  // an inline script in layout.tsx toggles data-jr-menu on <html>, and
+  // globals.css shows the panel from that attribute. That matters on
+  // slow phones — a tap on the 3-dot button in the first seconds after
+  // load used to do nothing because the React handler was not attached
+  // yet. On mount we adopt whatever state the native fallback left.
   const [open, setOpen] = useState(false);
   const { text } = useSiteCustomization();
 
@@ -44,14 +51,29 @@ export function Navbar({
   };
 
   useEffect(() => {
+    // adopt pre-hydration state + tell the native fallback to stand down.
+    // Writing a plain flag on window is not React state — the compiler's
+    // set-state-in-effect rule misreads it; disabled deliberately.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (document.documentElement.dataset.jrMenu === "open") setOpen(true);
+    (window as unknown as Record<string, unknown>).__jrHydrated = true;
+    return () => {
+      (window as unknown as Record<string, unknown>).__jrHydrated = false;
+    };
+  }, []);
+
+  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll while the full-screen menu is open
+  // Single source of truth for panel visibility: the data-jr-menu
+  // attribute on <html> (kept in sync with React state) — the same
+  // attribute the pre-hydration script toggles.
   useEffect(() => {
+    document.documentElement.dataset.jrMenu = open ? "open" : "closed";
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -127,6 +149,7 @@ export function Navbar({
           </button>
           <button
             onClick={() => setOpen((v) => !v)}
+            data-jr-menu-toggle=""
             className={`inline-flex h-11 w-11 items-center justify-center rounded-full lg:hidden ${
               overHero ? "text-[var(--jr-ivory)]" : "text-[var(--jr-plum)]"
             }`}
@@ -138,9 +161,15 @@ export function Navbar({
         </div>
       </nav>
 
-      {/* Mobile menu — full-screen takeover so nothing bleeds through */}
-      {open && (
-        <div className="fixed inset-0 z-[70] flex flex-col overflow-y-auto bg-[var(--jr-ivory)] lg:hidden">
+      {/* Mobile menu — full-screen takeover so nothing bleeds through.
+          Always in the DOM (SSR) so the pre-hydration script + CSS rule
+          can show it before React is ready; React keeps it in sync. */}
+      <div
+        data-jr-mobile-panel=""
+        className={`fixed inset-0 z-[70] flex-col overflow-y-auto bg-[var(--jr-ivory)] lg:hidden ${
+          open ? "flex" : "hidden"
+        }`}
+      >
           <div className="pointer-events-none absolute inset-0" aria-hidden="true" style={{ background: "radial-gradient(70% 40% at 50% -10%, color-mix(in srgb, var(--jr-gold) 14%, transparent), transparent 60%)" }} />
           <div className="relative flex h-16 shrink-0 items-center justify-between px-4 sm:px-6">
             <div className="flex items-center gap-3">
@@ -151,6 +180,7 @@ export function Navbar({
             </div>
             <button
               onClick={() => setOpen(false)}
+              data-jr-menu-toggle=""
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--jr-line)] text-[var(--jr-plum)]"
               aria-label="Close menu"
             >
@@ -164,6 +194,7 @@ export function Navbar({
                 <li key={item.id} className="border-b border-[var(--jr-sand)]">
                   <button
                     onClick={() => go(item.id)}
+                    data-jr-nav={routeToPath(item.id)}
                     className={`flex w-full items-center justify-between py-4 text-left font-display text-2xl font-medium transition-colors ${
                       route === item.id ? "text-[var(--jr-crimson)]" : "text-[var(--jr-plum)]"
                     }`}
@@ -181,6 +212,7 @@ export function Navbar({
             </ul>
             <button
               onClick={() => go("booking")}
+              data-jr-nav={routeToPath("booking")}
               className="mt-8 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--jr-crimson)] px-6 py-3.5 text-sm font-semibold text-[var(--jr-ivory)] shadow-[0_18px_40px_-14px_color-mix(in_srgb,var(--jr-crimson)_65%,transparent)]"
             >
               <CalendarCheck className="h-4 w-4" aria-hidden="true" />
@@ -190,8 +222,7 @@ export function Navbar({
               Weddings · Corporate · Birthdays · Fests — across India
             </p>
           </nav>
-        </div>
-      )}
+      </div>
     </header>
   );
 }

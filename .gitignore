@@ -100,3 +100,4 @@ scripts/img/**/*.jpg
 
 # local deliverables
 download/
+prisma/*.sqlite.prisma

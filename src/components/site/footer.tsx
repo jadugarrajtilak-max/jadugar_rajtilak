@@ -154,6 +154,15 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
             <button onClick={() => navigate("legal")} className="transition-colors hover:text-[var(--jr-crimson)]">
               Cancellation
             </button>
+            {/* XML sitemap for crawlers + a visible link for visitors */}
+            <a
+              href="/sitemap.xml"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-[var(--jr-crimson)]"
+            >
+              Sitemap
+            </a>
             <button onClick={() => navigate("admin")} className="transition-colors hover:text-[var(--jr-gold)]">
               Admin
             </button>

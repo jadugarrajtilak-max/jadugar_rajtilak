@@ -201,9 +201,11 @@ function RichPara({ text, className }: { text: string; className?: string }) {
   const nodes: React.ReactNode[] = [];
   let last = 0;
   let key = 0;
-  RICH_LINK_RE.lastIndex = 0;
+  // fresh instance per render — shared stateful regexes trip React's
+  // compiler immutability rule and are not safe across concurrent renders
+  const re = new RegExp(RICH_LINK_RE.source, RICH_LINK_RE.flags);
   let m: RegExpExecArray | null;
-  while ((m = RICH_LINK_RE.exec(text)) !== null) {
+  while ((m = re.exec(text)) !== null) {
     if (m.index > last) nodes.push(text.slice(last, m.index));
     const href = m[2];
     const internal = href.startsWith("/");
@@ -1437,7 +1439,7 @@ const OCCASIONS = [
   },
 ];
 
-export function ContactView() {
+export function ContactView({ navigate }: { navigate: (r: RouteId) => void }) {
   const { toast } = useToast();
   const { text } = useSiteCustomization();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -1504,76 +1506,141 @@ export function ContactView() {
 
   return (
     <div>
-      <PageHero
-        eyebrow={text("contact.hero.eyebrow")}
-        title={text("contact.hero.title")}
-        sub={text("contact.hero.sub")}
-      />
+      {/* ── The velvet-lobby hero — dark stage, gold light, promises up front ── */}
+      <header className="relative overflow-hidden bg-[var(--jr-plum-deep)] pb-20 pt-32">
+        <div className="absolute inset-0" aria-hidden="true" style={{ background: "radial-gradient(75% 90% at 50% -20%, color-mix(in srgb, var(--jr-gold) 16%, transparent), transparent 62%)" }} />
+        <div className="stage-light absolute -top-10 left-1/3 h-[70%] w-[34%] opacity-40" aria-hidden="true" />
+        <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6">
+          <p className="eyebrow">{text("contact.hero.eyebrow")}</p>
+          <h1 className="font-display mt-4 text-display-lg font-medium text-[var(--jr-ivory)]">
+            {text("contact.hero.title")}
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-body-lg text-[var(--jr-lavender)]/85">{text("contact.hero.sub")}</p>
 
-      {/* ── The desk-lamp strip — live status + promises, one glance ── */}
-      <section
-        aria-label="Studio status and response promises"
-        className="border-y border-[var(--jr-gold)]/20 bg-[var(--jr-plum)]"
-      >
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-2.5 px-4 py-4 sm:px-6">
-          <span className="inline-flex items-center gap-2.5 text-sm font-medium text-[var(--jr-ivory)]">
-            <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--jr-teal)] opacity-60" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--jr-teal)]" />
-            </span>
-            The desk lamp is lit — replies within one working day
-          </span>
-          <span className="hidden h-4 w-px bg-[var(--jr-gold)]/25 sm:block" aria-hidden="true" />
-          <span className="text-xs text-[var(--jr-lavender)]/85">Same-day quotes on WhatsApp</span>
-          <span className="hidden h-4 w-px bg-[var(--jr-gold)]/25 sm:block" aria-hidden="true" />
-          <span className="text-xs text-[var(--jr-lavender)]/85">72-hour soft-holds on your date</span>
-          <span className="hidden h-4 w-px bg-[var(--jr-gold)]/25 sm:block" aria-hidden="true" />
-          <span className="text-xs text-[var(--jr-lavender)]/85">No agents — you write to the magician</span>
+          {/* the studio's promises — three glass plaques */}
+          <ul className="mx-auto mt-9 flex max-w-3xl flex-wrap items-center justify-center gap-2.5" aria-label="Studio status and response promises">
+            {[
+              "Desk lamp lit — replies within one working day",
+              "Same-day quotes on WhatsApp",
+              "72-hour soft-holds on your date",
+            ].map((p) => (
+              <li
+                key={p}
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--jr-gold)]/30 bg-[var(--jr-plum-mid)]/60 px-4 py-2 text-[13px] font-medium text-[var(--jr-cream)] backdrop-blur"
+              >
+                <span className="relative flex h-2 w-2" aria-hidden="true">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--jr-teal)] opacity-60" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--jr-teal)]" />
+                </span>
+                {p}
+              </li>
+            ))}
+          </ul>
+
+          {/* hero quick actions — call / WhatsApp, one tap each */}
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <a
+              href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Namaste! I would like to check a date for a magic show.")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--jr-teal)] px-7 py-3 text-[15px] font-semibold text-[var(--jr-ivory)] shadow-[0_18px_40px_-14px_color-mix(in_srgb,var(--jr-teal)_85%,transparent)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--jr-teal)_80%,black)]"
+            >
+              <MessageCircle className="h-4 w-4" aria-hidden="true" /> WhatsApp the Studio
+            </a>
+            <a
+              href={`tel:${SITE.phoneRaw}`}
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--jr-gold)]/60 px-7 py-3 text-[15px] font-semibold text-[var(--jr-cream)] transition-all duration-500 hover:bg-[var(--jr-gold)]/10"
+            >
+              <Phone className="h-4 w-4" aria-hidden="true" /> {SITE.phoneDisplay}
+            </a>
+          </div>
+          <p className="mt-4 text-xs text-[var(--jr-lavender)]/60">No agents — you write directly to the magician.</p>
         </div>
-      </section>
+        {/* bottom curve into the light page body */}
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-8 rounded-t-[100%] bg-[var(--jr-ivory)]" />
+      </header>
 
       <section className="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.95fr_1.05fr]">
         {/* soft stage light behind the section (2D, no 3D) */}
         <div className="stage-light absolute -top-20 left-1/3 h-[60%] w-[34%] opacity-30" aria-hidden="true" />
 
-        {/* channel cards — flat, no tilt */}
+        {/* channel cards — the calling-card grid */}
         <Reveal>
-          <div className="relative space-y-5">
+          <div className="relative">
             <div className="mb-6 flex items-center gap-3">
               <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--jr-sand-light)] text-[var(--jr-gold)]">
                 <Wand2 className="h-5 w-5" aria-hidden="true" />
               </span>
               <p className="font-display text-2xl font-semibold text-[var(--jr-plum)]">Four ways to reach the magician</p>
             </div>
-            {CHANNELS.map((c) => (
-              <a
-                key={c.label}
-                href={c.href}
-                target={c.href.startsWith("http") ? "_blank" : undefined}
-                rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="card-cine relative flex items-start gap-4 rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-card)] p-5 transition-colors hover:border-[var(--jr-gold)]/60"
-              >
-                {/* playing-card corner pips — the studio's calling cards */}
-                <span aria-hidden="true" className="pointer-events-none absolute bottom-1.5 left-2.5 rotate-180 font-display text-[11px] font-semibold leading-none text-[var(--jr-gold)]/45">
-                  {c.pip}
-                  <span className="block text-center text-[9px] leading-none">{c.suit}</span>
-                </span>
-                <span aria-hidden="true" className="pointer-events-none absolute bottom-1.5 right-2.5 font-display text-[11px] font-semibold leading-none text-[var(--jr-gold)]/45">
-                  {c.pip}
-                  <span className="block text-center text-[9px] leading-none">{c.suit}</span>
-                </span>
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--jr-sand-light)] to-[var(--jr-gold-light)]/70 text-[var(--jr-gold-dark)] shadow-[0_14px_28px_-12px_color-mix(in_srgb,var(--jr-gold)_65%,transparent)]">
-                  <c.icon className="h-5 w-5" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--jr-gold)]">{c.label}</p>
-                  <p className="mt-0.5 font-medium text-[var(--jr-plum)]">{c.value}</p>
-                  <p className="text-sm text-[var(--jr-ink)]">{c.note}</p>
-                </div>
-                <ArrowRight className="ml-auto mt-1 h-4 w-4 shrink-0 text-[var(--jr-gold)]/50" aria-hidden="true" />
-              </a>
-            ))}
-            <p className="rounded-xl bg-[var(--jr-sand-light)]/50 p-4 text-xs leading-6 text-[var(--jr-ink)]">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {CHANNELS.map((c) => (
+                <a
+                  key={c.label}
+                  href={c.href}
+                  target={c.href.startsWith("http") ? "_blank" : undefined}
+                  rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="card-cine relative flex items-start gap-4 rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-card)] p-5 transition-colors hover:border-[var(--jr-gold)]/60"
+                >
+                  {/* playing-card corner pips — the studio's calling cards */}
+                  <span aria-hidden="true" className="pointer-events-none absolute bottom-1.5 left-2.5 rotate-180 font-display text-[11px] font-semibold leading-none text-[var(--jr-gold)]/45">
+                    {c.pip}
+                    <span className="block text-center text-[9px] leading-none">{c.suit}</span>
+                  </span>
+                  <span aria-hidden="true" className="pointer-events-none absolute bottom-1.5 right-2.5 font-display text-[11px] font-semibold leading-none text-[var(--jr-gold)]/45">
+                    {c.pip}
+                    <span className="block text-center text-[9px] leading-none">{c.suit}</span>
+                  </span>
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--jr-sand-light)] to-[var(--jr-gold-light)]/70 text-[var(--jr-gold-dark)] shadow-[0_14px_28px_-12px_color-mix(in_srgb,var(--jr-gold)_65%,transparent)]">
+                    <c.icon className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--jr-gold)]">{c.label}</p>
+                    <p className="mt-0.5 break-words font-medium text-[var(--jr-plum)]">{c.value}</p>
+                    <p className="mt-1 text-sm leading-6 text-[var(--jr-ink)]">{c.note}</p>
+                  </div>
+                  <ArrowRight className="ml-auto mt-1 h-4 w-4 shrink-0 text-[var(--jr-gold)]/50" aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+
+            {/* before-you-write — three answers hosts ask for first */}
+            <div className="mt-8 rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-sand-light)]/40 p-5">
+              <p className="flex items-center gap-2 text-sm font-semibold text-[var(--jr-plum)]">
+                <Clock className="h-4 w-4 text-[var(--jr-gold)]" aria-hidden="true" /> Before you write — quick answers
+              </p>
+              <ul className="mt-3 divide-y divide-[var(--jr-line)]">
+                {[
+                  {
+                    q: "What does a show cost?",
+                    a: "Transparent Signature / Royal / Grand packages — written quote within 24 hours.",
+                  },
+                  {
+                    q: "Is my date available?",
+                    a: "Live availability on the booking page; enquiries place a 72-hour soft-hold.",
+                  },
+                  {
+                    q: "Do you travel to my city?",
+                    a: "Udaipur home stage, touring pan-India — 40+ cities so far.",
+                  },
+                ].map((f) => (
+                  <li key={f.q}>
+                    <button
+                      onClick={() => navigate("faq")}
+                      className="group flex w-full items-center justify-between gap-3 py-2.5 text-left"
+                    >
+                      <span>
+                        <span className="block text-[13.5px] font-semibold text-[var(--jr-plum)] group-hover:text-[var(--jr-crimson)]">{f.q}</span>
+                        <span className="mt-0.5 block text-[12.5px] leading-5 text-[var(--jr-ink)]">{f.a}</span>
+                      </span>
+                      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[var(--jr-gold)]/60 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <p className="mt-4 rounded-xl bg-[var(--jr-sand-light)]/50 p-4 text-xs leading-6 text-[var(--jr-ink)]">
               Peak-season dates close 6–8 weeks ahead — a quick date check on WhatsApp
               is the fastest way to hold your evening.
             </p>
@@ -1736,54 +1803,6 @@ export function ContactView() {
                 </>
               )}
             </form>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* fast-route CTA — 3D pressable */}
-      <section className="mx-auto max-w-4xl px-4 pb-20 sm:px-6">
-        <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-[var(--jr-plum)] px-6 py-10 text-center shadow-[0_40px_90px_-40px_color-mix(in_srgb,var(--jr-plum)_80%,transparent)]">
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 opacity-60"
-              style={{ background: "radial-gradient(80% 90% at 50% 120%, color-mix(in srgb, var(--jr-plum-mid) 80%, var(--jr-crimson)) 0%, transparent 60%)" }}
-            />
-            <div className="stage-light absolute -top-12 left-[40%] h-[85%] w-[22%] opacity-50" aria-hidden="true" />
-            <div
-              className="animate-hat-sway absolute left-8 top-6 hidden text-[var(--jr-gold)]/40 md:block"
-              aria-hidden="true"
-            >
-              <Sparkles className="h-8 w-8" />
-            </div>
-            <div className="relative">
-              <p className="eyebrow">The Fastest Route</p>
-              <p className="font-display mt-3 text-3xl font-medium text-[var(--jr-ivory)]">
-                One WhatsApp message — and the date is on hold
-              </p>
-              <p className="mx-auto mt-3 max-w-xl text-[15px] leading-7 text-[var(--jr-lavender)]/85">
-                Skip the forms. Send the occasion, city and date, and receive availability
-                plus a written quote on the same day.
-              </p>
-              <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <a
-                  href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Namaste! I would like to check a date for a magic show.")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--jr-teal)] px-8 py-3 text-[15px] font-semibold text-[var(--jr-ivory)] shadow-[0_18px_40px_-14px_color-mix(in_srgb,var(--jr-teal)_85%,transparent)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--jr-teal)_80%,black)] active:translate-y-0.5"
-                >
-                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                  WhatsApp the Studio
-                </a>
-                <a
-                  href={`tel:${SITE.phoneRaw}`}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--jr-gold)]/60 px-8 py-3 text-[15px] font-semibold text-[var(--jr-cream)] transition-all duration-500 hover:bg-[var(--jr-gold)]/10 active:translate-y-0.5"
-                >
-                  <Phone className="h-4 w-4" aria-hidden="true" />
-                  {SITE.phoneDisplay}
-                </a>
-              </div>
-            </div>
           </div>
         </Reveal>
       </section>

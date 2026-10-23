@@ -466,3 +466,13 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Pre-hydration mobile menu fallback (Fix: 3-dot menu on slow phones) ──
+   The inline script in layout.tsx toggles data-jr-menu on <html> before
+   React hydration finishes; this rule shows the always-rendered mobile
+   panel during that window. Unlayered + !important so it wins over the
+   Tailwind `hidden` utility regardless of cascade layers. Once React
+   hydrates, Navbar keeps the attribute and the open class in sync. */
+html[data-jr-menu="open"] [data-jr-mobile-panel] {
+  display: flex !important;
+}

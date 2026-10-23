@@ -334,7 +334,7 @@ function SeoGuidance({ draft }: { draft: Draft }) {
         imageAltText: draft.featuredImageAlt.trim().length > 0,
         h2Count: draft.sections.filter((s) => s.h.trim()).length,
       }),
-    [draft, links]
+    [draft, links, body]
   );
   const serp = serpPreview(draft.metaTitle || draft.title, `blog/${draft.slug}`, draft.metaDescription || draft.excerpt);
   const scoreColor = score >= 80 ? "#3e8e8a" : score >= 55 ? "#b8923a" : "#b3263e";

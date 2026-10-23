@@ -50,7 +50,7 @@ export const AGENTS: AgentMeta[] = [
     id: "blog",
     name: "Blog Writer",
     hindi: "ब्लॉग राइटर",
-    role: "One SEO-friendly blog draft every day from the Content Calendar. Saves as draft for your approval — existing posts are never touched.",
+    role: "One SEO-friendly blog post every day from the Content Calendar — publishes it live automatically (toggle above), falls back to a curated template when the LLM is offline. Existing posts are never touched.",
     cadence: "Daily (09:15 IST) + manual",
     scheduleHour: 9,
     accent: "#4c3a75",

@@ -4,10 +4,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Bot, Loader2, Play, CheckCircle2, XCircle, AlertTriangle, Clock,
   Trophy, ShieldCheck, Wrench, PenLine, RefreshCw, ChevronDown,
-  ExternalLink, Sparkles, Lock,
+  ExternalLink, Sparkles, Lock, Globe, Copy, Check, Send,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { adminFetch } from "@/lib/admin-client";
 
@@ -28,6 +29,29 @@ type AgentRow = {
 type BacklinkRow = {
   id: string; source: string; type: string; action: string; estDa: number;
   week: string; status: string; notes: string; outreach: string;
+};
+type PendingDraft = {
+  id: string; title: string; slug: string; category: string;
+  createdAt: string; readingTime: string | null;
+};
+
+// Where the owner actually executes each backlink task — the listing /
+// signup page for every source in the pipeline. One click, real action.
+const SOURCE_URLS: Record<string, string> = {
+  Justdial: "https://www.justdial.com/Udaipur/Jadugar-Rajtilak-Opposite-Hotel-Rajkamal-Bhuwana/9999PX294-X294-180528141553-G5M2_BZDET",
+  Venuelook: "https://www.venuelook.com/",
+  Sulekha: "https://www.sulekha.com/",
+  IndiaMART: "https://www.indiamart.com/",
+  TradeIndia: "https://www.tradeindia.com/",
+  "YellowPages India": "https://www.yellowpages.in/",
+  StarClinch: "https://starclinch.com/",
+  WedMeGood: "https://www.wedmegood.com/",
+  Hire4Event: "https://hire4event.com/",
+  EventJini: "https://www.eventjini.com/",
+  AliveExperiences: "https://aliveexperiences.com/",
+  "GetReal.buzz": "https://getreal.buzz/",
+  "Local press (Bhaskar/Patrika Udaipur)": "https://udaipur.bhaskar.com/",
+  "'Top 10 magicians India' listicles": "https://www.google.com/search?q=top+10+magicians+in+india",
 };
 
 const AGENT_ICONS: Record<string, typeof Bot> = {
@@ -60,16 +84,30 @@ export function AgentsPanel() {
   const [loading, setLoading] = useState(true);
   const [agents, setAgents] = useState<AgentRow[]>([]);
   const [backlinks, setBacklinks] = useState<BacklinkRow[]>([]);
+  const [autoPublish, setAutoPublish] = useState(true);
+  const [pendingDrafts, setPendingDrafts] = useState<PendingDraft[]>([]);
+  const [publishedCount, setPublishedCount] = useState(0);
   const [running, setRunning] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>("blog");
   const [showSkill, setShowSkill] = useState<string | null>(null);
   const [showOutreach, setShowOutreach] = useState<string | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [publishing, setPublishing] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    const res = await adminFetch<{ agents: AgentRow[]; backlinks: BacklinkRow[] }>("/api/admin/agents");
+    const res = await adminFetch<{
+      agents: AgentRow[];
+      backlinks: BacklinkRow[];
+      autoPublish?: boolean;
+      pendingDrafts?: PendingDraft[];
+      publishedCount?: number;
+    }>("/api/admin/agents");
     if (res.ok && res.data) {
       setAgents(res.data.agents);
       setBacklinks(res.data.backlinks);
+      setAutoPublish(res.data.autoPublish !== false);
+      setPendingDrafts(res.data.pendingDrafts ?? []);
+      setPublishedCount(res.data.publishedCount ?? 0);
     } else if (res.error) {
       toast({ title: "Could not load agents", description: res.error, variant: "destructive" });
     }
@@ -115,6 +153,55 @@ export function AgentsPanel() {
     }
   };
 
+  const toggleAutoPublish = async (next: boolean) => {
+    setAutoPublish(next); // optimistic
+    const res = await adminFetch("/api/admin/agents", {
+      method: "PATCH",
+      body: JSON.stringify({ setting: "autopublish", value: next ? "on" : "off" }),
+    });
+    if (res.ok) {
+      toast({
+        title: next ? "Auto-publish ON" : "Auto-publish OFF",
+        description: next
+          ? "Blog Writer ab har roz ka post seedha live publish karega (toggle kabhi bhi off kar sakte hain)."
+          : "Blog Writer sirf draft banayega — Blog Studio mein aapke approval ka intezaar.",
+      });
+    } else {
+      setAutoPublish(!next);
+      toast({ title: "Could not save setting", description: res.error ?? "Try again", variant: "destructive" });
+    }
+  };
+
+  const publishDraft = async (draft: PendingDraft) => {
+    setPublishing(draft.id);
+    const res = await adminFetch<{ published: { slug: string } }>("/api/admin/agents", {
+      method: "PATCH",
+      body: JSON.stringify({ publishDraftId: draft.id }),
+    });
+    setPublishing(null);
+    if (res.ok) {
+      toast({
+        title: "Published live",
+        description: `jadugarrajtilak.com/blog/${res.data?.published?.slug ?? draft.slug} is live and in the sitemap.`,
+      });
+      setPendingDrafts((rows) => rows.filter((r) => r.id !== draft.id));
+      setPublishedCount((n) => n + 1);
+    } else {
+      toast({ title: "Publish failed", description: res.error ?? "Try again", variant: "destructive" });
+    }
+  };
+
+  const copyOutreach = (id: string, outreach: { to?: string; subject?: string; body?: string }) => {
+    const text = `To: ${outreach.to || "platform contact"}\nSubject: ${outreach.subject || ""}\n\n${outreach.body || ""}`;
+    navigator.clipboard
+      ?.writeText(text)
+      .then(() => {
+        setCopied(id);
+        setTimeout(() => setCopied(null), 1600);
+      })
+      .catch(() => toast({ title: "Copy failed", description: "Select and copy manually.", variant: "destructive" }));
+  };
+
   const dueCount = useMemo(() => agents.filter((a) => a.isDueToday && (!a.lastSuccessAt || new Date(a.lastSuccessAt).toISOString().slice(0, 10) !== new Date().toISOString().slice(0, 10))).length, [agents]);
 
   if (loading) {
@@ -132,12 +219,24 @@ export function AgentsPanel() {
         <div>
           <h1 className="font-display text-3xl font-semibold text-[#2a1b3d]">AI Agents</h1>
           <p className="mt-1 text-sm text-[#5b5266]">
-            Aapki 24×7 growth crew — Rank, SEO, Bug Fixer aur Blog Writer. Sab agents apne skill.md se seekhte
-            hain aur har run ke baad khud ko improve karte hain. Data safe: blog sirf draft banata hai, koi
-            existing content nahi chhedta.
+            Aapki 24×7 growth crew — Rank, SEO, Bug Fixer aur Blog Writer. Har run ke baad agents apne
+            skill.md se seekhte hain. Blog Writer roz ka post publish bhi karta hai — switch se control karein.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* execution switch — the owner decides if agents publish or only draft */}
+          <div className="flex items-center gap-3 rounded-full border border-[#e3d9c6] bg-[#fffdf7] px-4 py-2">
+            <Send className="h-4 w-4 text-[#b8923a]" aria-hidden="true" />
+            <div className="leading-tight">
+              <p className="text-[12px] font-semibold text-[#2a1b3d]">Auto-publish</p>
+              <p className="text-[10px] text-[#8c8a84]">{autoPublish ? "ON — posts go live" : "OFF — drafts only"}</p>
+            </div>
+            <Switch
+              checked={autoPublish}
+              onCheckedChange={toggleAutoPublish}
+              aria-label="Toggle automatic publishing of the daily blog post"
+            />
+          </div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f5e9] px-3 py-1.5 text-xs font-semibold text-[#1B7D46]">
             <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" /> Scheduler: 24×7 active
           </span>
@@ -163,6 +262,68 @@ export function AgentsPanel() {
             <Play className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" /> Run due agents
           </Button>
         </div>
+      )}
+
+      {/* ── pending drafts — one click to execute ── */}
+      {pendingDrafts.length > 0 && (
+        <Card className="border-[#e3d9c6] bg-[#fffdf7] shadow-sm">
+          <CardHeader className="pb-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg font-semibold text-[#2a1b3d]">
+                  <PenLine className="h-5 w-5 text-[#4c3a75]" aria-hidden="true" /> Pending drafts — waiting to go live
+                </CardTitle>
+                <p className="mt-1 text-sm text-[#5b5266]">
+                  {pendingDrafts.length} draft(s) ready. Publish now, ya Blog Studio mein poori post dekh kar edit karein.
+                </p>
+              </div>
+              <span className="rounded-full bg-[#e8f0fe] px-3 py-1.5 text-[11px] font-semibold text-[#1a56db]">
+                {publishedCount} published so far
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-h-64 space-y-2 overflow-y-auto scroll-slim">
+              {pendingDrafts.map((d) => (
+                <div
+                  key={d.id}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#f0ead9] bg-white px-4 py-3"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-[14px] font-semibold text-[#2a1b3d]">{d.title}</p>
+                    <p className="text-[11px] text-[#8c8a84]">
+                      {d.category} · {new Date(d.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                      {d.readingTime ? ` · ${d.readingTime}` : ""}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`/blog/${d.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 rounded-full border border-[#e3d9c6] px-3.5 py-1.5 text-[12px] font-medium text-[#5b5266] transition-colors hover:border-[#b8923a] hover:text-[#2a1b3d]"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /> Preview
+                    </a>
+                    <Button
+                      size="sm"
+                      disabled={publishing === d.id}
+                      onClick={() => publishDraft(d)}
+                      className="h-8 rounded-full bg-[#2f6d4f] px-4 hover:bg-[#256043]"
+                    >
+                      {publishing === d.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                      ) : (
+                        <Send className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
+                      )}
+                      Publish now
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* ── agent cards ── */}
@@ -357,6 +518,8 @@ export function AgentsPanel() {
         onStatus={setBacklinkStatus}
         showOutreach={showOutreach}
         setShowOutreach={setShowOutreach}
+        copied={copied}
+        onCopy={copyOutreach}
       />
 
       {/* safety note */}
@@ -365,10 +528,11 @@ export function AgentsPanel() {
           <Lock className="h-4 w-4 text-[#b8923a]" aria-hidden="true" /> Safety commitments
         </p>
         <p className="mt-1.5">
-          Blog Writer sirf <b>drafts</b> banata hai — publish aapke approval ke bina nahi hota, aur existing
-          posts kabhi modify/delete nahi hote. Bug Fixer read-only hai. Rank Agent kabhi koi external site pe
-          kuch auto-submit nahi karta (spam zero). Sab agent APIs admin-auth ke peeche hain aur secrets output
-          mein kabhi print nahi hote. Leads aur bookings data kabhi agent ke haath mein nahi aata.
+          Blog Writer roz ka post publish karta hai jab auto-publish ON ho — switch se kabhi bhi draft-only mode
+          par lautein. Existing posts kabhi modify/delete nahi hote. Bug Fixer read-only hai. Rank Agent kabhi
+          koi external site pe kuch auto-submit nahi karta (spam zero) — outreach aap apne email se bhejte hain.
+          Sab agent APIs admin-auth ke peeche hain aur secrets output mein kabhi print nahi hote. Leads aur
+          bookings data kabhi agent ke haath mein nahi aata.
         </p>
       </div>
     </div>
@@ -389,11 +553,15 @@ function BacklinkBoard({
   onStatus,
   showOutreach,
   setShowOutreach,
+  copied,
+  onCopy,
 }: {
   backlinks: BacklinkRow[];
   onStatus: (id: string, status: string) => void;
   showOutreach: string | null;
   setShowOutreach: (v: string | null) => void;
+  copied: string | null;
+  onCopy: (id: string, outreach: { to?: string; subject?: string; body?: string }) => void;
 }) {
   const live = backlinks.filter((b) => b.status === "live").length;
   const drafted = backlinks.filter((b) => b.status === "drafted").length;
@@ -408,8 +576,8 @@ function BacklinkBoard({
               <Trophy className="h-5 w-5 text-[#b8923a]" aria-hidden="true" /> Rank Agent — Backlink Pipeline
             </CardTitle>
             <p className="mt-1 text-sm text-[#5b5266]">
-              White-hat sources only — zero spam. Outreach drafts agent ne ready ki hain; aap apne account se
-              review karke bhejein. Status khud update karein jab link live ho.
+              White-hat sources only — zero spam. Har row pe “Open platform” seedha listing page kholta hai;
+              outreach draft copy karke apne email se bhejein. Link live hone par status update karein.
             </p>
           </div>
           <div className="flex gap-2 text-center text-[11px] font-semibold">
@@ -430,7 +598,7 @@ function BacklinkBoard({
                 <th className="py-2 pr-3 font-semibold">DA~</th>
                 <th className="py-2 pr-3 font-semibold">Week</th>
                 <th className="py-2 pr-3 font-semibold">Status</th>
-                <th className="py-2 font-semibold">Draft</th>
+                <th className="py-2 font-semibold">Execute</th>
               </tr>
             </thead>
             <tbody>
@@ -442,6 +610,7 @@ function BacklinkBoard({
                 } catch {
                   outreach = null;
                 }
+                const sourceUrl = SOURCE_URLS[b.source];
                 return (
                   <tr key={b.id} className="border-b border-[#f0ead9] align-top">
                     <td className="py-2.5 pr-3 font-semibold text-[#2a1b3d]">{b.source}</td>
@@ -463,18 +632,30 @@ function BacklinkBoard({
                         ))}
                       </select>
                     </td>
-                    <td className="py-2.5">
-                      {outreach ? (
-                        <button
-                          onClick={() => setShowOutreach(showOutreach === b.id ? null : b.id)}
-                          className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#1a56db] hover:underline"
-                        >
-                          <ExternalLink className="h-3 w-3" aria-hidden="true" />
-                          {showOutreach === b.id ? "Hide" : "View"}
-                        </button>
-                      ) : (
-                        <span className="text-[11px] text-[#8c8a84]">—</span>
-                      )}
+                    <td className="relative py-2.5">
+                      <div className="flex items-center gap-1.5">
+                        {sourceUrl && (
+                          <a
+                            href={sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={`Open ${b.source} — listing / signup page`}
+                            className="inline-flex items-center gap-1 rounded-full border border-[#e3d9c6] px-2.5 py-1 text-[11px] font-semibold text-[#5b5266] transition-colors hover:border-[#b8923a] hover:text-[#2a1b3d]"
+                          >
+                            <Globe className="h-3 w-3" aria-hidden="true" /> Open
+                          </a>
+                        )}
+                        {outreach && (
+                          <button
+                            onClick={() => setShowOutreach(showOutreach === b.id ? null : b.id)}
+                            className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#1a56db] hover:underline"
+                          >
+                            <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                            {showOutreach === b.id ? "Hide" : "Draft"}
+                          </button>
+                        )}
+                        {!outreach && !sourceUrl && <span className="text-[11px] text-[#8c8a84]">—</span>}
+                      </div>
                       {showOutreach === b.id && outreach && (
                         <div className="absolute z-10 mt-2 w-[min(420px,90vw)] rounded-xl border border-[#e3d9c6] bg-white p-4 shadow-xl">
                           <p className="text-[11px] font-semibold uppercase tracking-wider text-[#8c8a84]">To</p>
@@ -483,6 +664,34 @@ function BacklinkBoard({
                           <p className="text-[13px] font-semibold text-[#2a1b3d]">{outreach.subject}</p>
                           <p className="mt-2 text-[11px] font-semibold uppercase tracking-wider text-[#8c8a84]">Body</p>
                           <p className="mt-0.5 whitespace-pre-wrap text-[12.5px] leading-relaxed text-[#5b5266]">{outreach.body}</p>
+                          <div className="mt-3 flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 rounded-full border-[#b8923a]/50 text-[#2a1b3d] hover:bg-[#f3ead3]"
+                              onClick={() => onCopy(b.id, outreach as { to?: string; subject?: string; body?: string })}
+                            >
+                              {copied === b.id ? (
+                                <>
+                                  <Check className="mr-1 h-3.5 w-3.5 text-[#2f6d4f]" aria-hidden="true" /> Copied
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="mr-1 h-3.5 w-3.5" aria-hidden="true" /> Copy outreach
+                                </>
+                              )}
+                            </Button>
+                            {sourceUrl && (
+                              <a
+                                href={sourceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex h-8 items-center gap-1.5 rounded-full bg-[#2a1b3d] px-4 text-[12px] font-semibold text-[#faf6ee] transition-colors hover:bg-[#35224d]"
+                              >
+                                <Globe className="h-3.5 w-3.5" aria-hidden="true" /> Open {b.source.split(" ")[0]}
+                              </a>
+                            )}
+                          </div>
                           <p className="mt-3 rounded-lg bg-[#fef9e7] px-3 py-2 text-[11px] text-[#8a6116]">
                             Apne email se bhejein — agent kabhi auto-send nahi karta (no-spam rule).
                           </p>

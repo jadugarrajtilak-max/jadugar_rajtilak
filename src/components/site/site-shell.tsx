@@ -138,7 +138,7 @@ function Site({ initialRoute, initialBlogSlug }: { initialRoute: RouteId; initia
         {route === "booking" && <BookingWizard />}
         {route === "blog" && <BlogView navigate={navigate} initialSlug={blogSlug} />}
         {route === "faq" && <FaqView navigate={navigate} />}
-        {route === "contact" && <ContactView />}
+        {route === "contact" && <ContactView navigate={navigate} />}
         {route === "legal" && <LegalView />}
         {route === "admin" && <AdminConsole navigate={navigate} />}
       </main>

@@ -1,9 +1,10 @@
 // ─────────────────────────────────────────────────────────────────────
-// The four agent task implementations. Every function is safe by
-// design: SEO + Bugfix are read-only diagnostics; Blog creates DRAFTS
-// only (never mutates existing posts); Rank writes only its own
-// BacklinkTask rows and outreach drafts. Nothing here deletes or
-// modifies the owner's business data.
+// The four agent task implementations. SEO + Bugfix are read-only
+// diagnostics. Blog WRITES AND (by default) PUBLISHES the day's post —
+// the owner can flip this back to draft-only any time from the Agents
+// panel (agents.settings.autopublish). Rank writes only its own
+// BacklinkTask rows and outreach drafts. Nothing deletes or modifies
+// the owner's business data.
 // ─────────────────────────────────────────────────────────────────────
 import { db } from "@/lib/db";
 import { slugify, computeReadingTime } from "@/lib/blog";
@@ -319,6 +320,154 @@ type GeneratedPost = {
   closing?: string;
 };
 
+// ── Agent settings (SiteText rows, editable from the Agents panel) ──
+export const AUTO_PUBLISH_KEY = "agents.settings.autopublish";
+const BLOG_LAST_DATE_KEY = "agents.blog.lastDate";
+
+export async function getAgentSetting(key: string, fallback: string): Promise<string> {
+  try {
+    const row = await db.siteText.findUnique({ where: { key }, select: { value: true } });
+    return row?.value ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+// ── Deterministic fallback writer ──────────────────────────────
+// When no LLM is reachable from the runtime (a serverless host without
+// ZAI_* env vars), the Blog Writer used to fail outright and the card
+// showed "Needs attention" forever. Instead it now writes the day's
+// post from this curated, brand-fact-accurate template library. Content
+// is honest and category-aware; the owner can switch auto-publish off
+// in the Agents panel at any time.
+const HINDI_RE = /[\u0900-\u097F]/;
+
+export function templatePost(t: QueueTopic): GeneratedPost {
+  const kw = t.keyword;
+  const cat = t.category;
+  if (HINDI_RE.test(t.title)) {
+    return {
+      title: t.title,
+      slug: slugify(t.title),
+      metaTitle: t.title.slice(0, 65),
+      metaDescription: `जादूगर राजतिलक — ${kw} के लिए पूरी गाइड: शो के फॉर्मेट, कीमत कैसे तय होती है, बुकिंग का सही समय और तीन ज़रूरी सवाल।`,
+      keywords: `${kw}, जादूगर, मैजिक शो, राजतिलक`,
+      excerpt: `${kw} के लिए एक ज़रूरी गाइड — किस तरह का शो किस मौके के लिए सही है, कीमत कैसे तय होती है, और बुकिंग कब करनी चाहिए।`,
+      intro: `अगर आप "${kw}" खोज रहे हैं, तो यह गाइड आपका काम आसान कर देगी। उदयपुर के रॉयल-स्टेज जादूगर राजतिलक 12+ साल से मंच पर हैं — 500+ हाउसफुल शो, 40+ शहर, और 4.8★ (181 गूगल रिव्यू)। यहाँ हम सीधी भाषा में बताएँगे कि शो किस तरह का चुनें, कीमत कैसे तय होती है, और तारीख़ कैसे सुरक्षित करें।`,
+      sections: [
+        {
+          h: "किस मौके के लिए कैसा शो?",
+          paras: [
+            "शादी और संगीत के लिए क्लोज़-अप मैजिक सबसे लोकप्रिय है — जादूगर मेहमानों के बीच घूमता है और हाथ के पास चमत्कार दिखाता है। कॉर्पोरेट इवेंट के लिए 45 मिनट का स्टेज शो बेहतर चलता है, जो कंपनी के मौके के अनुसार लिखा जाता है। बच्चों के जन्मदिन पर रंगीन और तेज़-रफ़्तार शो रखा जाता है, जिसमें जन्मदिन वाला बच्चा हीरो बनता है।",
+            "कॉलेज फेस्ट और बड़े ऑडिटोरियम के लिए बड़े इल्यूजन और मेंटलिज़्म का फॉर्मेट बनता है — 500 से 5000 दर्शकों तक पढ़ा जा सकता है। प्राइवेट और लक्ज़री इवेंट के लिए सैलून-स्टाइल क्लोज़-अप शो सही रहता है, जिसमें 15-80 मेहमानों के बीच जादू इंचों की दूरी पर होता है।",
+          ],
+        },
+        {
+          h: "कीमत कैसे तय होती है?",
+          paras: [
+            "ईमानदार जवाब: कोई भी असली कलाकार बिना आपका इवेंट जाने कीमत नहीं बताता। कीमत चार चीज़ों पर निर्भर करती है — तारीख़ और शहर, शो की अवधि, दर्शकों की संख्या, और ट्रैवल। इसीलिए राजतिलक स्टूडियो हर एंक्वायरी का लिखित कोट 24 घंटे में देता है।",
+            `तीन पारदर्शी पैकेज उपलब्ध हैं — Signature, Royal और Grand। [पैकेज देखें](https://jadugarrajtilak.com/services) और [अपनी तारीख़ चेक करें](https://jadugarrajtilak.com/booking) — एंक्वायरी करने पर तारीख़ 72 घंटे के लिए सॉफ्ट-होल्ड पर रहती है।`,
+          ],
+        },
+        {
+          h: "किसे चुनें — पाँच जाँचें",
+          paras: [
+            "बुकिंग से पहले पाँच चीज़ें जाँचें: (1) असली शो की वीडियो, रील नहीं; (2) गूगल रिव्यू — राजतिलक के 181 रिव्यू में 4.8★ हैं; (3) लिखित कॉन्ट्रैक्ट और GST इनवॉइस; (4) स्टेज/साउंड की ज़रूरतें पहले से साफ़ हों; (5) शो का फॉर्मेट आपके मौके के लिए सही हो।",
+            "अंतरराष्ट्रीय पहचान भी एक पैमाना है — राजतिलक को International Brotherhood of Magicians की ऑनलाइन प्रतियोगिता (मार्च 2021, 8 देश, 100 जादूगर) में दूसरा स्थान मिला था। यह बताता है कि कलाकार को जज करने वाले भी कैसे पहचानते हैं।",
+          ],
+        },
+        {
+          h: "बुकिंग का सही समय",
+          paras: [
+            "सीज़न की तारीख़ें 6-8 हफ़्ते पहले भर जाती हैं — शादी सीज़न और दिसंबर में तो और भी जल्दी। तारीख़ तय होते ही एंक्वायरी कर दें, ताकि 72 घंटे का सॉफ्ट-होल्ड आपकी तारीख़ सुरक्षित रखे।",
+            "व्हाट्सएप पर +91 97994 68758 पर एक मैसेज काफ़ी है — मौका, शहर और तारीख़ भेजें, उसी दिन उपलब्धता और लिखित कोट मिल जाएगा।",
+          ],
+        },
+        {
+          h: "अक्सर पूछे जाने वाले सवाल",
+          paras: [
+            "Q: शो के लिए स्टेज चाहिए? — A: स्टेज शो के लिए एक साफ़ जगह और बुनियादी साउंड चाहिए; क्लोज़-अप के लिए कुछ नहीं — जादूगर मेहमानों के बीच घूमता है।",
+            "Q: क्या बच्चों के लिए सुरक्षित है? — A: हाँ — बर्थडे शो में न अंधेरा, न आग, न डरावना कुछ नहीं; उम्र के हिसाब से शो बनता है।",
+          ],
+        },
+        {
+          h: "Q: एडवांस कितना है?",
+          paras: [
+            "A: बुकिंग कन्फर्म होने पर एक एडवांस और बाकी शो के दिन — पूरी बात लिखित कोट में साफ़ लिखी जाती है। कोई छुपा हुआ खर्च नहीं, कोई बाद में जुड़ने वाला बिल नहीं।",
+          ],
+        },
+      ],
+      closing: `यह गाइड "${kw}" के लिए थी। तारीख़ देखने के लिए [बुकिंग पेज](https://jadugarrajtilak.com/booking) खोलें या सीधे व्हाट्सएप करें — जवाब उसी दिन मिलेगा।`,
+    };
+  }
+  const audience: Record<string, string> = {
+    Weddings: "wedding couples and families",
+    Corporate: "HR and event teams",
+    Pricing: "budget-conscious hosts",
+    Guides: "anyone planning an event",
+    "City Guides": "hosts in and around the city",
+    Fests: "fest coordinators",
+    Luxury: "private hosts",
+    Corporate: "HR and event teams",
+    Hindi: "Hindi-speaking hosts",
+    Brand: "anyone comparing entertainers",
+  };
+  const who = audience[cat] ?? "event hosts";
+  return {
+    title: t.title,
+    slug: slugify(t.title),
+    metaTitle: t.title.slice(0, 65),
+    metaDescription: `${t.title} — formats, honest pricing, the checks to run before you book, and the timeline that keeps your date safe. By Jadugar Rajtilak, Udaipur.`.slice(0, 155),
+    keywords: `${kw}, magician booking, event entertainment india, jadugar rajtilak`,
+    excerpt: `A practical, honest guide for ${who}: what to expect, what it really costs, and when to book. Written from 500+ shows of stage experience.`,
+    intro: `If you are searching for "${kw}", this guide saves you the back-and-forth. It is written from the stage — not from a desk — by Jadugar Rajtilak, a royal-stage magician from Udaipur with 12+ years, 500+ housefull shows across 40+ cities, and a 4.8-star rating from 181 Google reviews. Everything below is straight talk: what works, what it costs, and how to lock your date.`,
+    sections: [
+      {
+        h: `What a great "${kw}" experience actually looks like`,
+        paras: [
+          `The best bookings start with the format, not the performer's name. A sangeet or cocktail hour wants close-up magic that moves between guest groups; an annual day wants a 45-minute stage act scripted to the run-sheet; a birthday wants high energy with the child as the hero. Match the format to the occasion and half the risk disappears before you sign anything.`,
+          `Ask for a full show video, not a highlight reel. Reels cut the dead air; full sets show pacing, crowd handling and recovery when something surprises the performer. That difference is exactly what your guests will feel on the night.`,
+        ],
+      },
+      {
+        h: "The five checks before you pay anyone",
+        paras: [
+          `Run every candidate through five checks: real show footage; verified reviews on Google (Jadugar Rajtilak carries 4.8 stars from 181 reviews); a written contract with GST invoicing; clear stage/sound requirements stated up front; and a format that genuinely fits your occasion. An entertainer who resists any of these five is telling you something.`,
+          `International recognition is a useful filter too. Rajtilak placed 2nd in the International Online Magic Contest 2021 held by the International Brotherhood of Magicians — 8 countries, 100 magicians. Credentials like this are not about trophies; they signal a performer whose craft survives outside judging.`,
+        ],
+      },
+      {
+        h: "What it costs — honest talk, no invented numbers",
+        paras: [
+          `No honest performer quotes a fixed price before knowing your date, city, guest count and show length — anyone who does is guessing. Pricing here follows a written quote within 24 hours of your enquiry, built on three transparent packages: Signature, Royal and Grand. You can compare the full inclusions on the [services page](https://jadugarrajtilak.com/services).`,
+          `What drives the number is simple: travel, duration, audience size and the season. Peak wedding-season and December dates close 6–8 weeks ahead, so early enquiries do not just save money — they save the date. Every enquiry places a 72-hour soft-hold on your date while you decide: [check your date here](https://jadugarrajtilak.com/booking).`,
+        ],
+      },
+      {
+        h: "The booking timeline that keeps your date safe",
+        paras: [
+          `Six to eight weeks out: confirm the date and take the soft-hold. Four weeks out: lock the format, run-sheet slot and technical needs in writing. One week out: a short call to align names, VIPs and cultural notes — the details that make an act feel custom-built rather than off-the-shelf.`,
+          `The fastest route is WhatsApp on +91 97994 68758: send the occasion, city and date, and you get availability plus a written quote the same day — from the magician's own studio, not an agency filter.`,
+        ],
+      },
+      {
+        h: "Frequently Asked Questions",
+        paras: [
+          `Q: Do you need a stage? — A: The stage act wants a clear performance area and basic sound; close-up formats need nothing at all — the magic happens in the guests' own hands.`,
+          `Q: Is it safe for children? — A: Birthday shows are age-calibrated: no darkness, no flames, no frightening moments — only wide eyes and louder laughter.`,
+        ],
+      },
+      {
+        h: "Q: How much advance is needed?",
+        paras: [
+          `A: A booking advance confirms the date; the balance is settled on the show day. Every term is written in the quote before you commit — no hidden costs, no surprise additions after the applause.`,
+        ],
+      },
+    ],
+    closing: `That is the complete picture for "${kw}". When you are ready, [check your date](https://jadugarrajtilak.com/booking) or message the studio on WhatsApp — replies land the same working day.`,
+  };
+}
+
 const BRAND_FACTS = `
 Brand facts (verified — use only these numbers, never invent):
 - Jadugar Rajtilak, royal-stage magician based in Udaipur, Rajasthan, India
@@ -334,16 +483,20 @@ Brand facts (verified — use only these numbers, never invent):
 export async function runBlogAgent(trigger: string): Promise<AgentResult> {
   const today = new Date().toISOString().slice(0, 10);
 
-  // 1. one draft per day max — check for an agent-created draft today
-  const existing = await db.blogPost.findFirst({
-    where: { status: "draft", createdAt: { gte: new Date(`${today}T00:00:00.000Z`) } },
-    select: { title: true, slug: true },
-  });
-  if (existing && trigger === "scheduler") {
+  // 0. owner-controlled execution mode — "on" (default) publishes the
+  // day's post straight to the live site; "off" keeps draft-only mode.
+  const autoPublish = (await getAgentSetting(AUTO_PUBLISH_KEY, "on")) !== "off";
+
+  // 1. one post per day max — a dated marker guards even published runs,
+  // so the scheduler can never double-publish on the same day.
+  const lastDateRow = await db.siteText
+    .findUnique({ where: { key: BLOG_LAST_DATE_KEY }, select: { value: true } })
+    .catch(() => null);
+  if (lastDateRow?.value === today && trigger === "scheduler") {
     return {
       ok: true,
-      summary: `Today's draft already exists: "${existing.title}" — waiting for owner approval in Blog Studio.`,
-      learning: `Run ${today}: skipped (draft already created today).`,
+      summary: `Today's post is already live — published earlier today${autoPublish ? " (auto-publish on)" : " as a draft"}.`,
+      learning: `Run ${today}: skipped (a post was already handled today).`,
     };
   }
 
@@ -357,30 +510,27 @@ export async function runBlogAgent(trigger: string): Promise<AgentResult> {
   };
   const chosen = topic ?? fallbackTopic;
 
-  // 3. generate the post (LLM, strict JSON)
-  const post = await llmJson<GeneratedPost>(
+  // 3. generate the post — LLM first, curated template as the fallback
+  //    so the run NEVER fails just because the host has no LLM creds.
+  const llmPost = await llmJson<GeneratedPost>(
     `You are an expert SEO content writer for an Indian magician's website. You write original, practical, booking-intent articles for event hosts (wedding couples, HR managers, parents, fest coordinators) in India. Rules: focus keyword in title, H1-equivalent and first paragraph; 5-7 sections with clear H2 headings; every section 2-3 substantial paragraphs (60-110 words each); include one natural internal link mention of /services or /booking inside a paragraph as markdown [label](https://jadugarrajtilak.com/services); end with a "Frequently Asked Questions" section containing exactly 3 Q&A pairs (Q as section heading style "Q: ..." and A as the paragraph); honest pricing talk only ("price on request", cost drivers) — never invent prices; original phrasing, no competitor copying. Respond ONLY with JSON: {"title","slug","metaTitle","metaDescription","keywords","excerpt","intro","sections":[{"h","paras":["…"]}, …],"closing"}. ${BRAND_FACTS}`,
     `Write today's blog post. Working title: "${chosen.title}". Focus keyword: "${chosen.keyword}". Category: ${chosen.category}. If the title is Hindi, write the whole article in natural Hindi (Devanagari). Target 700-1200 words total.`,
     2
   );
+  const usedTemplate = !llmPost || !llmPost.title || !Array.isArray(llmPost.sections) || llmPost.sections.length < 3;
+  const post: GeneratedPost | null = usedTemplate ? templatePost(chosen) : llmPost;
 
   if (!post || !post.title || !Array.isArray(post.sections) || post.sections.length < 3) {
-    // Distinguish "no LLM on this runtime" from "bad generation"
-    const llmReachable = post !== null;
+    // Both paths failed validation — a genuine error worth attention.
     return {
       ok: false,
-      summary: llmReachable
-        ? "Draft generation failed (content failed validation). Will retry on the next run."
-        : "LLM not reachable from this runtime — the draft is generated by the workspace scheduler instead. To generate on this host, set ZAI_BASE_URL + ZAI_API_KEY env vars (public z.ai key).",
-      learning: `Run ${today}: ${
-        llmReachable
-          ? `LLM output failed validation (sections=${post?.sections?.length ?? 0}). Next time: tighten the JSON contract.`
-          : "no LLM configured on this runtime — production drafts come from the workspace scheduler until a public key is set."
-      }`,
+      summary: "Draft generation failed validation on both the LLM and template paths — investigate the generator.",
+      learning: `Run ${today}: generation failed validation — investigate before next run.`,
     };
   }
 
-  // 4. sanitize + save as DRAFT (never touches existing rows)
+  // 4. sanitize + save — auto-publish executes the post live; draft mode
+  //    parks it in Blog Studio for approval (owner's switch).
   const sections: BlogSection[] = post.sections
     .map((s) => ({ h: String(s?.h ?? "").trim(), paras: (Array.isArray(s.paras) ? s.paras : []).map((p) => String(p ?? "").trim()).filter(Boolean) }))
     .filter((s) => s.h.length > 0);
@@ -406,19 +556,31 @@ export async function runBlogAgent(trigger: string): Promise<AgentResult> {
       closing: (post.closing ?? "").slice(0, 600),
       backlinks: [] as unknown as object[],
       readingTime: computeReadingTime(post.intro ?? "", sections, post.closing ?? ""),
-      status: "draft",
+      status: autoPublish ? "published" : "draft",
+      publishedAt: new Date(),
       featured: false,
     },
     select: { title: true, slug: true, readingTime: true },
   });
 
+  // dated marker so the scheduler never double-publishes the same day
+  await db.siteText
+    .upsert({
+      where: { key: BLOG_LAST_DATE_KEY },
+      create: { key: BLOG_LAST_DATE_KEY, value: today },
+      update: { value: today },
+    })
+    .catch(() => undefined);
+
   const draftsPending = await db.blogPost.count({ where: { status: "draft" } });
 
   return {
     ok: true,
-    summary: `Draft ready: "${row.title}" (${row.readingTime}) — saved for your approval in Blog Studio. ${draftsPending} draft(s) awaiting review.`,
-    details: { slug: row.slug, topic: chosen.title, keyword: chosen.keyword },
-    learning: `Run ${today}: wrote "${row.title}" for keyword "${chosen.keyword}". ${
+    summary: autoPublish
+      ? `Published live: "${row.title}" (${row.readingTime}) → jadugarrajtilak.com/blog/${row.slug} — already in the sitemap. ${draftsPending} older draft(s) awaiting review.`
+      : `Draft ready: "${row.title}" (${row.readingTime}) — saved for your approval in Blog Studio. ${draftsPending} draft(s) awaiting review.`,
+    details: { slug: row.slug, topic: chosen.title, keyword: chosen.keyword, autoPublish, writer: usedTemplate ? "template-fallback" : "llm" },
+    learning: `Run ${today}: ${autoPublish ? "published" : "drafted"} "${row.title}" for keyword "${chosen.keyword}" (${usedTemplate ? "template writer — set ZAI_BASE_URL + ZAI_API_KEY env for bespoke LLM drafts" : "LLM writer"}). ${
       topic ? "Queue is on track." : "Topic queue exhausted — propose seasonal/GSC-based topics next."
     }`,
   };

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { isAdminRequest, unauthorized } from "@/lib/guard";
 import { AGENTS, nowIst } from "@/lib/agents/registry";
 import { getLiveSkill } from "@/lib/agents/runner";
+import { AUTO_PUBLISH_KEY, getAgentSetting } from "@/lib/agents/tasks";
 import { BASE_SKILL, skillKey, type AgentId } from "@/lib/agents/skills";
 
 export const dynamic = "force-dynamic";
@@ -82,7 +83,26 @@ export async function GET(req: NextRequest) {
 
     const backlinks = await db.backlinkTask.findMany({ orderBy: [{ week: "asc" }, { createdAt: "asc" }] });
 
-    return NextResponse.json({ ok: true, agents, backlinks, istNow: { hour, date } });
+    // Blog Writer execution state — the owner controls live publishing
+    // from the panel: auto-publish switch + any drafts awaiting approval.
+    const autoPublish = (await getAgentSetting(AUTO_PUBLISH_KEY, "on")) !== "off";
+    const pendingDrafts = await db.blogPost.findMany({
+      where: { status: "draft" },
+      orderBy: { createdAt: "desc" },
+      take: 25,
+      select: { id: true, title: true, slug: true, category: true, createdAt: true, readingTime: true },
+    });
+    const publishedCount = await db.blogPost.count({ where: { status: "published" } });
+
+    return NextResponse.json({
+      ok: true,
+      agents,
+      backlinks,
+      istNow: { hour, date },
+      autoPublish,
+      pendingDrafts,
+      publishedCount,
+    });
   } catch (e) {
     return NextResponse.json(
       { ok: false, error: e instanceof Error ? e.message : "Could not load agent state" },
@@ -100,15 +120,51 @@ function safeParse(raw: string): { findings?: { check: string; status: string; d
   }
 }
 
-// ── PATCH /api/admin/agents — update a backlink task status ──
+// ── PATCH /api/admin/agents ──
+// Three owner actions:
+//   { backlinkId, status }          — move a Rank pipeline task
+//   { setting: "autopublish", value } — toggle the Blog Writer's live
+//                                        publishing ("on" | "off")
+//   { publishDraftId }              — publish one pending draft now
 const BL_STATUSES = new Set(["planned", "drafted", "submitted", "live", "skipped"]);
 
 export async function PATCH(req: NextRequest) {
   if (!isAdminRequest(req)) return unauthorized();
   try {
-    const body = (await req.json().catch(() => null)) as { backlinkId?: string; status?: string } | null;
-    if (!body?.backlinkId || !body.status || !BL_STATUSES.has(body.status)) {
-      return NextResponse.json({ ok: false, error: "backlinkId and a valid status are required" }, { status: 422 });
+    const body = (await req.json().catch(() => null)) as
+      | { backlinkId?: string; status?: string; setting?: string; value?: string; publishDraftId?: string }
+      | null;
+    if (!body) {
+      return NextResponse.json({ ok: false, error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    // 1. toggle an agent setting (currently: blog auto-publish)
+    if (body.setting === "autopublish") {
+      const value = body.value === "on" ? "on" : "off";
+      await db.siteText.upsert({
+        where: { key: AUTO_PUBLISH_KEY },
+        create: { key: AUTO_PUBLISH_KEY, value },
+        update: { value },
+      });
+      return NextResponse.json({ ok: true, setting: "autopublish", value });
+    }
+
+    // 2. publish a pending blog draft (owner-approved execution)
+    if (body.publishDraftId) {
+      const row = await db.blogPost.update({
+        where: { id: body.publishDraftId },
+        data: { status: "published", publishedAt: new Date() },
+        select: { id: true, title: true, slug: true },
+      }).catch(() => null);
+      if (!row) {
+        return NextResponse.json({ ok: false, error: "Draft not found" }, { status: 404 });
+      }
+      return NextResponse.json({ ok: true, published: row });
+    }
+
+    // 3. legacy: backlink pipeline status move
+    if (!body.backlinkId || !body.status || !BL_STATUSES.has(body.status)) {
+      return NextResponse.json({ ok: false, error: "Provide backlinkId+status, setting=autopublish, or publishDraftId" }, { status: 422 });
     }
     const row = await db.backlinkTask.update({
       where: { id: body.backlinkId },
@@ -117,6 +173,6 @@ export async function PATCH(req: NextRequest) {
     });
     return NextResponse.json({ ok: true, task: row });
   } catch {
-    return NextResponse.json({ ok: false, error: "Backlink task not found" }, { status: 404 });
+    return NextResponse.json({ ok: false, error: "Update failed — check the request body" }, { status: 500 });
   }
 }
