@@ -33,7 +33,8 @@ export async function POST(req: NextRequest) {
 }
 
 export function isSchedulerRequest(req: NextRequest): boolean {
-  const key = process.env.AGENT_SCHEDULER_KEY;
+  // AGENT_SCHEDULER_KEY primary; CRON_SECRET fallback (single-var activation)
+  const key = process.env.AGENT_SCHEDULER_KEY || process.env.CRON_SECRET;
   if (!key) return false;
   const header = req.headers.get("x-scheduler-key");
   if (header && header === key) return true;

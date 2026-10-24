@@ -11,10 +11,13 @@ export const maxDuration = 60;
 // Fired by Vercel Cron (Authorization: Bearer CRON_SECRET) and by the
 // workspace mini-service (x-scheduler-key). Decides which agents are due
 // (IST schedule) and runs them sequentially within the time budget.
+// NOTE: AGENT_SCHEDULER_KEY is the primary key; CRON_SECRET is accepted as a
+// fallback so owners can activate the Vercel cron by setting just ONE env
+// var in the dashboard (Vercel auto-sends "Authorization: Bearer $CRON_SECRET").
 async function handle(req: NextRequest) {
-  const key = process.env.AGENT_SCHEDULER_KEY;
+  const key = process.env.AGENT_SCHEDULER_KEY || process.env.CRON_SECRET;
   if (!key) {
-    return NextResponse.json({ ok: false, error: "Scheduler not configured (AGENT_SCHEDULER_KEY missing)" }, { status: 503 });
+    return NextResponse.json({ ok: false, error: "Scheduler not configured (set AGENT_SCHEDULER_KEY or CRON_SECRET)" }, { status: 503 });
   }
   const header = req.headers.get("x-scheduler-key");
   const auth = req.headers.get("authorization");
