@@ -55,52 +55,42 @@ export const metadata: Metadata = {
     icon: [{ url: "/images/icon-v2.png", type: "image/png", sizes: "512x512" }],
     apple: [{ url: "/images/apple-icon-v2.png", type: "image/png", sizes: "180x180" }],
   },
-  // NOTE: no `title` here on purpose — the client router renders the
-  // per-route <title> (page.tsx RouteSeoTags). A layout-level title would
-  // add a second <title> element that browsers read first, freezing the
-  // home title on every deep link (/about, /services, …).
-  description:
-    "Book Jadugar Rajtilak — Udaipur's 4.8★ rated magician (181 Google reviews). Royal stage magic for weddings, corporate evenings, birthdays and college fests across India. Live date availability, transparent packages, written quotes.",
+  // NOTE: no `title`, `description`, `canonical`, `openGraph` or `twitter`
+  // here on purpose — page.tsx server-renders the per-route tags
+  // (site-shell RouteSeoTags) from the middleware pathname. A layout-level
+  // copy of any of these would render a SECOND tag first in <head>, and
+  // crawlers read the first: every deep link would inherit the home
+  // description + canonical "/" (duplicate-content signal — the exact bug
+  // fixed 2026-10-24). og/twitter for non-JS scrapers (WhatsApp previews)
+  // are also rendered per-route by RouteSeoTags, which SSRs into raw HTML.
   keywords: [
     "Jadugar Rajtilak",
+    "best magician in India",
+    "magician in India",
+    "magician for wedding India",
+    "wedding magician India",
+    "corporate magician India",
+    "hire magician India",
+    "book magician online India",
+    "stage magician India",
+    "birthday party magician India",
+    "kids birthday magician",
+    "mentalist India",
+    "magic show price in India",
+    "close-up magician India",
+    "college fest magician",
     "magician in Udaipur",
     "magician Udaipur Rajasthan",
-    "magician for wedding",
     "wedding magician Rajasthan",
-    "corporate magic show India",
-    "stage magician booking",
-    "kids birthday magician Udaipur",
-    "college fest magician",
     "event entertainment Udaipur",
     "best magician in Rajasthan",
   ],
   authors: [{ name: "Jadugar Rajtilak" }],
   creator: "Jadugar Rajtilak",
   publisher: "Jadugar Rajtilak",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Jadugar Rajtilak — Where Reality Bends | Magician, Udaipur",
-    description:
-      "A royal stage where reality bends. 4.8★ from 181 Google reviews — premium magic shows for weddings, corporate events, birthdays and festivals. Check your date.",
-    url: "/",
-    siteName: "Jadugar Rajtilak",
-    locale: "en_IN",
-    type: "website",
-    images: [
-      {
-        url: "/images/hero-portrait-v2.jpg",
-        width: 1024,
-        height: 1365,
-        alt: "Jadugar Rajtilak — royal portrait of the magician in his navy stage suit, hands raised mid-flourish",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Jadugar Rajtilak — Cinematic Magic Shows, Udaipur",
-    description: "4.8★ · 181 Google reviews. Premium event magician — live availability, written quotes.",
-    images: ["/images/hero-portrait-v2.jpg"],
-  },
+  // (canonical / openGraph / twitter intentionally omitted — see the
+  // comment above the keywords block; RouteSeoTags renders all of them
+  // per-route into the server-rendered HTML.)
   robots: {
     index: true,
     follow: true,

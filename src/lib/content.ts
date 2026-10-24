@@ -727,26 +727,26 @@ export const SITE = {
 // Per-view metadata (SPA titles — applied client-side per route)
 export const VIEW_META: Record<RouteId, { title: string; description: string }> = {
   home: {
-    title: "Jadugar Rajtilak — Magician in Udaipur, Rajasthan | Wedding & Corporate Magic Shows",
+    title: "Jadugar Rajtilak — Magician in Udaipur & Across India | Wedding & Corporate Magic Shows",
     description:
-      "Book Jadugar Rajtilak, Udaipur's 4.8★ rated stage magician (181 Google reviews). Royal stage magic for weddings, corporate shows, birthdays and college fests across India. Check your date live.",
+      "Book Jadugar Rajtilak — Udaipur's 4.8★ rated stage magician (181 Google reviews). Royal stage magic for weddings, corporate shows, birthdays and college fests across India. Check your date live.",
   },
   about: {
-    title: "About Jadugar Rajtilak — Stage Magician & Mentalist from Udaipur",
+    title: "About Jadugar Rajtilak — Stage Magician & Mentalist from Udaipur, India",
     description:
       "The story behind the vermilion mark — 12+ years on stage, 500+ shows across 40+ Indian cities. Meet Jadugar Rajtilak, Udaipur's royal stage magician.",
   },
   services: {
-    title: "Magic Shows for Weddings, Corporate Events, Birthdays & Fests",
+    title: "Magic Show Services in India — Wedding, Corporate, Birthday & Fest Magician",
     description:
-      "Six calibrated show formats: wedding sangeet magic, corporate annual-day acts, age-safe birthday shows, college fest illusions, private salon evenings and virtual sets.",
+      "Six calibrated show formats for hosts across India: wedding sangeet magic, corporate annual-day acts, age-safe birthday shows, college fest illusions, private salon evenings and virtual sets.",
   },
   packages: {
-    title: "Magic Show Packages — Signature, Royal & Grand",
-    description: "Three honest tiers with stated inclusions — Signature, Royal and Grand. Every enquiry receives a written quote; travel and staging stated up front.",
+    title: "Magic Show Packages & Prices in India — Signature, Royal & Grand",
+    description: "Three honest tiers with stated inclusions for events across India — Signature, Royal and Grand. Every enquiry receives a written quote; travel and staging stated up front.",
   },
   gallery: {
-    title: "Gallery — Live Performance Photographs | Jadugar Rajtilak",
+    title: "Gallery — Live Magic Show Photographs from Across India | Jadugar Rajtilak",
     description: "Frames from real shows: stage illusions, close-up magic, birthday finales and institutional galas across India.",
   },
   testimonials: {
@@ -754,16 +754,16 @@ export const VIEW_META: Record<RouteId, { title: string; description: string }> 
     description: "What hosts say after the show — weddings, corporate annual days and birthday parties across India.",
   },
   booking: {
-    title: "Check Date & Book a Magic Show",
-    description: "Live date availability, a written quote within 24 hours and a 72-hour soft-hold on your evening.",
+    title: "Book a Magician in India — Check Date & Get a Written Quote",
+    description: "Live date availability, a written quote within 24 hours and a 72-hour soft-hold on your evening — for weddings, corporate events and birthdays across India.",
   },
   blog: {
     title: "Blog — Event Entertainment Guides & Magician Booking Tips | Jadugar Rajtilak",
     description: "SEO-friendly guides on booking magicians in India: wedding entertainment ideas, honest magic show pricing, corporate event checklists, sangeet & mehendi ideas and more.",
   },
   faq: {
-    title: "FAQ — Pricing, Travel, Tech Riders & Safety",
-    description: "Every question hosts ask before booking a magic show — answered plainly.",
+    title: "Magician Booking FAQ — Pricing, Travel, Tech Riders & Safety in India",
+    description: "Every question hosts ask before booking a magic show in India — answered plainly.",
   },
   contact: {
     title: "Contact — Call +91 97994 68758 | Udaipur, Rajasthan",

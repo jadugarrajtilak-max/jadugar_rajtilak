@@ -309,6 +309,21 @@ const TOPIC_QUEUE: QueueTopic[] = [
   { title: "Rajasthan Wedding Circuit: Which Cities Book Stage Magic Most", keyword: "wedding magician rajasthan", category: "Weddings" },
   { title: "बच्चों के जन्मदिन पर जादू: उम्र के हिसाब से सही शो चुनने की गाइड", keyword: "बच्चों के लिए जादूगर", category: "Hindi" },
   { title: "The 4.8-Star Effect: What 181 Google Reviews Say About Booking Entertainers", keyword: "magician reviews india", category: "Brand" },
+  // ── India-wide expansion (2026-10-24): national buyer-intent keywords + ──
+  // high-volume city searches (StarClinch/JustDial dominate these today;
+  // a touring performer's city guide can win featured snippets over time).
+  { title: "Magician for Wedding in India: What Top Hosts Book (and What They Avoid)", keyword: "magician for wedding in india", category: "Weddings" },
+  { title: "Best Magician in India for Corporate Events: The 2026 Booking Guide", keyword: "best magician in india for corporate events", category: "Corporate" },
+  { title: "How to Book a Magician in India: The Complete 2026 Checklist", keyword: "how to book a magician in india", category: "Guides" },
+  { title: "Birthday Party Magician Cost in India: 2026 City-Wise Price Bands", keyword: "birthday party magician cost", category: "Pricing" },
+  { title: "Close-Up Magician for Indian Weddings: Roaming Magic, Explained", keyword: "close up magician india", category: "Weddings" },
+  { title: "Mentalist for Corporate Events in India: What Mind Reading Adds to Your Evening", keyword: "mentalist for corporate events india", category: "Corporate" },
+  { title: "Magician in Delhi for Weddings & Events: The Complete Booking Guide", keyword: "magician in delhi", category: "City Guides" },
+  { title: "Magician in Mumbai: Booking Corporate Shows & Private Parties", keyword: "magician in mumbai", category: "City Guides" },
+  { title: "Magician in Bangalore for Events, Parties & Corporate Evenings", keyword: "magician in bangalore", category: "City Guides" },
+  { title: "Destination Wedding Magician: Goa, Rajasthan & Beyond", keyword: "destination wedding magician india", category: "Weddings" },
+  { title: "Stage Magician Booking in India: Formats, Prices & What to Verify", keyword: "stage magician booking india", category: "Guides" },
+  { title: "इंडिया के टॉप मैजिशियन: शादी और इवेंट के लिए कैसे बुक करें", keyword: "india ke top magician", category: "Hindi" },
 ];
 
 type GeneratedPost = {

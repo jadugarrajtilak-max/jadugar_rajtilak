@@ -88,6 +88,9 @@ function RouteSeoTags({ route, ogImage }: { route: RouteId; ogImage: string }) {
       <meta property="og:url" content={url} />
       <meta property="og:image" content={fullOg} />
       <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="Jadugar Rajtilak" />
+      <meta property="og:locale" content="en_IN" />
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
       <meta name="twitter:image" content={fullOg} />
