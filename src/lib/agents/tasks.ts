@@ -441,7 +441,6 @@ export function templatePost(t: QueueTopic): GeneratedPost {
     "City Guides": "hosts in and around the city",
     Fests: "fest coordinators",
     Luxury: "private hosts",
-    Corporate: "HR and event teams",
     Hindi: "Hindi-speaking hosts",
     Brand: "anyone comparing entertainers",
   };
@@ -535,9 +534,26 @@ export async function runBlogAgent(trigger: string): Promise<AgentResult> {
     };
   }
 
-  // 2. next topic from the queue that has no matching slug yet
-  const taken = new Set(await db.blogPost.findMany({ select: { slug: true } }).then((r) => r.map((x) => x.slug)));
-  const topic = TOPIC_QUEUE.find((t) => !taken.has(slugify(t.title)));
+  // 2. next topic from the queue. Three guards so a topic is never
+  //    written twice: (a) a done-marker the agent writes after creating
+  //    the topic's post, (b) the topic's own title-slug already existing
+  //    as a post, and (c) an existing post with the exact same title —
+  //    the LLM invents its own slug, so the old slug-only check never
+  //    matched and repeated runs re-wrote the same article (which is
+  //    also what exhausted the slug space and crashed older builds).
+  const existingPosts = await db.blogPost.findMany({ select: { slug: true, title: true } });
+  const taken = new Set(existingPosts.map((x) => x.slug));
+  const existingTitles = new Set(existingPosts.map((x) => x.title.trim().toLowerCase()));
+  const doneRows = await db.siteText
+    .findMany({ where: { key: { startsWith: "agents.blog.topicdone." } }, select: { key: true } })
+    .catch(() => [] as { key: string }[]);
+  const doneTopics = new Set(doneRows.map((r) => r.key));
+  const topic = TOPIC_QUEUE.find(
+    (t) =>
+      !doneTopics.has(`agents.blog.topicdone.${slugify(t.title)}`) &&
+      !taken.has(slugify(t.title)) &&
+      !existingTitles.has(t.title.trim().toLowerCase())
+  );
   const fallbackTopic: QueueTopic = {
     title: `Event Entertainment Insight ${today}`,
     keyword: "event entertainment india",
@@ -570,37 +586,68 @@ export async function runBlogAgent(trigger: string): Promise<AgentResult> {
     .map((s) => ({ h: String(s?.h ?? "").trim(), paras: (Array.isArray(s.paras) ? s.paras : []).map((p) => String(p ?? "").trim()).filter(Boolean) }))
     .filter((s) => s.h.length > 0);
 
+  // LLM JSON occasionally returns non-string types (keywords as an
+  // array, numbers as titles) — Prisma then rejects the whole create()
+  // as an "Invalid invocation" and the run errors out. Coerce every
+  // text field up front so a quirky response can never fail the run.
+  const asText = (v: unknown, max: number): string => String(v ?? "").slice(0, max);
+  const title = asText(post.title, 160).trim() || chosen.title.slice(0, 160);
+  const keywordsRaw = Array.isArray(post.keywords)
+    ? post.keywords.map((k) => String(k)).join(", ")
+    : asText(post.keywords, 200);
+  const keywords = keywordsRaw.trim() || chosen.keyword;
+  const excerpt = asText(post.excerpt, 200).trim() || chosen.title.slice(0, 200);
+  const metaDescription = asText(post.metaDescription, 155).trim() || excerpt.slice(0, 155);
+  const metaTitle = asText(post.metaTitle, 70).trim() || title.slice(0, 70);
+  const intro = asText(post.intro, 600);
+  const closing = asText(post.closing, 600);
+
   // Robust slug dedup: the queue slug, then a date suffix, then a
   // short random tail if even the dated one was taken (multiple runs
   // the same day must never crash on the unique constraint).
-  let slug = slugify(post.slug || post.title);
+  let slug = slugify(asText(post.slug, 120) || title);
+  if (!slug) slug = `post-${today.replace(/-/g, "")}`;
   if (taken.has(slug)) slug = `${slug}-${today.replace(/-/g, "").slice(4)}`;
   while (taken.has(slug)) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
-  const excerpt = (post.excerpt ?? chosen.title).slice(0, 200);
-  const metaDescription = (post.metaDescription ?? excerpt).slice(0, 155);
 
-  const row = await db.blogPost.create({
-    data: {
-      slug,
-      title: post.title.slice(0, 160),
-      metaTitle: (post.metaTitle ?? post.title).slice(0, 70),
-      metaDescription,
-      keywords: post.keywords ?? chosen.keyword,
-      excerpt,
-      category: chosen.category,
-      featuredImage: "/images/hero-portrait-v2.jpg",
-      featuredImageAlt: `Jadugar Rajtilak — ${chosen.keyword}`,
-      intro: (post.intro ?? "").slice(0, 600),
-      sections: sections as unknown as object[],
-      closing: (post.closing ?? "").slice(0, 600),
-      backlinks: [] as unknown as object[],
-      readingTime: computeReadingTime(post.intro ?? "", sections, post.closing ?? ""),
-      status: autoPublish ? "published" : "draft",
-      publishedAt: new Date(),
-      featured: false,
-    },
-    select: { id: true, title: true, slug: true, readingTime: true },
-  });
+  // Race-proof create: the dedup above can still lose a millisecond
+  // race against a concurrent invocation of this agent (both saw the
+  // same `taken`). On Prisma's unique-constraint error (P2002) we
+  // regenerate the tail and retry instead of erroring the run.
+  let row: { id: string; title: string; slug: string; readingTime: string | null } | null = null;
+  for (let attempt = 0; attempt < 3 && !row; attempt++) {
+    try {
+      row = await db.blogPost.create({
+        data: {
+          slug,
+          title,
+          metaTitle,
+          metaDescription,
+          keywords,
+          excerpt,
+          category: chosen.category,
+          featuredImage: "/images/hero-portrait-v2.jpg",
+          featuredImageAlt: `Jadugar Rajtilak — ${chosen.keyword}`,
+          intro,
+          sections: sections as unknown as object[],
+          closing,
+          backlinks: [] as unknown as object[],
+          readingTime: computeReadingTime(intro, sections, closing),
+          status: autoPublish ? "published" : "draft",
+          publishedAt: new Date(),
+          featured: false,
+        },
+        select: { id: true, title: true, slug: true, readingTime: true },
+      });
+    } catch (e) {
+      if ((e as { code?: string })?.code === "P2002") {
+        slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
+        continue;
+      }
+      throw e;
+    }
+  }
+  if (!row) throw new Error("blogPost.create failed after 3 slug-collision retries");
 
   // dated marker so the scheduler never double-publishes the same day
   await db.siteText
@@ -610,6 +657,15 @@ export async function runBlogAgent(trigger: string): Promise<AgentResult> {
       update: { value: today },
     })
     .catch(() => undefined);
+
+  // topic done-marker — this topic is now written; the queue advances
+  // to the NEXT topic on any later run instead of re-writing it.
+  if (topic) {
+    const doneKey = `agents.blog.topicdone.${slugify(topic.title)}`;
+    await db.siteText
+      .upsert({ where: { key: doneKey }, create: { key: doneKey, value: row.slug }, update: { value: row.slug } })
+      .catch(() => undefined);
+  }
 
   // SECURITY GATE — with auto-publish OFF (default), the run files an
   // approval request. The post stays a private draft until the owner
@@ -734,9 +790,14 @@ export async function runManagerAgent(): Promise<AgentResult> {
   const assignments: { agentId: string; task: string; why: string }[] = [];
   const since7d = new Date(Date.now() - 7 * 86400000);
 
-  // 1. TEAM HEALTH — per-agent 7-day runs, success rate, last outcome
+  // 1. TEAM HEALTH — per-agent 7-day runs, success rate, last outcome.
+  //    An agent's health reflects its CURRENT state: errors that a
+  //    later successful run has already washed out are "recovered"
+  //    history, not an open issue. (The old any-error-in-7d rule kept
+  //    the toast crying "1 issue" for a week after an agent had
+  //    already been fixed and re-run successfully.)
   const team: {
-    agentId: string; runs7d: number; success7d: number; errors7d: number;
+    agentId: string; runs7d: number; success7d: number; errors7d: number; unrecovered: number;
     lastRunAt: Date | null; lastStatus: string | null; staleDays: number | null;
   }[] = [];
   for (const meta of AGENTS.filter((a) => a.id !== "manager")) {
@@ -753,12 +814,16 @@ export async function runManagerAgent(): Promise<AgentResult> {
     const runs7d = runs.length;
     const success7d = runs.filter((r) => r.status === "success").length;
     const errors7d = runs7d - success7d;
+    // most recent success inside the window (runs are ordered desc)
+    const lastSuccessAtMs = runs.find((r) => r.status === "success")?.startedAt.getTime() ?? 0;
+    // unrecovered = error runs NEWER than the agent's last success
+    const unrecovered = runs.filter((r) => r.status === "error" && r.startedAt.getTime() > lastSuccessAtMs).length;
     const staleDays = last?.startedAt
       ? Math.floor((Date.now() - last.startedAt.getTime()) / 86400000)
       : null;
     team.push({
       agentId: meta.id,
-      runs7d, success7d, errors7d,
+      runs7d, success7d, errors7d, unrecovered,
       lastRunAt: last?.startedAt ?? null,
       lastStatus: last?.status ?? null,
       staleDays,
@@ -766,12 +831,13 @@ export async function runManagerAgent(): Promise<AgentResult> {
     const rate = runs7d > 0 ? Math.round((success7d / runs7d) * 100) : null;
     findings.push({
       check: `${meta.name} — 7-day health`,
-      status: errors7d === 0 ? (runs7d > 0 ? "pass" : "warn") : "fail",
+      status: runs7d === 0 ? "warn" : unrecovered > 0 ? "fail" : "pass",
       detail:
         runs7d === 0
           ? `No runs in the last 7 days (last: ${last?.startedAt?.toISOString().slice(0, 10) ?? "never"}). Scheduler theek hai? Manual run karein.`
-          : `${runs7d} run(s), ${success7d} success, ${errors7d} error${errors7d === 1 ? "" : "s"}${rate !== null ? ` — ${rate}% success` : ""}. Last: ${last?.status ?? "n/a"} (${staleDays ?? 0}d ago).`,
-      fix: errors7d > 0 ? "Open the agent card — error summary mein exact reason hai. Fix karke manual run karein." : undefined,
+          : `${runs7d} run(s), ${success7d} success, ${errors7d} error${errors7d === 1 ? "" : "s"}${rate !== null ? ` — ${rate}% success` : ""}. Last: ${last?.status ?? "n/a"} (${staleDays ?? 0}d ago).` +
+            (errors7d > unrecovered ? ` ${errors7d - unrecovered} purana error recover ho chuka hai — agent ab theek chal raha hai.` : ""),
+      fix: unrecovered > 0 ? "Open the agent card — error summary mein exact reason hai. Fix karke manual run karein." : undefined,
     });
   }
 
@@ -834,7 +900,7 @@ export async function runManagerAgent(): Promise<AgentResult> {
   });
 
   // 4. WORK ASSIGNMENT — who should run next, with a reason
-  const errorAgents = team.filter((t) => t.errors7d > 0);
+  const errorAgents = team.filter((t) => t.unrecovered > 0);
   const staleAgents = team.filter((t) => (t.staleDays ?? 99) >= 3 && t.agentId !== "rank");
   for (const t of errorAgents) {
     assignments.push({
@@ -872,7 +938,7 @@ export async function runManagerAgent(): Promise<AgentResult> {
   return {
     ok: true,
     summary:
-      `Team report: ${team.filter((t) => t.errors7d === 0 && t.runs7d > 0).length}/${team.length} agents healthy (7d), ${failing} issue(s). ` +
+      `Team report: ${team.filter((t) => t.runs7d > 0 && t.unrecovered === 0).length}/${team.length} agents healthy (7d), ${failing} issue(s). ` +
       `Approval queue: ${pendingApprovals} pending. Leads: ${leadsThisWeek} this week (prev ${leadsLastWeek}) + ${ctaThisWeek} CTA tap(s). ` +
       `${assignments.length} work assignment(s) ready — niche diye gaye hain.`,
     findings,
@@ -882,6 +948,7 @@ export async function runManagerAgent(): Promise<AgentResult> {
         runs7d: t.runs7d,
         success7d: t.success7d,
         errors7d: t.errors7d,
+        unrecovered: t.unrecovered,
         lastStatus: t.lastStatus,
         staleDays: t.staleDays,
       })),

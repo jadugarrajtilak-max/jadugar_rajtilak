@@ -63,7 +63,7 @@ export async function runAgent(agentId: AgentId, trigger: "manual" | "scheduler"
       where: { id: run.id },
       data: {
         status: result.ok ? "success" : "error",
-        summary: result.summary.slice(0, 500),
+        summary: condenseError(result.summary),
         output: JSON.stringify({
           findings: result.findings?.slice(0, 60) ?? null,
           details: result.details ?? null,
@@ -77,11 +77,20 @@ export async function runAgent(agentId: AgentId, trigger: "manual" | "scheduler"
     const msg = e instanceof Error ? e.message : "Unknown agent failure";
     await db.agentRun.update({
       where: { id: run.id },
-      data: { status: "error", summary: msg.slice(0, 500), finishedAt: new Date() },
+      data: { status: "error", summary: condenseError(msg), finishedAt: new Date() },
     }).catch(() => undefined);
     await appendLearning(agentId, `Run failed with error: ${msg.slice(0, 160)} — investigate before next run.`).catch(() => undefined);
     return { ok: false, agentId, runId: run.id, summary: msg };
   }
+}
+
+/** Prisma puts the REAL reason at the END of its message, after a long
+ *  code frame that used to eat the whole 500-char budget — the admin
+ *  panel then showed a truncated error with no cause. Keep head + tail. */
+function condenseError(msg: string): string {
+  const one = msg.replace(/\s+/g, " ").trim();
+  if (one.length <= 500) return one;
+  return `${one.slice(0, 200)} … ${one.slice(-280)}`;
 }
 
 /**
