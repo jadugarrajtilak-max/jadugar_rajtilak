@@ -101,3 +101,6 @@ scripts/img/**/*.jpg
 # local deliverables
 download/
 prisma/*.sqlite.prisma
+
+# local QA screenshots (browser verification artifacts)
+scripts/qa/

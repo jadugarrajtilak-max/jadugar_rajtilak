@@ -104,4 +104,12 @@ export type Stats = {
   byCity: Record<string, number>;
   series: { date: string; count: number }[];
   funnel: { stage: string; count: number }[];
+  cta?: {
+    total: number;
+    thisWeek: number;
+    byType: Record<string, number>;
+    byPath: Record<string, number>;
+    series: { date: string; count: number }[];
+  };
+  pendingApprovals?: number;
 };

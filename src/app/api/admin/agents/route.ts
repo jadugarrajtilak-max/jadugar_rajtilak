@@ -83,9 +83,22 @@ export async function GET(req: NextRequest) {
 
     const backlinks = await db.backlinkTask.findMany({ orderBy: [{ week: "asc" }, { createdAt: "asc" }] });
 
-    // Blog Writer execution state — the owner controls live publishing
-    // from the panel: auto-publish switch + any drafts awaiting approval.
-    const autoPublish = (await getAgentSetting(AUTO_PUBLISH_KEY, "on")) !== "off";
+    // AI Permission System — the approval queue. Every proposal that
+    // would change the live site waits here for the owner's decision.
+    // autoPublish is the owner's explicit standing permission (OFF by
+    // default — "bina permission AI kuch nahi badlega").
+    const autoPublish = (await getAgentSetting(AUTO_PUBLISH_KEY, "off")) === "on";
+    const pendingApprovals = await db.agentApproval.findMany({
+      where: { status: "pending" },
+      orderBy: { createdAt: "asc" },
+      take: 30,
+    });
+    const decidedApprovals = await db.agentApproval.findMany({
+      where: { status: { not: "pending" } },
+      orderBy: { decidedAt: "desc" },
+      take: 12,
+      select: { id: true, agentId: true, kind: true, title: true, status: true, decidedAt: true, createdAt: true },
+    });
     const pendingDrafts = await db.blogPost.findMany({
       where: { status: "draft" },
       orderBy: { createdAt: "desc" },
@@ -100,6 +113,8 @@ export async function GET(req: NextRequest) {
       backlinks,
       istNow: { hour, date },
       autoPublish,
+      pendingApprovals,
+      decidedApprovals,
       pendingDrafts,
       publishedCount,
     });
@@ -121,24 +136,59 @@ function safeParse(raw: string): { findings?: { check: string; status: string; d
 }
 
 // ── PATCH /api/admin/agents ──
-// Three owner actions:
-//   { backlinkId, status }          — move a Rank pipeline task
-//   { setting: "autopublish", value } — toggle the Blog Writer's live
-//                                        publishing ("on" | "off")
-//   { publishDraftId }              — publish one pending draft now
+// Owner actions:
+//   { approvalId, decision }         — approve / reject an AI proposal
+//                                       (the AI Permission System gate)
+//   { backlinkId, status }           — move a Rank pipeline task
+//   { setting: "autopublish", value } — toggle the Blog Writer's standing
+//                                        publish permission (default off)
+//   { publishDraftId }               — legacy: publish one pending draft
 const BL_STATUSES = new Set(["planned", "drafted", "submitted", "live", "skipped"]);
 
 export async function PATCH(req: NextRequest) {
   if (!isAdminRequest(req)) return unauthorized();
   try {
     const body = (await req.json().catch(() => null)) as
-      | { backlinkId?: string; status?: string; setting?: string; value?: string; publishDraftId?: string }
+      | { approvalId?: string; decision?: string; backlinkId?: string; status?: string; setting?: string; value?: string; publishDraftId?: string }
       | null;
     if (!body) {
       return NextResponse.json({ ok: false, error: "Invalid JSON body" }, { status: 400 });
     }
 
-    // 1. toggle an agent setting (currently: blog auto-publish)
+    // 0. AI Permission System — approve or reject a pending proposal.
+    //    Approving a blog.publish proposal publishes that post live;
+    //    rejecting keeps the draft but closes the request (audit trail).
+    if (body.approvalId) {
+      const decision = body.decision === "approve" ? "approved" : body.decision === "reject" ? "rejected" : null;
+      if (!decision) {
+        return NextResponse.json({ ok: false, error: "decision must be approve or reject" }, { status: 422 });
+      }
+      const row = await db.agentApproval.findUnique({ where: { id: body.approvalId } });
+      if (!row || row.status !== "pending") {
+        return NextResponse.json({ ok: false, error: "Approval not found or already decided" }, { status: 404 });
+      }
+      let executed: string | null = null;
+      if (decision === "approved") {
+        if (row.kind === "blog.publish") {
+          const payload = JSON.parse(row.payload || "{}") as { postId?: string; slug?: string };
+          if (payload.postId) {
+            const post = await db.blogPost.update({
+              where: { id: payload.postId },
+              data: { status: "published", publishedAt: new Date() },
+              select: { slug: true },
+            }).catch(() => null);
+            if (post) executed = `published → /blog/${post.slug}`;
+          }
+        }
+      }
+      await db.agentApproval.update({
+        where: { id: row.id },
+        data: { status: decision, decidedAt: new Date(), decidedBy: "owner" },
+      });
+      return NextResponse.json({ ok: true, approval: { id: row.id, status: decision }, executed });
+    }
+
+    // 1. toggle an agent setting (the blog auto-publish permission)
     if (body.setting === "autopublish") {
       const value = body.value === "on" ? "on" : "off";
       await db.siteText.upsert({
@@ -149,7 +199,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ ok: true, setting: "autopublish", value });
     }
 
-    // 2. publish a pending blog draft (owner-approved execution)
+    // 2. legacy: publish a pending blog draft directly from Blog Studio
     if (body.publishDraftId) {
       const row = await db.blogPost.update({
         where: { id: body.publishDraftId },
@@ -164,7 +214,7 @@ export async function PATCH(req: NextRequest) {
 
     // 3. legacy: backlink pipeline status move
     if (!body.backlinkId || !body.status || !BL_STATUSES.has(body.status)) {
-      return NextResponse.json({ ok: false, error: "Provide backlinkId+status, setting=autopublish, or publishDraftId" }, { status: 422 });
+      return NextResponse.json({ ok: false, error: "Provide approvalId+decision, backlinkId+status, setting=autopublish, or publishDraftId" }, { status: 422 });
     }
     const row = await db.backlinkTask.update({
       where: { id: body.backlinkId },

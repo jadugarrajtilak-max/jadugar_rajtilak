@@ -476,3 +476,12 @@
 html[data-jr-menu="open"] [data-jr-mobile-panel] {
   display: flex !important;
 }
+
+/* ── Sticky conversion CTA bar (lead layer) ──────────────────────
+   While the fullscreen mobile menu is open the sticky bar must get
+   out of the way (StickyCta mirrors the menu state onto
+   body[data-jr-sticky-cta]). Unlayered + !important for the same
+   pre-hydration safety as the rule above. */
+body[data-jr-sticky-cta="hidden"] [data-jr-sticky-cta] {
+  display: none !important;
+}

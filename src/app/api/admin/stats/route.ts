@@ -45,6 +45,29 @@ export async function GET(req: NextRequest) {
     const bookedDates = availability.filter((a) => a.status === "booked").length;
     const blockedDates = availability.filter((a) => a.status === "blocked").length;
 
+    // ── CTA engagement (lead-generation visibility, 2026-10-24) ────
+    // WhatsApp / call / booking taps are real buying signals. They now
+    // sit next to form leads on the dashboard so the phone channel
+    // stops being invisible.
+    const ctaSince = new Date(today.getTime() - 14 * 86400000);
+    const ctaRows = await db.ctaClick.findMany({
+      where: { createdAt: { gte: ctaSince } },
+      select: { cta: true, createdAt: true, path: true },
+    });
+    const ctaByType: Record<string, number> = {};
+    const ctaByDay: Record<string, number> = {};
+    const ctaByPath: Record<string, number> = {};
+    for (const c of ctaRows) {
+      ctaByType[c.cta] = (ctaByType[c.cta] ?? 0) + 1;
+      ctaByPath[c.path] = (ctaByPath[c.path] ?? 0) + 1;
+      const day = c.createdAt.toISOString().slice(0, 10);
+      ctaByDay[day] = (ctaByDay[day] ?? 0) + 1;
+    }
+    const ctaThisWeek = ctaRows.filter((c) => c.createdAt >= weekAgo).length;
+
+    // Pending AI proposals — the approval-queue badge on the dashboard.
+    const pendingApprovals = await db.agentApproval.count({ where: { status: "pending" } });
+
     // Conversion funnel (doc 9.4: leads by source, funnel, revenue mix)
     const funnel = [
       { stage: "Enquiry", count: leads.length },
@@ -77,6 +100,14 @@ export async function GET(req: NextRequest) {
       byCity,
       series,
       funnel,
+      cta: {
+        total: ctaRows.length,
+        thisWeek: ctaThisWeek,
+        byType: ctaByType,
+        byPath: Object.fromEntries(Object.entries(ctaByPath).sort((a, b) => b[1] - a[1]).slice(0, 8)),
+        series: series.map((s) => ({ date: s.date, count: ctaByDay[s.date] ?? 0 })),
+      },
+      pendingApprovals,
     });
   } catch {
     return NextResponse.json({ ok: false, error: "Failed to compute stats" }, { status: 500 });

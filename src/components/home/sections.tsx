@@ -27,6 +27,7 @@ import { ReviewsCarousel } from "@/components/site/reviews-carousel";
 import { useSiteCustomization } from "@/components/site/customization-provider";
 import { imageFrame } from "@/lib/customization";
 import { CITIES, EVENT_TYPES, FAQS, PACKAGES, SIGNATURE_ACTS, SITE, TRUST_ITEMS, type RouteId } from "@/lib/content";
+import { trackCta } from "@/lib/router";
 
 // Scroll-reveal wrapper — CSS + IntersectionObserver (doc 4.2).
 // Same motion language as the old framer-motion version (opacity/y,
@@ -587,7 +588,10 @@ export function BookingStrip({ navigate }: { navigate: (r: RouteId) => void }) {
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <button
-              onClick={() => navigate("booking")}
+              onClick={() => {
+                trackCta("booking");
+                navigate("booking");
+              }}
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--jr-crimson)] px-8 py-3 text-[15px] font-semibold text-[var(--jr-ivory)] shadow-[0_18px_40px_-14px_color-mix(in_srgb,var(--jr-crimson)_80%,transparent)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-[var(--jr-crimson-hover)]"
             >
               <CalendarCheck className="h-4 w-4" aria-hidden="true" />
@@ -597,6 +601,7 @@ export function BookingStrip({ navigate }: { navigate: (r: RouteId) => void }) {
               href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Namaste! I would like to check a date for a magic show.")}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackCta("whatsapp")}
               className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--jr-gold)]/60 px-8 py-3 text-[15px] font-semibold text-[var(--jr-cream)] transition-all duration-500 hover:bg-[var(--jr-gold)]/10"
             >
               <MessageCircle className="h-4 w-4" aria-hidden="true" />

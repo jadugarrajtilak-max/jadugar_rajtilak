@@ -11,7 +11,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Reveal, SectionHeading } from "@/components/home/sections";
 import { BLOG_POSTS, FAQS, FAQ_CATS, SITE, type RouteId } from "@/lib/content";
-import { trackEvent, trackPageView } from "@/lib/router";
+import { trackEvent, trackPageView, trackCta } from "@/lib/router";
 import { useSiteCustomization } from "@/components/site/customization-provider";
 import { useToast } from "@/hooks/use-toast";
 
@@ -388,7 +388,10 @@ function ArticleReader({
     document.getElementById(`chapter-${i}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const quoteCta = () => trackEvent("quote_cta_click", { page: `/blog/${post.slug}` });
+  const quoteCta = () => {
+    trackEvent("quote_cta_click", { page: `/blog/${post.slug}` });
+    trackCta("quote");
+  };
 
   return (
     <div
@@ -1164,6 +1167,7 @@ function CrystalBall() {
               href={`https://wa.me/${SITE.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackCta("whatsapp")}
               className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--jr-gold)]/60 px-6 py-2.5 text-sm font-semibold text-[var(--jr-cream)] transition-colors hover:bg-[var(--jr-gold)]/15"
             >
               <MessageCircle className="h-4 w-4" aria-hidden="true" /> Get the real answer on WhatsApp
@@ -1498,10 +1502,10 @@ export function ContactView({ navigate }: { navigate: (r: RouteId) => void }) {
   };
 
   const CHANNELS = [
-    { icon: Phone, label: text("contact.channelCallLabel"), value: SITE.phoneDisplay, note: text("contact.channelCallNote"), href: `tel:${SITE.phoneRaw}`, pip: "K", suit: "♠" },
-    { icon: MessageCircle, label: text("contact.channelWhatsAppLabel"), value: "Chat instantly", note: text("contact.channelWhatsAppNote"), href: `https://wa.me/${SITE.whatsapp}`, pip: "A", suit: "♥" },
-    { icon: Mail, label: text("contact.channelEmailLabel"), value: SITE.email, note: text("contact.channelEmailNote"), href: `mailto:${SITE.email}`, pip: "Q", suit: "♦" },
-    { icon: MapPin, label: text("contact.channelStudioLabel"), value: SITE.address, note: text("contact.channelStudioNote"), href: SITE.mapsUrl, pip: "10", suit: "♣" },
+    { icon: Phone, label: text("contact.channelCallLabel"), value: SITE.phoneDisplay, note: text("contact.channelCallNote"), href: `tel:${SITE.phoneRaw}`, onClick: () => trackCta("call"), pip: "K", suit: "♠" },
+    { icon: MessageCircle, label: text("contact.channelWhatsAppLabel"), value: "Chat instantly", note: text("contact.channelWhatsAppNote"), href: `https://wa.me/${SITE.whatsapp}`, onClick: () => trackCta("whatsapp"), pip: "A", suit: "♥" },
+    { icon: Mail, label: text("contact.channelEmailLabel"), value: SITE.email, note: text("contact.channelEmailNote"), href: `mailto:${SITE.email}`, onClick: () => trackCta("contact"), pip: "Q", suit: "♦" },
+    { icon: MapPin, label: text("contact.channelStudioLabel"), value: SITE.address, note: text("contact.channelStudioNote"), href: SITE.mapsUrl, onClick: undefined, pip: "10", suit: "♣" },
   ];
 
   return (
@@ -1543,12 +1547,14 @@ export function ContactView({ navigate }: { navigate: (r: RouteId) => void }) {
               href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Namaste! I would like to check a date for a magic show.")}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackCta("whatsapp")}
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--jr-teal)] px-7 py-3 text-[15px] font-semibold text-[var(--jr-ivory)] shadow-[0_18px_40px_-14px_color-mix(in_srgb,var(--jr-teal)_85%,transparent)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--jr-teal)_80%,black)]"
             >
               <MessageCircle className="h-4 w-4" aria-hidden="true" /> WhatsApp the Studio
             </a>
             <a
               href={`tel:${SITE.phoneRaw}`}
+              onClick={() => trackCta("call")}
               className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--jr-gold)]/60 px-7 py-3 text-[15px] font-semibold text-[var(--jr-cream)] transition-all duration-500 hover:bg-[var(--jr-gold)]/10"
             >
               <Phone className="h-4 w-4" aria-hidden="true" /> {SITE.phoneDisplay}
@@ -1580,6 +1586,7 @@ export function ContactView({ navigate }: { navigate: (r: RouteId) => void }) {
                   href={c.href}
                   target={c.href.startsWith("http") ? "_blank" : undefined}
                   rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  onClick={c.onClick}
                   className="card-cine relative flex items-start gap-4 rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-card)] p-5 transition-colors hover:border-[var(--jr-gold)]/60"
                 >
                   {/* playing-card corner pips — the studio's calling cards */}
@@ -1700,6 +1707,7 @@ export function ContactView({ navigate }: { navigate: (r: RouteId) => void }) {
                       href={`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Namaste! I just sent a letter through the website — checking my date.")}`}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackCta("whatsapp")}
                       className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--jr-teal)] px-6 py-3 text-sm font-semibold text-[var(--jr-ivory)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--jr-teal)_80%,black)]"
                     >
                       <MessageCircle className="h-4 w-4" aria-hidden="true" /> Get a faster reply on WhatsApp

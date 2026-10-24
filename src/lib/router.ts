@@ -61,6 +61,28 @@ export function trackEvent(name: string, params: Record<string, unknown> = {}) {
   }
 }
 
+// ── CTA engagement tracking (lead-generation visibility) ──────────
+// trackCta("whatsapp") fires when a high-intent CTA (WhatsApp / call /
+// booking / contact / quote) is tapped. It records the tap in BOTH
+// GA4 (conversion event) and the first-party CtaClick table (Master
+// Admin dashboard + Manager Agent funnel report) — phone-channel
+// interest stops being invisible. Fire-and-forget: it can never break
+// or delay the CTA click itself.
+export function trackCta(cta: "whatsapp" | "call" | "booking" | "contact" | "quote") {
+  if (typeof window === "undefined") return;
+  try {
+    trackEvent("cta_click", { cta, path: window.location.pathname });
+    void fetch("/api/cta", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cta, path: window.location.pathname }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    /* measurement must never break the CTA */
+  }
+}
+
 // /blog/<slug> deep links resolve to the blog route + the post slug
 // (implementation lives in the shared routes.ts module).
 

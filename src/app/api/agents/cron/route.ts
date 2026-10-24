@@ -32,9 +32,10 @@ async function handle(req: NextRequest) {
     const queue =
       force && isAgentId(force)
         ? [force]
-        : // priority order: blog first (daily content), then health, seo, rank
+        : // priority order: blog first (daily content), then health, seo,
+          // rank, and the manager LAST so its report covers everyone.
           (await dueAgents()).sort(
-            (a, b) => ({ blog: 0, bugfix: 1, seo: 2, rank: 3 })[a] - ({ blog: 0, bugfix: 1, seo: 2, rank: 3 })[b]
+            (a, b) => ({ blog: 0, bugfix: 1, seo: 2, rank: 3, manager: 4 })[a]! - ({ blog: 0, bugfix: 1, seo: 2, rank: 3, manager: 4 })[b]!
           );
 
     let deferred: string[] = [];

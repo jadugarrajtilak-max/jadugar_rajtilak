@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useSiteRouter, routeToPath, type RouteId } from "@/lib/router";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
+import { StickyCta } from "@/components/site/sticky-cta";
 import { SiteCustomizationProvider, useSiteCustomization } from "@/components/site/customization-provider";
 import { CinematicHero } from "@/components/hero/cinematic-hero";
 import {
@@ -144,6 +145,11 @@ function Site({ initialRoute, initialBlogSlug }: { initialRoute: RouteId; initia
       </main>
 
       {route !== "admin" && <Footer navigate={navigate} />}
+
+      {/* Conversion layer — sticky Call/WhatsApp/Check-Date bar (mobile)
+          + floating WhatsApp (desktop). Every tap is tracked as a
+          first-party CtaClick so phone-channel leads show in admin. */}
+      {route !== "admin" && <StickyCta onCheckDate={goBooking} />}
     </div>
   );
 }

@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     const agentId = body?.agentId ?? "";
     const trigger = body?.trigger === "scheduler" || body?.trigger === "cron" ? body.trigger : "manual";
     if (!isAgentId(agentId)) {
-      return NextResponse.json({ ok: false, error: "Unknown agent — expected rank | seo | bugfix | blog" }, { status: 422 });
+      return NextResponse.json({ ok: false, error: "Unknown agent — expected manager | rank | seo | bugfix | blog" }, { status: 422 });
     }
     if (await hasStaleRunning(agentId)) {
       return NextResponse.json({ ok: false, error: "This agent is already running (started < 30 min ago)." }, { status: 409 });

@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Users, CalendarCheck, CheckCircle2, TrendingUp, Globe, MousePointerClick, Loader2 } from "lucide-react";
+import { Users, CalendarCheck, CheckCircle2, TrendingUp, Globe, MousePointerClick, Loader2, MessageCircle, Phone, Bot } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -56,6 +56,7 @@ export function DashboardPanel({
     { label: "This week", value: stats.totals.thisWeek, icon: TrendingUp, tint: TEAL },
     { label: "Confirmed shows", value: stats.totals.confirmed, icon: CalendarCheck, tint: VERMILION },
     { label: "Completed", value: stats.totals.completed, icon: CheckCircle2, tint: GOLD },
+    { label: "WhatsApp / Call taps (14d)", value: stats.cta?.total ?? 0, icon: MessageCircle, tint: "#128c4a" },
   ];
 
   const series = stats.series.map((s) => ({
@@ -80,16 +81,24 @@ export function DashboardPanel({
         <div>
           <h1 className="font-display text-3xl font-semibold text-[#2a1b3d]">Command dashboard</h1>
           <p className="mt-1 text-sm text-[#5b5266]">
-            First-party lead analytics · GA4 &amp; Search Console API dashboards arrive with Phase 2
+            First-party lead + CTA analytics · GA4 &amp; Search Console API dashboards arrive with Phase 2
           </p>
         </div>
-        <Button onClick={onRefresh} variant="outline" className="border-[#b8923a]/50 hover:bg-[#f3ead3]">
-          Refresh data
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {(stats.pendingApprovals ?? 0) > 0 && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#b8923a]/40 bg-[#fef9e7] px-3.5 py-1.5 text-xs font-semibold text-[#8a6116]">
+              <Bot className="h-3.5 w-3.5" aria-hidden="true" />
+              {stats.pendingApprovals} AI proposal{stats.pendingApprovals === 1 ? "" : "s"} awaiting approval
+            </span>
+          )}
+          <Button onClick={onRefresh} variant="outline" className="border-[#b8923a]/50 hover:bg-[#f3ead3]">
+            Refresh data
+          </Button>
+        </div>
       </header>
 
-      {/* KPI cards */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {/* KPI cards — 5 cards: leads + phone-channel engagement */}
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {cards.map((c) => (
           <Card key={c.label} className="border-[#e3d9c6] bg-[#fffdf7] card-cine">
             <CardContent className="flex items-center gap-4 p-5">
@@ -107,6 +116,60 @@ export function DashboardPanel({
           </Card>
         ))}
       </div>
+
+      {/* CTA engagement — phone-channel leads made visible */}
+      {stats.cta && (
+        <Card className="border-[#e3d9c6] bg-[#fffdf7]">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 font-display text-lg font-semibold text-[#2a1b3d]">
+              <Phone className="h-4 w-4 text-[#128c4a]" aria-hidden="true" /> Real buying signals — CTA taps (14 days)
+            </CardTitle>
+            <p className="mt-1 text-sm text-[#5b5266]">
+              Jab visitor WhatsApp / Call / Check Date dabata hai, woh bhi ek lead signal hai — ab yahan
+              dikhta hai. Phone par aane wale enquiry is layer se visible ho jaate hain.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { label: "WhatsApp taps", value: stats.cta.byType.whatsapp ?? 0, icon: MessageCircle, tint: "#128c4a" },
+                { label: "Call taps", value: stats.cta.byType.call ?? 0, icon: Phone, tint: VERMILION },
+                { label: "Check Date taps", value: stats.cta.byType.booking ?? 0, icon: CalendarCheck, tint: PLUM },
+                { label: "Quote CTA taps", value: (stats.cta.byType.quote ?? 0) + (stats.cta.byType.contact ?? 0), icon: MousePointerClick, tint: GOLD },
+              ].map((c) => (
+                <div key={c.label} className="flex items-center gap-3 rounded-xl border border-[#efe8da] bg-white px-4 py-3.5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-white" style={{ background: c.tint }}>
+                    <c.icon className="h-4.5 w-4.5" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p className="font-display text-2xl font-semibold leading-none text-[#2a1b3d]">{c.value}</p>
+                    <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-[#5b5266]">{c.label}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {Object.keys(stats.cta.byPath).length > 0 && (
+              <div className="mt-4">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#5b5266]">Where they tapped</p>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(stats.cta.byPath).map(([path, count]) => (
+                    <span key={path} className="inline-flex items-center gap-1.5 rounded-full border border-[#e3d9c6] bg-[#fffdf7] px-3 py-1.5 text-xs font-medium text-[#2a1b3d]">
+                      {path}
+                      <span className="rounded-full bg-[#f3ead3] px-1.5 py-0.5 text-[10px] font-semibold text-[#8a6116]">{count}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {stats.cta.total === 0 && (
+              <p className="mt-4 rounded-xl bg-[#f3ead3]/50 p-3.5 text-xs leading-6 text-[#5b5266]">
+                Abhi koi CTA tap record nahi hua. Naya sticky mobile bar + floating WhatsApp button live
+                hone ke baad yahan signals aana shuru honge.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* 14-day enquiry trend */}

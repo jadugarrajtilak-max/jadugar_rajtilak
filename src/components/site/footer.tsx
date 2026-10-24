@@ -4,6 +4,7 @@ import { Phone, Mail, MessageCircle, MapPin, Star } from "lucide-react";
 import { BrandMark } from "./navbar";
 import { useSiteCustomization } from "@/components/site/customization-provider";
 import { EVENT_TYPES, NAV_ITEMS, SITE, type RouteId } from "@/lib/content";
+import { trackCta } from "@/lib/router";
 
 export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
   const { text } = useSiteCustomization();
@@ -98,7 +99,7 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
             <ul className="space-y-3 text-sm text-[var(--jr-ink)]">
               <li className="flex items-center gap-2.5">
                 <Phone className="h-4 w-4 shrink-0 text-[var(--jr-gold)]" aria-hidden="true" />
-                <a href={`tel:${SITE.phoneRaw}`} className="transition-colors hover:text-[var(--jr-crimson)]">
+                <a href={`tel:${SITE.phoneRaw}`} onClick={() => trackCta("call")} className="transition-colors hover:text-[var(--jr-crimson)]">
                   {SITE.phoneDisplay}
                 </a>
               </li>
@@ -114,6 +115,7 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
                   href={`https://wa.me/${SITE.whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackCta("whatsapp")}
                   className="transition-colors hover:text-[var(--jr-crimson)]"
                 >
                   WhatsApp — same number

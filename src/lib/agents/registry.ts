@@ -19,10 +19,19 @@ export type AgentMeta = {
 
 export const AGENTS: AgentMeta[] = [
   {
+    id: "manager",
+    name: "Manager Agent",
+    hindi: "मैनेजर एजेंट",
+    role: "Team lead — monitors every agent's runs, success rate and pending approvals, tracks the lead funnel, and assigns the next work. Read-only: it never executes or changes anything itself.",
+    cadence: "Daily (11:30 IST) + manual",
+    scheduleHour: 11,
+    accent: "#1F6F8B",
+  },
+  {
     id: "rank",
     name: "Rank Agent",
     hindi: "रैंक एजेंट",
-    role: "White-hat backlinks, DA/PA growth, outreach drafts — zero spam. Tracks the 15-source pipeline from the 90-day roadmap.",
+    role: "White-hat backlinks, DA/PA growth, outreach drafts — zero spam. Tracks the 20-source pipeline from the 90-day roadmap.",
     cadence: "Weekly (Mon 10:30 IST) + manual",
     scheduleHour: 10,
     weeklyOnly: true,
@@ -50,7 +59,7 @@ export const AGENTS: AgentMeta[] = [
     id: "blog",
     name: "Blog Writer",
     hindi: "ब्लॉग राइटर",
-    role: "One SEO-friendly blog post every day from the Content Calendar — publishes it live automatically (toggle above), falls back to a curated template when the LLM is offline. Existing posts are never touched.",
+    role: "One SEO-friendly blog post every day from the Content Calendar. SECURITY GATE: the post lands in the Approval Queue — it goes live only after the owner approves (auto-publish permission is OFF by default). Existing posts are never touched.",
     cadence: "Daily (09:15 IST) + manual",
     scheduleHour: 9,
     accent: "#4c3a75",

@@ -5,6 +5,7 @@ import {
   Bot, Loader2, Play, CheckCircle2, XCircle, AlertTriangle, Clock,
   Trophy, ShieldCheck, Wrench, PenLine, RefreshCw, ChevronDown,
   ExternalLink, Sparkles, Lock, Globe, Copy, Check, Send,
+  ClipboardCheck, XOctagon, ClipboardList, UserCheck,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ type RunRow = {
   findings: { findings?: Finding[]; details?: Record<string, unknown> } | null;
 };
 type AgentRow = {
-  id: "rank" | "seo" | "bugfix" | "blog";
+  id: "rank" | "seo" | "bugfix" | "blog" | "manager";
   name: string; hindi: string; role: string; cadence: string; accent: string;
   lastRunAt: string | null; lastRunStatus: string | null; lastSuccessAt: string | null;
   totalRuns: number; successRuns: number; isDueToday: boolean;
@@ -34,10 +35,20 @@ type PendingDraft = {
   id: string; title: string; slug: string; category: string;
   createdAt: string; readingTime: string | null;
 };
+// AI Permission System — the approval queue rows
+type ApprovalRow = {
+  id: string; agentId: string; kind: string; title: string; summary: string;
+  payload: string; status: string; createdAt: string;
+};
+type DecidedRow = {
+  id: string; agentId: string; kind: string; title: string; status: string;
+  decidedAt: string | null; createdAt: string;
+};
 
 // Where the owner actually executes each backlink task — the listing /
 // signup page for every source in the pipeline. One click, real action.
 const SOURCE_URLS: Record<string, string> = {
+  "Google Business Profile": "https://business.google.com/",
   Justdial: "https://www.justdial.com/Udaipur/Jadugar-Rajtilak-Opposite-Hotel-Rajkamal-Bhuwana/9999PX294-X294-180528141553-G5M2_BZDET",
   Venuelook: "https://www.venuelook.com/",
   Sulekha: "https://www.sulekha.com/",
@@ -50,11 +61,16 @@ const SOURCE_URLS: Record<string, string> = {
   EventJini: "https://www.eventjini.com/",
   AliveExperiences: "https://aliveexperiences.com/",
   "GetReal.buzz": "https://getreal.buzz/",
+  ShaadiSaga: "https://www.shaadisaga.com/",
+  "Weddingz.in": "https://www.weddingz.in/",
   "Local press (Bhaskar/Patrika Udaipur)": "https://udaipur.bhaskar.com/",
+  "Event manager associations (EMA India chapters)": "https://ema.org.in/",
+  "HARO / Qwoted / Featured.com": "https://featured.com/",
   "'Top 10 magicians India' listicles": "https://www.google.com/search?q=top+10+magicians+in+india",
 };
 
 const AGENT_ICONS: Record<string, typeof Bot> = {
+  manager: ClipboardCheck,
   rank: Trophy,
   seo: Sparkles,
   bugfix: Wrench,
@@ -84,7 +100,7 @@ export function AgentsPanel() {
   const [loading, setLoading] = useState(true);
   const [agents, setAgents] = useState<AgentRow[]>([]);
   const [backlinks, setBacklinks] = useState<BacklinkRow[]>([]);
-  const [autoPublish, setAutoPublish] = useState(true);
+  const [autoPublish, setAutoPublish] = useState(false);
   const [pendingDrafts, setPendingDrafts] = useState<PendingDraft[]>([]);
   const [publishedCount, setPublishedCount] = useState(0);
   const [running, setRunning] = useState<string | null>(null);
@@ -93,6 +109,11 @@ export function AgentsPanel() {
   const [showOutreach, setShowOutreach] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const [publishing, setPublishing] = useState<string | null>(null);
+  // AI Permission System state
+  const [approvals, setApprovals] = useState<ApprovalRow[]>([]);
+  const [decided, setDecided] = useState<DecidedRow[]>([]);
+  const [deciding, setDeciding] = useState<string | null>(null);
+  const [showAudit, setShowAudit] = useState(false);
 
   const load = useCallback(async () => {
     const res = await adminFetch<{
@@ -101,13 +122,17 @@ export function AgentsPanel() {
       autoPublish?: boolean;
       pendingDrafts?: PendingDraft[];
       publishedCount?: number;
+      pendingApprovals?: ApprovalRow[];
+      decidedApprovals?: DecidedRow[];
     }>("/api/admin/agents");
     if (res.ok && res.data) {
       setAgents(res.data.agents);
       setBacklinks(res.data.backlinks);
-      setAutoPublish(res.data.autoPublish !== false);
+      setAutoPublish(res.data.autoPublish === true);
       setPendingDrafts(res.data.pendingDrafts ?? []);
       setPublishedCount(res.data.publishedCount ?? 0);
+      setApprovals(res.data.pendingApprovals ?? []);
+      setDecided(res.data.decidedApprovals ?? []);
     } else if (res.error) {
       toast({ title: "Could not load agents", description: res.error, variant: "destructive" });
     }
@@ -161,14 +186,52 @@ export function AgentsPanel() {
     });
     if (res.ok) {
       toast({
-        title: next ? "Auto-publish ON" : "Auto-publish OFF",
+        title: next ? "AI Publish Permission: GRANTED" : "AI Publish Permission: REVOKED",
         description: next
-          ? "Blog Writer ab har roz ka post seedha live publish karega (toggle kabhi bhi off kar sakte hain)."
-          : "Blog Writer sirf draft banayega — Blog Studio mein aapke approval ka intezaar.",
+          ? "Ab Blog Writer roz ka post seedha live publish kar sakta hai (aapki standing permission). Kabhi bhi revoke kar sakte hain."
+          : "Security mode ON — AI sirf draft + approval request banayega. Live jaane ke liye aapki manzuli chahiye.",
       });
     } else {
       setAutoPublish(!next);
       toast({ title: "Could not save setting", description: res.error ?? "Try again", variant: "destructive" });
+    }
+  };
+
+  // ── AI Permission System: approve / reject a pending proposal ──
+  const decideApproval = async (row: ApprovalRow, decision: "approve" | "reject") => {
+    setDeciding(row.id);
+    const res = await adminFetch<{ executed: string | null; approval: { status: string } }>("/api/admin/agents", {
+      method: "PATCH",
+      body: JSON.stringify({ approvalId: row.id, decision }),
+    });
+    setDeciding(null);
+    if (res.ok && res.data) {
+      setApprovals((rows) => rows.filter((r) => r.id !== row.id));
+      setDecided((rows) => [
+        {
+          id: row.id,
+          agentId: row.agentId,
+          kind: row.kind,
+          title: row.title,
+          status: decision === "approve" ? "approved" : "rejected",
+          decidedAt: new Date().toISOString(),
+          createdAt: row.createdAt,
+        },
+        ...rows,
+      ]);
+      if (decision === "approve" && row.kind === "blog.publish") {
+        setPendingDrafts((rows) => rows.filter((r) => `Publish: "${r.title}"` !== row.title));
+        setPublishedCount((n) => n + 1);
+      }
+      toast({
+        title: decision === "approve" ? "Approved & executed" : "Rejected",
+        description:
+          decision === "approve"
+            ? res.data.executed ?? "Proposal approved."
+            : "Proposal reject ho gaya — draft Blog Studio mein surakshit hai, audit trail mein entry ban gayi.",
+      });
+    } else {
+      toast({ title: "Decision failed", description: res.error ?? "Try again", variant: "destructive" });
     }
   };
 
@@ -204,6 +267,20 @@ export function AgentsPanel() {
 
   const dueCount = useMemo(() => agents.filter((a) => a.isDueToday && (!a.lastSuccessAt || new Date(a.lastSuccessAt).toISOString().slice(0, 10) !== new Date().toISOString().slice(0, 10))).length, [agents]);
 
+  // Manager's latest successful report → team table + work assignments
+  const managerReport = useMemo(() => {
+    const mgr = agents.find((a) => a.id === "manager");
+    const run = mgr?.recentRuns?.find((r) => r.status === "success" && r.findings?.details);
+    if (!run?.findings?.details) return null;
+    const d = run.findings.details as {
+      team?: { agentId: string; runs7d: number; success7d: number; errors7d: number; lastStatus: string | null; staleDays: number | null }[];
+      assignments?: { agentId: string; task: string; why: string }[];
+      funnel?: { leadsThisWeek: number; leadsLastWeek: number; ctaThisWeek: number; whatsappTaps: number; callTaps: number };
+      pendingApprovals?: number;
+    };
+    return { run, details: d, at: run.startedAt };
+  }, [agents]);
+
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center text-[#5b5266]">
@@ -218,23 +295,24 @@ export function AgentsPanel() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold text-[#2a1b3d]">AI Agents</h1>
-          <p className="mt-1 text-sm text-[#5b5266]">
-            Aapki 24×7 growth crew — Rank, SEO, Bug Fixer aur Blog Writer. Har run ke baad agents apne
-            skill.md se seekhte hain. Blog Writer roz ka post publish bhi karta hai — switch se control karein.
+          <p className="mt-1 max-w-2xl text-sm text-[#5b5266]">
+            Aapki 24×7 growth crew — Manager (team lead), Rank, SEO, Bug Fixer aur Blog Writer. Har run ke
+            baad agents apne skill.md se seekhte hain. <span className="font-semibold text-[#2a1b3d]">AI Permission System</span> ke
+            saath: bina aapki manzuli AI site par kuch bhi live nahi karta.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {/* execution switch — the owner decides if agents publish or only draft */}
+          {/* the owner's explicit publish permission — OFF (secure) by default */}
           <div className="flex items-center gap-3 rounded-full border border-[#e3d9c6] bg-[#fffdf7] px-4 py-2">
             <Send className="h-4 w-4 text-[#b8923a]" aria-hidden="true" />
             <div className="leading-tight">
-              <p className="text-[12px] font-semibold text-[#2a1b3d]">Auto-publish</p>
-              <p className="text-[10px] text-[#8c8a84]">{autoPublish ? "ON — posts go live" : "OFF — drafts only"}</p>
+              <p className="text-[12px] font-semibold text-[#2a1b3d]">AI Publish Permission</p>
+              <p className="text-[10px] text-[#8c8a84]">{autoPublish ? "GRANTED — posts go live" : "OFF (secure default) — approval first"}</p>
             </div>
             <Switch
               checked={autoPublish}
               onCheckedChange={toggleAutoPublish}
-              aria-label="Toggle automatic publishing of the daily blog post"
+              aria-label="Toggle the AI's standing permission to publish the daily blog post"
             />
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[#e8f5e9] px-3 py-1.5 text-xs font-semibold text-[#1B7D46]">
@@ -245,6 +323,150 @@ export function AgentsPanel() {
           </Button>
         </div>
       </div>
+
+      {/* ── AI Permission System banner — the security gate ── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#b8923a]/40 bg-gradient-to-r from-[#fef9e7] to-[#fffdf7] px-5 py-4">
+        <p className="flex items-start gap-2.5 text-sm leading-relaxed text-[#5b5266]">
+          <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#b8923a]" aria-hidden="true" />
+          <span>
+            <span className="font-semibold text-[#2a1b3d]">AI Permission System — ACTIVE.</span> Agents sirf
+            propose karte hain: blog post, outreach, content change — sab pehle aapke Approval Queue mein
+            aata hai. Aap Approve dabate ho, tabhi kuch live hota hai. Reject kiye gaye proposals audit
+            trail mein surakshit rehte hain. {autoPublish ? "(Publish permission abhi granted hai — switch off karein to har post approval maangega.)" : ""}
+          </span>
+        </p>
+        <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold ${
+          approvals.length > 0 ? "bg-[#fef9e7] text-[#8a6116]" : "bg-[#e8f5e9] text-[#1B7D46]"
+        }`}>
+          <ClipboardList className="h-3.5 w-3.5" aria-hidden="true" />
+          {approvals.length} proposal{approvals.length === 1 ? "" : "s"} pending
+        </span>
+      </div>
+
+      {/* ── Approval Queue — nothing goes live without the owner ── */}
+      {approvals.length > 0 && (
+        <Card className="border-[#b8923a]/50 bg-[#fffdf7] shadow-md">
+          <CardHeader className="pb-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg font-semibold text-[#2a1b3d]">
+                  <ClipboardCheck className="h-5 w-5 text-[#b8923a]" aria-hidden="true" /> Approval Queue — aapki manzuli ka intezaar
+                </CardTitle>
+                <p className="mt-1 text-sm text-[#5b5266]">
+                  {approvals.length} AI proposal(s). Approve → live ho jayega · Reject → draft surakshit,
+                  request band. Preview karke decision lein.
+                </p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="max-h-80 space-y-2.5 overflow-y-auto scroll-slim">
+              {approvals.map((a) => {
+                let previewSlug: string | null = null;
+                try {
+                  previewSlug = (JSON.parse(a.payload) as { slug?: string }).slug ?? null;
+                } catch {
+                  previewSlug = null;
+                }
+                const agentMeta = agents.find((ag) => ag.id === a.agentId);
+                return (
+                  <div key={a.id} className="rounded-xl border border-[#e3d9c6] bg-white px-4 py-3.5">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white"
+                            style={{ background: agentMeta?.accent ?? "#5b5266" }}
+                          >
+                            {agentMeta?.name ?? a.agentId}
+                          </span>
+                          <span className="rounded-full bg-[#f0eeea] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#5b5266]">
+                            {a.kind}
+                          </span>
+                          <span className="text-[11px] text-[#8c8a84]">{timeAgo(a.createdAt)}</span>
+                        </div>
+                        <p className="mt-1.5 text-[14.5px] font-semibold text-[#2a1b3d]">{a.title}</p>
+                        <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-[#5b5266]">{a.summary}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {previewSlug && (
+                          <a
+                            href={`/blog/${previewSlug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 rounded-full border border-[#e3d9c6] px-3.5 py-1.5 text-[12px] font-medium text-[#5b5266] transition-colors hover:border-[#b8923a] hover:text-[#2a1b3d]"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /> Preview
+                          </a>
+                        )}
+                        <Button
+                          size="sm"
+                          disabled={deciding === a.id}
+                          onClick={() => decideApproval(a, "approve")}
+                          className="h-9 rounded-full bg-[#2f6d4f] px-5 hover:bg-[#256043]"
+                        >
+                          {deciding === a.id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                          ) : (
+                            <CheckCircle2 className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
+                          )}
+                          Approve
+                        </Button>
+                        <Button
+                          size="sm"
+                          disabled={deciding === a.id}
+                          onClick={() => decideApproval(a, "reject")}
+                          variant="outline"
+                          className="h-9 rounded-full border-[#C0392B]/40 px-5 text-[#C0392B] hover:bg-[#fdedec]"
+                        >
+                          {deciding === a.id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                          ) : (
+                            <XOctagon className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
+                          )}
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ── audit trail — every decision, kept forever ── */}
+      {decided.length > 0 && (
+        <div className="rounded-2xl border border-[#e3d9c6] bg-[#fffdf7] px-5 py-4">
+          <button
+            className="flex w-full items-center justify-between gap-2 text-left"
+            onClick={() => setShowAudit(!showAudit)}
+            aria-expanded={showAudit}
+          >
+            <p className="flex items-center gap-2 text-sm font-semibold text-[#2a1b3d]">
+              <UserCheck className="h-4 w-4 text-[#b8923a]" aria-hidden="true" /> Approval audit trail
+              <span className="rounded-full bg-[#f0eeea] px-2 py-0.5 text-[10px] font-bold text-[#5b5266]">{decided.length} decided</span>
+            </p>
+            <ChevronDown className={`h-4 w-4 text-[#8c8a84] transition-transform ${showAudit ? "rotate-180" : ""}`} aria-hidden="true" />
+          </button>
+          {showAudit && (
+            <div className="mt-3 max-h-56 space-y-1.5 overflow-y-auto scroll-slim">
+              {decided.map((d) => (
+                <div key={d.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white px-3 py-2 text-[12.5px]">
+                  <span className="min-w-0 truncate text-[#2a1b3d]">
+                    <span className={`mr-2 inline-block h-2 w-2 rounded-full ${d.status === "approved" ? "bg-[#2f6d4f]" : "bg-[#C0392B]"}`} aria-hidden="true" />
+                    {d.title}
+                  </span>
+                  <span className="text-[11px] text-[#8c8a84]">
+                    {d.status} · {d.decidedAt ? new Date(d.decidedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : ""} IST
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {dueCount > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#e3d9c6] bg-[#fef9e7] px-5 py-4">
@@ -264,6 +486,108 @@ export function AgentsPanel() {
         </div>
       )}
 
+      {/* ── Manager's desk — team health + work assignments ── */}
+      {managerReport && managerReport.details.team && (
+        <Card className="border-[#e3d9c6] bg-[#fffdf7] shadow-sm">
+          <CardHeader className="pb-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg font-semibold text-[#2a1b3d]">
+                  <ClipboardCheck className="h-5 w-5 text-[#1F6F8B]" aria-hidden="true" /> Manager's Desk — team monitoring
+                </CardTitle>
+                <p className="mt-1 text-sm text-[#5b5266]">
+                  Manager Agent roz sab agents ki health check karta hai, leads funnel track karta hai aur
+                  kaam assign karta hai. Last report: {timeAgo(managerReport.at)}.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 text-center text-[11px] font-semibold">
+                {managerReport.details.funnel && (
+                  <>
+                    <span className="rounded-full bg-[#e8f5e9] px-3 py-1.5 text-[#1B7D46]">
+                      Leads 7d: {managerReport.details.funnel.leadsThisWeek} (prev {managerReport.details.funnel.leadsLastWeek})
+                    </span>
+                    <span className="rounded-full bg-[#e8f0fe] px-3 py-1.5 text-[#1a56db]">
+                      CTA taps 7d: {managerReport.details.funnel.ctaThisWeek} · WA {managerReport.details.funnel.whatsappTaps} · Call {managerReport.details.funnel.callTaps}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* team health table */}
+            <div className="overflow-x-auto scroll-slim">
+              <table className="w-full min-w-[560px] text-left text-[13px]">
+                <thead>
+                  <tr className="border-b border-[#e3d9c6] text-[11px] uppercase tracking-wider text-[#8c8a84]">
+                    <th scope="col" className="py-2 pr-4 font-semibold">Agent</th>
+                    <th scope="col" className="py-2 pr-4 font-semibold">Runs (7d)</th>
+                    <th scope="col" className="py-2 pr-4 font-semibold">Success</th>
+                    <th scope="col" className="py-2 pr-4 font-semibold">Errors</th>
+                    <th scope="col" className="py-2 font-semibold">Health</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {managerReport.details.team.map((t) => {
+                    const meta = agents.find((a) => a.id === t.agentId);
+                    const health =
+                      t.errors7d > 0 ? { label: "Failing", cls: "bg-[#fdedec] text-[#C0392B]" }
+                      : t.runs7d === 0 ? { label: "Idle 7d", cls: "bg-[#f0eeea] text-[#8c8a84]" }
+                      : { label: "Healthy", cls: "bg-[#e8f5e9] text-[#1B7D46]" };
+                    return (
+                      <tr key={t.agentId} className="border-b border-[#f0ead9] last:border-0">
+                        <td className="py-2.5 pr-4">
+                          <span className="inline-flex items-center gap-2 font-semibold text-[#2a1b3d]">
+                            <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: meta?.accent ?? "#5b5266" }} aria-hidden="true" />
+                            {meta?.name ?? t.agentId}
+                          </span>
+                        </td>
+                        <td className="py-2.5 pr-4 text-[#5b5266]">{t.runs7d}</td>
+                        <td className="py-2.5 pr-4 text-[#5b5266]">{t.success7d}</td>
+                        <td className="py-2.5 pr-4 text-[#5b5266]">{t.errors7d}</td>
+                        <td className="py-2.5">
+                          <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${health.cls}`}>{health.label}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* work assignments */}
+            {managerReport.details.assignments && managerReport.details.assignments.length > 0 && (
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#8c8a84]">Work assignments — Manager ne ye kaam allocate kiya hai</p>
+                <div className="space-y-2">
+                  {managerReport.details.assignments.map((as, i) => {
+                    const meta = agents.find((a) => a.id === as.agentId);
+                    return (
+                      <div key={i} className="flex items-start gap-3 rounded-xl border border-[#efe8da] bg-white px-4 py-3">
+                        <span
+                          className="mt-0.5 inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white"
+                          style={{ background: meta?.accent ?? "#8a6116" }}
+                        >
+                          {as.agentId === "owner" ? (
+                            <><UserCheck className="h-3 w-3" aria-hidden="true" /> You</>
+                          ) : (
+                            <><Bot className="h-3 w-3" aria-hidden="true" /> {meta?.name ?? as.agentId}</>
+                          )}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-[13.5px] font-semibold text-[#2a1b3d]">{as.task}</p>
+                          <p className="mt-0.5 text-[12.5px] leading-relaxed text-[#5b5266]">{as.why}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* ── pending drafts — one click to execute ── */}
       {pendingDrafts.length > 0 && (
         <Card className="border-[#e3d9c6] bg-[#fffdf7] shadow-sm">
@@ -271,10 +595,10 @@ export function AgentsPanel() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg font-semibold text-[#2a1b3d]">
-                  <PenLine className="h-5 w-5 text-[#4c3a75]" aria-hidden="true" /> Pending drafts — waiting to go live
+                  <PenLine className="h-5 w-5 text-[#4c3a75]" aria-hidden="true" /> Drafts awaiting your word
                 </CardTitle>
                 <p className="mt-1 text-sm text-[#5b5266]">
-                  {pendingDrafts.length} draft(s) ready. Publish now, ya Blog Studio mein poori post dekh kar edit karein.
+                  {pendingDrafts.length} draft(s). Approval Queue se publish karein (recommended), ya Blog Studio mein poori post dekh kar edit karein.
                 </p>
               </div>
               <span className="rounded-full bg-[#e8f0fe] px-3 py-1.5 text-[11px] font-semibold text-[#1a56db]">
@@ -525,14 +849,16 @@ export function AgentsPanel() {
       {/* safety note */}
       <div className="rounded-2xl border border-[#e3d9c6] bg-[#fffdf7] px-5 py-4 text-[13px] leading-relaxed text-[#5b5266]">
         <p className="flex items-center gap-2 font-semibold text-[#2a1b3d]">
-          <Lock className="h-4 w-4 text-[#b8923a]" aria-hidden="true" /> Safety commitments
+          <Lock className="h-4 w-4 text-[#b8923a]" aria-hidden="true" /> Safety &amp; security commitments
         </p>
         <p className="mt-1.5">
-          Blog Writer roz ka post publish karta hai jab auto-publish ON ho — switch se kabhi bhi draft-only mode
-          par lautein. Existing posts kabhi modify/delete nahi hote. Bug Fixer read-only hai. Rank Agent kabhi
-          koi external site pe kuch auto-submit nahi karta (spam zero) — outreach aap apne email se bhejte hain.
-          Sab agent APIs admin-auth ke peeche hain aur secrets output mein kabhi print nahi hote. Leads aur
-          bookings data kabhi agent ke haath mein nahi aata.
+          <span className="font-semibold text-[#2a1b3d]">AI Permission System:</span> agents kabhi bina aapki
+          approval site par kuch live nahi karte — har proposal Approval Queue mein aata hai (auto-publish
+          permission default OFF hai). Existing posts kabhi modify/delete nahi hote. Manager Agent read-only
+          monitor hai — kuch execute nahi karta. Bug Fixer bhi read-only hai. Rank Agent kabhi koi external
+          site pe kuch auto-submit nahi karta (spam zero) — outreach aap apne email se bhejte hain. Sab agent
+          APIs admin-auth ke peeche hain aur secrets output mein kabhi print nahi hote. Leads aur bookings
+          data kabhi agent ke haath mein nahi aata.
         </p>
       </div>
     </div>

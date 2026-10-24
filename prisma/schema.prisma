@@ -192,3 +192,41 @@ model BacklinkTask {
 
   @@index([status])
 }
+
+// ── AI Permission System (2026-10-24) ────────────────────────────────
+// AgentApproval — the security gate between the AI agents and the live
+// site. Every agent proposal that would CHANGE anything publicly visible
+// (publishing a post, sending outreach, updating site content) is parked
+// here as a pending row. NOTHING goes live until the owner explicitly
+// approves it from Master Admin → AI Agents → Approval Queue. Rejected
+// proposals stay in the table as an audit trail.
+model AgentApproval {
+  id        String    @id @default(cuid())
+  agentId   String    // rank | seo | bugfix | blog | manager
+  kind      String    // "blog.publish" | "outreach.send" | "content.change"
+  title     String    // human label shown in the queue
+  summary   String    // what happens if approved
+  payload   String    @default("") // JSON — the proposed change details
+  status    String    @default("pending") // pending | approved | rejected
+  createdAt DateTime  @default(now())
+  decidedAt DateTime?
+  decidedBy String?   // "owner" (Master Admin session) — audit trail
+
+  @@index([status, createdAt])
+}
+
+// CtaClick — first-party, privacy-light CTA engagement tracking.
+// Every WhatsApp / call / booking CTA tap is a REAL buying signal.
+// Landscaped into the Master Admin dashboard next to form leads so
+// phone-channel interest is finally visible (the "leads nahi aa rahi"
+// gap: visitors were engaging but nothing recorded it).
+model CtaClick {
+  id        String   @id @default(cuid())
+  cta       String   // whatsapp | call | booking | contact | quote
+  path      String   @default("/")
+  device    String   @default("desktop") // desktop | mobile | tablet
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([cta, createdAt])
+}

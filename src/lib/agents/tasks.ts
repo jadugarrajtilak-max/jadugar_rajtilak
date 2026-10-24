@@ -1,16 +1,19 @@
 // ─────────────────────────────────────────────────────────────────────
-// The four agent task implementations. SEO + Bugfix are read-only
-// diagnostics. Blog WRITES AND (by default) PUBLISHES the day's post —
-// the owner can flip this back to draft-only any time from the Agents
-// panel (agents.settings.autopublish). Rank writes only its own
-// BacklinkTask rows and outreach drafts. Nothing deletes or modifies
-// the owner's business data.
+// The five agent task implementations. SEO + Bugfix are read-only
+// diagnostics. Manager monitors the team + funnel (read-only) and
+// assigns work. Blog DRAFTS the day's post and files an approval
+// request — the AI Permission System keeps nothing live without the
+// owner's approval (auto-publish is the owner's explicit standing
+// permission, OFF by default). Rank writes only its own BacklinkTask
+// rows and outreach drafts. Nothing deletes or modifies the owner's
+// business data.
 // ─────────────────────────────────────────────────────────────────────
 import { db } from "@/lib/db";
 import { slugify, computeReadingTime } from "@/lib/blog";
 import type { BlogSection } from "@/lib/content";
 import type { AgentId } from "./skills";
 import { llmJson } from "./llm";
+import { AGENTS } from "./registry";
 
 const SITE_URL = process.env.AGENT_AUDIT_BASE_URL || "https://jadugarrajtilak.com";
 
@@ -324,6 +327,36 @@ type GeneratedPost = {
 export const AUTO_PUBLISH_KEY = "agents.settings.autopublish";
 const BLOG_LAST_DATE_KEY = "agents.blog.lastDate";
 
+// ── AI Permission System: approval queue helper ─────────────────
+// Every agent proposal that changes the LIVE SITE files an approval
+// row here. Default posture: AI PROPOSES, OWNER DISPOSES. The
+// auto-publish switch is the owner's explicit standing permission and
+// is OFF by default (security rule 2026-10-24: "bina permission AI
+// kuch bhi change nahi karega").
+export async function fileApproval(input: {
+  agentId: string;
+  kind: string;
+  title: string;
+  summary: string;
+  payload?: Record<string, unknown>;
+}): Promise<void> {
+  try {
+    await db.agentApproval.create({
+      data: {
+        agentId: input.agentId,
+        kind: input.kind,
+        title: input.title.slice(0, 200),
+        summary: input.summary.slice(0, 500),
+        payload: JSON.stringify(input.payload ?? {}).slice(0, 10000),
+      },
+    });
+  } catch (e) {
+    // The proposal itself must still exist (draft row) even if the
+    // queue write fails — surfaced in the run log instead.
+    console.error("[agents] fileApproval failed:", e instanceof Error ? e.message : e);
+  }
+}
+
 export async function getAgentSetting(key: string, fallback: string): Promise<string> {
   try {
     const row = await db.siteText.findUnique({ where: { key }, select: { value: true } });
@@ -483,9 +516,11 @@ Brand facts (verified — use only these numbers, never invent):
 export async function runBlogAgent(trigger: string): Promise<AgentResult> {
   const today = new Date().toISOString().slice(0, 10);
 
-  // 0. owner-controlled execution mode — "on" (default) publishes the
-  // day's post straight to the live site; "off" keeps draft-only mode.
-  const autoPublish = (await getAgentSetting(AUTO_PUBLISH_KEY, "on")) !== "off";
+  // 0. SECURITY GATE — the owner's explicit permission. Default "off":
+  // the agent only DRAFTS + files an approval request; nothing goes
+  // live until the owner approves it in the Approval Queue. "on" is a
+  // standing permission the owner granted deliberately from the panel.
+  const autoPublish = (await getAgentSetting(AUTO_PUBLISH_KEY, "off")) === "on";
 
   // 1. one post per day max — a dated marker guards even published runs,
   // so the scheduler can never double-publish on the same day.
@@ -535,8 +570,12 @@ export async function runBlogAgent(trigger: string): Promise<AgentResult> {
     .map((s) => ({ h: String(s?.h ?? "").trim(), paras: (Array.isArray(s.paras) ? s.paras : []).map((p) => String(p ?? "").trim()).filter(Boolean) }))
     .filter((s) => s.h.length > 0);
 
+  // Robust slug dedup: the queue slug, then a date suffix, then a
+  // short random tail if even the dated one was taken (multiple runs
+  // the same day must never crash on the unique constraint).
   let slug = slugify(post.slug || post.title);
   if (taken.has(slug)) slug = `${slug}-${today.replace(/-/g, "").slice(4)}`;
+  while (taken.has(slug)) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
   const excerpt = (post.excerpt ?? chosen.title).slice(0, 200);
   const metaDescription = (post.metaDescription ?? excerpt).slice(0, 155);
 
@@ -560,7 +599,7 @@ export async function runBlogAgent(trigger: string): Promise<AgentResult> {
       publishedAt: new Date(),
       featured: false,
     },
-    select: { title: true, slug: true, readingTime: true },
+    select: { id: true, title: true, slug: true, readingTime: true },
   });
 
   // dated marker so the scheduler never double-publishes the same day
@@ -572,15 +611,28 @@ export async function runBlogAgent(trigger: string): Promise<AgentResult> {
     })
     .catch(() => undefined);
 
+  // SECURITY GATE — with auto-publish OFF (default), the run files an
+  // approval request. The post stays a private draft until the owner
+  // presses Approve in Master Admin → AI Agents → Approval Queue.
+  if (!autoPublish) {
+    await fileApproval({
+      agentId: "blog",
+      kind: "blog.publish",
+      title: `Publish: "${row.title}"`,
+      summary: `Blog Writer ne ek naya SEO draft taiyaar kiya hai (${row.readingTime}, keyword: ${chosen.keyword}). Approve karne par yeh post live ho jayega aur sitemap mein add ho jayega.`,
+      payload: { postId: row.id, slug: row.slug, topic: chosen.title, keyword: chosen.keyword },
+    });
+  }
+
   const draftsPending = await db.blogPost.count({ where: { status: "draft" } });
 
   return {
     ok: true,
     summary: autoPublish
-      ? `Published live: "${row.title}" (${row.readingTime}) → jadugarrajtilak.com/blog/${row.slug} — already in the sitemap. ${draftsPending} older draft(s) awaiting review.`
-      : `Draft ready: "${row.title}" (${row.readingTime}) — saved for your approval in Blog Studio. ${draftsPending} draft(s) awaiting review.`,
+      ? `Published live (owner permission ON): "${row.title}" (${row.readingTime}) → jadugarrajtilak.com/blog/${row.slug}. ${draftsPending} older draft(s) awaiting review.`
+      : `Approval queue: "${row.title}" (${row.readingTime}) — draft ready, aapke approval ka intezaar mein (AI kuch bhi khud se live nahi karta). ${draftsPending} draft(s) pending.`,
     details: { slug: row.slug, topic: chosen.title, keyword: chosen.keyword, autoPublish, writer: usedTemplate ? "template-fallback" : "llm" },
-    learning: `Run ${today}: ${autoPublish ? "published" : "drafted"} "${row.title}" for keyword "${chosen.keyword}" (${usedTemplate ? "template writer — set ZAI_BASE_URL + ZAI_API_KEY env for bespoke LLM drafts" : "LLM writer"}). ${
+    learning: `Run ${today}: ${autoPublish ? "published (standing permission ON)" : "drafted + filed for approval (security gate)"} "${row.title}" for keyword "${chosen.keyword}" (${usedTemplate ? "template writer — set ZAI_BASE_URL + ZAI_API_KEY env for bespoke LLM drafts" : "LLM writer"}). ${
       topic ? "Queue is on track." : "Topic queue exhausted — propose seasonal/GSC-based topics next."
     }`,
   };
@@ -592,6 +644,7 @@ export async function runBlogAgent(trigger: string): Promise<AgentResult> {
 const SEED_LINKS: { source: string; type: string; action: string; estDa: number; week: string }[] = [
   { source: "Justdial", type: "Directory (exists)", action: "Update photos, services, link; reply to reviews", estDa: 89, week: "W1" },
   { source: "Venuelook", type: "Marketplace (exists)", action: "Refresh portfolio + get 5 client reviews (3-star now)", estDa: 35, week: "W1" },
+  { source: "Google Business Profile", type: "Own property (exists)", action: "Weekly post + Q&A + photos; request 2-3 reviews/month — maps-pack visibility", estDa: 100, week: "W1" },
   { source: "Sulekha", type: "Directory (new)", action: "Full profile with photos + pricing + website link", estDa: 86, week: "W2" },
   { source: "IndiaMART", type: "Directory (new)", action: "Business profile under event services", estDa: 89, week: "W2" },
   { source: "TradeIndia", type: "Directory (new)", action: "Verified supplier profile", estDa: 78, week: "W3" },
@@ -602,18 +655,27 @@ const SEED_LINKS: { source: string; type: string; action: string; estDa: number;
   { source: "EventJini", type: "Event platform (new)", action: "Performer listing", estDa: 40, week: "W5" },
   { source: "AliveExperiences", type: "Booking agency (new)", action: "Verified artist listing", estDa: 30, week: "W6" },
   { source: "GetReal.buzz", type: "Artist platform (new)", action: "Performer profile", estDa: 35, week: "W6" },
+  { source: "ShaadiSaga", type: "Wedding marketplace (new)", action: "Vendor listing under wedding entertainment — strong bridal traffic", estDa: 46, week: "W7" },
+  { source: "Weddingz.in", type: "Wedding marketplace (new)", action: "Vendor profile with showreel link", estDa: 42, week: "W7" },
   { source: "Guest posts (wedding/event blogs)", type: "Outreach ×5", action: "Personalized pitches → 2-3 published by W7-8", estDa: 30, week: "W5-8" },
   { source: "Local press (Bhaskar/Patrika Udaipur)", type: "Press ×1", action: "Press note: Udaipur magician's IBM international honour", estDa: 80, week: "W7" },
+  { source: "Event manager associations (EMA India chapters)", type: "Partnership ×3", action: "Vendor-list pitches to planners who book entertainment repeatedly", estDa: 45, week: "W9" },
   { source: "'Top 10 magicians India' listicles", type: "Listicle outreach ×3", action: "Contact authors with credentials pack", estDa: 40, week: "W11" },
+  { source: "HARO / Qwoted / Featured.com", type: "Journalist source ×2", action: "Answer event-entertainment queries with the IBM credential — earns editorial links", estDa: 75, week: "W10-12" },
 ];
 
 type Outreach = { to: string; subject: string; body: string };
 
 export async function runRankAgent(): Promise<AgentResult> {
-  // 1. seed the pipeline on first run
-  const count = await db.backlinkTask.count();
-  if (count === 0) {
-    await db.backlinkTask.createMany({ data: SEED_LINKS });
+  // 1. seed the pipeline on first run, and top up any NEW sources that
+  //    were added to the playbook after the pipeline was created (keyed
+  //    by source name — existing rows are never touched).
+  const existingSources = new Set(
+    (await db.backlinkTask.findMany({ select: { source: true } })).map((r) => r.source)
+  );
+  const missing = SEED_LINKS.filter((l) => !existingSources.has(l.source));
+  if (missing.length > 0) {
+    await db.backlinkTask.createMany({ data: missing });
   }
 
   // 2. stats (re-computed after drafting so the summary is accurate)
@@ -665,6 +727,173 @@ export async function runRankAgent(): Promise<AgentResult> {
 }
 
 // ════════════════════════════════════════════════════════════════════
+// 5 · MANAGER AGENT — team lead: monitoring + work assignment (read-only)
+// ════════════════════════════════════════════════════════════════════
+export async function runManagerAgent(): Promise<AgentResult> {
+  const findings: Finding[] = [];
+  const assignments: { agentId: string; task: string; why: string }[] = [];
+  const since7d = new Date(Date.now() - 7 * 86400000);
+
+  // 1. TEAM HEALTH — per-agent 7-day runs, success rate, last outcome
+  const team: {
+    agentId: string; runs7d: number; success7d: number; errors7d: number;
+    lastRunAt: Date | null; lastStatus: string | null; staleDays: number | null;
+  }[] = [];
+  for (const meta of AGENTS.filter((a) => a.id !== "manager")) {
+    const runs = await db.agentRun.findMany({
+      where: { agentId: meta.id, startedAt: { gte: since7d } },
+      orderBy: { startedAt: "desc" },
+      select: { status: true, startedAt: true },
+    });
+    const last = await db.agentRun.findFirst({
+      where: { agentId: meta.id },
+      orderBy: { startedAt: "desc" },
+      select: { startedAt: true, status: true },
+    });
+    const runs7d = runs.length;
+    const success7d = runs.filter((r) => r.status === "success").length;
+    const errors7d = runs7d - success7d;
+    const staleDays = last?.startedAt
+      ? Math.floor((Date.now() - last.startedAt.getTime()) / 86400000)
+      : null;
+    team.push({
+      agentId: meta.id,
+      runs7d, success7d, errors7d,
+      lastRunAt: last?.startedAt ?? null,
+      lastStatus: last?.status ?? null,
+      staleDays,
+    });
+    const rate = runs7d > 0 ? Math.round((success7d / runs7d) * 100) : null;
+    findings.push({
+      check: `${meta.name} — 7-day health`,
+      status: errors7d === 0 ? (runs7d > 0 ? "pass" : "warn") : "fail",
+      detail:
+        runs7d === 0
+          ? `No runs in the last 7 days (last: ${last?.startedAt?.toISOString().slice(0, 10) ?? "never"}). Scheduler theek hai? Manual run karein.`
+          : `${runs7d} run(s), ${success7d} success, ${errors7d} error${errors7d === 1 ? "" : "s"}${rate !== null ? ` — ${rate}% success` : ""}. Last: ${last?.status ?? "n/a"} (${staleDays ?? 0}d ago).`,
+      fix: errors7d > 0 ? "Open the agent card — error summary mein exact reason hai. Fix karke manual run karein." : undefined,
+    });
+  }
+
+  // 2. APPROVAL QUEUE — pending proposals (the security gate's backlog)
+  const pendingApprovals = await db.agentApproval.count({ where: { status: "pending" } });
+  const oldestPending = await db.agentApproval.findFirst({
+    where: { status: "pending" },
+    orderBy: { createdAt: "asc" },
+    select: { createdAt: true, title: true },
+  });
+  const oldestAgeHours = oldestPending
+    ? Math.floor((Date.now() - oldestPending.createdAt.getTime()) / 3600000)
+    : null;
+  findings.push({
+    check: "Approval queue (security gate)",
+    status: pendingApprovals === 0 ? "pass" : pendingApprovals <= 3 ? "warn" : "fail",
+    detail:
+      pendingApprovals === 0
+        ? "Queue khaali hai — koi AI proposal pending nahi."
+        : `${pendingApprovals} proposal(s) aapke approval ka intezaar mein${oldestAgeHours !== null ? `, sabse purana ${oldestAgeHours}h se pending (${oldestPending?.title?.slice(0, 60)}…)` : ""}.`,
+    fix: pendingApprovals > 0 ? "AI Agents → Approval Queue → Approve ya Reject karein. Blog posts tab tak live nahi honge." : undefined,
+  });
+  if (pendingApprovals > 0) {
+    assignments.push({
+      agentId: "owner",
+      task: `Approval queue saaf karein — ${pendingApprovals} pending proposal(s)`,
+      why: "AI kuch bhi live nahi karega jab tak aap approve nahi karte (security rule). Publish karne ke liye queue khaali hona zaroori nahi, par review jaldi rahe to content SEO momentum bana rahta hai.",
+    });
+  }
+
+  // 3. GROWTH FUNNEL — leads this week vs last week + CTA engagement
+  const since7dStart = new Date();
+  since7dStart.setHours(0, 0, 0, 0);
+  since7dStart.setDate(since7dStart.getDate() - 7);
+  const since14dStart = new Date(since7dStart);
+  since14dStart.setDate(since14dStart.getDate() - 7);
+  const leadsThisWeek = await db.lead.count({ where: { createdAt: { gte: since7dStart } } });
+  const leadsLastWeek = await db.lead.count({
+    where: { createdAt: { gte: since14dStart, lt: since7dStart } },
+  });
+  const ctaThisWeek = await db.ctaClick.count({ where: { createdAt: { gte: since7dStart } } });
+  const whatsappTaps = await db.ctaClick.count({
+    where: { cta: "whatsapp", createdAt: { gte: since7dStart } },
+  });
+  const callTaps = await db.ctaClick.count({
+    where: { cta: "call", createdAt: { gte: since7dStart } },
+  });
+  findings.push({
+    check: "Lead funnel — this week",
+    status: leadsThisWeek > 0 ? "pass" : "warn",
+    detail:
+      `Form leads: ${leadsThisWeek} (pichle hafte: ${leadsLastWeek}). ` +
+      `CTA engagement: ${ctaThisWeek} tap(s) — WhatsApp ${whatsappTaps}, Call ${callTaps}. ` +
+      (leadsThisWeek === 0 && ctaThisWeek === 0
+        ? "Traffic ya conversion dono kam lag rahe hain — SEO agent ka report dekhein aur GBP/directories par kaam jari rakhein."
+        : leadsThisWeek === 0 && ctaThisWeek > 0
+          ? "Log WhatsApp/call par tap kar rahe hain par form nahi bhar rahe — phone check karein, form chhota rakhne ka consider karein."
+          : "Signal theek hai — follow-up within 24h rakhein."),
+    fix: leadsThisWeek === 0 && ctaThisWeek === 0 ? "Rank agent run karein (backlink pipeline) + GSC queries review karein — new content topics wahan se aate hain." : undefined,
+  });
+
+  // 4. WORK ASSIGNMENT — who should run next, with a reason
+  const errorAgents = team.filter((t) => t.errors7d > 0);
+  const staleAgents = team.filter((t) => (t.staleDays ?? 99) >= 3 && t.agentId !== "rank");
+  for (const t of errorAgents) {
+    assignments.push({
+      agentId: t.agentId,
+      task: "Error diagnosis + re-run",
+      why: `${t.errors7d} error run(s) in 7 days — agent card mein summary dekhein, fix karke dobara run karein.`,
+    });
+  }
+  for (const t of staleAgents) {
+    assignments.push({
+      agentId: t.agentId,
+      task: "Manual run (scheduler miss)",
+      why: `Last run ${(t.staleDays ?? "?")} din pehle tha — schedule window miss hua lagta hai.`,
+    });
+  }
+  const plannedBacklinks = await db.backlinkTask.count({ where: { status: "planned" } });
+  if (plannedBacklinks > 0) {
+    assignments.push({
+      agentId: "rank",
+      task: `Next outreach batch (${plannedBacklinks} planned sources)`,
+      why: "DA/PA growth pipeline — Rank agent personalized drafts taiyaar karega, bhejna aap khud karenge (zero spam).",
+    });
+  }
+  assignments.push({
+    agentId: "seo",
+    task: "Post-deploy SEO audit",
+    why: "Har deploy ke baad titles/canonicals/sitemap dobara verify karwana safe rehta hai.",
+  });
+
+  const failing = findings.filter((f) => f.status === "fail").length;
+  const learning = `Run ${new Date().toISOString().slice(0, 10)}: team=${team.length} agents, ${failing} failing check(s), ${pendingApprovals} approval(s) pending, leads 7d=${leadsThisWeek} (prev ${leadsLastWeek}), CTA taps 7d=${ctaThisWeek}. Watch tomorrow: ${
+    pendingApprovals > 0 ? "approval queue turnaround" : failing > 0 ? "error agents" : "lead delta"
+  }.`;
+
+  return {
+    ok: true,
+    summary:
+      `Team report: ${team.filter((t) => t.errors7d === 0 && t.runs7d > 0).length}/${team.length} agents healthy (7d), ${failing} issue(s). ` +
+      `Approval queue: ${pendingApprovals} pending. Leads: ${leadsThisWeek} this week (prev ${leadsLastWeek}) + ${ctaThisWeek} CTA tap(s). ` +
+      `${assignments.length} work assignment(s) ready — niche diye gaye hain.`,
+    findings,
+    details: {
+      team: team.map((t) => ({
+        agentId: t.agentId,
+        runs7d: t.runs7d,
+        success7d: t.success7d,
+        errors7d: t.errors7d,
+        lastStatus: t.lastStatus,
+        staleDays: t.staleDays,
+      })),
+      assignments,
+      funnel: { leadsThisWeek, leadsLastWeek, ctaThisWeek, whatsappTaps, callTaps },
+      pendingApprovals,
+    },
+    learning,
+  };
+}
+
+// ════════════════════════════════════════════════════════════════════
 // Dispatcher
 // ════════════════════════════════════════════════════════════════════
 export async function runTask(agentId: AgentId, trigger: string): Promise<AgentResult> {
@@ -677,6 +906,8 @@ export async function runTask(agentId: AgentId, trigger: string): Promise<AgentR
       return runBlogAgent(trigger);
     case "rank":
       return runRankAgent();
+    case "manager":
+      return runManagerAgent();
   }
 }
 
