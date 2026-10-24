@@ -2,74 +2,78 @@
 # ─────────────────────────────────────────────────────────────────────
 # set-scheduler-key.sh — activate the production agent scheduler
 #
-# Usage:  ./scripts/set-scheduler-key.sh <VERCEL_TOKEN>
+# Usage:  VERCEL_TOKEN=vcp_xxx ./scripts/set-scheduler-key.sh
+#   (token also accepted as $1 — never written to disk)
 #
-# What it does (needs a Vercel API token with project edit scope):
-#   1. Reads AGENT_SCHEDULER_KEY from .env (generates one if missing)
-#   2. Sets AGENT_SCHEDULER_KEY + CRON_SECRET on the Vercel project
-#      (production environment) via the Vercel API
-#   3. Triggers a redeploy so the functions pick up the new env
-#   4. Verifies the live cron endpoint accepts the key
+# What it does:
+#   1. Verifies the Vercel API token
+#   2. Reads AGENT_SCHEDULER_KEY from .env (generates if missing)
+#   3. Replaces AGENT_SCHEDULER_KEY + CRON_SECRET on the Vercel project
+#      (any existing values are deleted first, by ID)
+#   4. Lists final state + registered cron jobs
 #
-# The token is used only for this API session — never written to disk.
+# Redeploy + live verification are handled separately (git push),
+# because env vars only take effect on NEW deployments.
 # ─────────────────────────────────────────────────────────────────────
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-TOKEN="${1:?Usage: ./scripts/set-scheduler-key.sh <VERCEL_TOKEN>}"
-TEAM="${VERCEL_TEAM:-}"
-PID="${VERCEL_PROJECT_ID:?Set VERCEL_PROJECT_ID (or export it) in your shell}"
-API="https://api.vercel.com/v10/projects/$PID/env"
-[ -n "$TEAM" ] && API="$API?teamId=$TEAM" || true
+TOKEN="${1:-${VERCEL_TOKEN:-}}"
+[ -n "$TOKEN" ] || { echo "Usage: VERCEL_TOKEN=<token> $0"; exit 1; }
+TEAM="${VERCEL_TEAM:-team_ndEM5sNbP7WtAIkKmtduOcAQ}"
+PID="${VERCEL_PROJECT_ID:-prj_vbsWZXXVtYAnXlClNlwwWcBb0NRi}"
+AUTH="Authorization: Bearer $TOKEN"
+Q="teamId=$TEAM"
 
-# 1. Key: reuse the local one, or generate a fresh 256-bit key
+echo "→ 1/4 Verifying token ..."
+WHO=$(curl -s -H "$AUTH" https://api.vercel.com/v2/user | python3 -c "import json,sys;print(json.load(sys.stdin).get('user',{}).get('username',''))" 2>/dev/null || true)
+[ -n "$WHO" ] || { echo "  ✗ token invalid"; exit 1; }
+echo "  ✓ token OK (user: $WHO)"
+
+echo "→ 2/4 Reading key from .env ..."
 KEY="$(grep -s '^AGENT_SCHEDULER_KEY=' .env | cut -d= -f2 || true)"
 if [ -z "$KEY" ]; then
   KEY="$(openssl rand -hex 32)"
   printf '\nAGENT_SCHEDULER_KEY=%s\n' "$KEY" >> .env
-  echo "Generated a new key and saved it to .env"
-fi
-echo "Using key from .env (${#KEY} chars)"
-
-# 2. Set both env vars on the Vercel project (production)
-set_env() {
-  local key="$1" value="$2"
-  local qs=""
-  [ -n "$TEAM" ] && qs="?teamId=$TEAM" || true
-  # delete existing (ignore error if absent), then create
-  curl -s -X DELETE \
-    "https://api.vercel.com/v9/projects/$PID/env/$key$qs" \
-    -H "Authorization: Bearer $TOKEN" > /dev/null || true
-  curl -s -X POST "https://api.vercel.com/v10/projects/$PID/env$qs" \
-    -H "Authorization: Bearer $TOKEN" \
-    -H "Content-Type: application/json" \
-    -d "{\"key\":\"$key\",\"value\":\"$value\",\"type\":\"encrypted\",\"target\":[\"production\"]}" \
-    | python3 -c "import json,sys;d=json.load(sys.stdin);print('  set', d.get('key') or d)"
-}
-
-echo "Setting env vars on Vercel project $PID ..."
-set_env "AGENT_SCHEDULER_KEY" "$KEY"
-set_env "CRON_SECRET" "$KEY"
-
-# 3. Redeploy so serverless functions see the new env vars
-echo "Triggering redeploy ..."
-DEPLOY_ID="$(curl -s -X POST "https://api.vercel.com/v13/deployments$([ -n "$TEAM" ] && echo "?teamId=$TEAM")" \
-  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d "{\"name\":\"$(basename "$PWD")\",\"target\":\"production\"}" \
-  | python3 -c "import json,sys;print(json.load(sys.stdin).get('id',''))")"
-echo "  deployment: $DEPLOY_ID (watch it in the Vercel dashboard)"
-
-# 4. Verify (waits for the deployment to settle, then tests the endpoint)
-echo "Verifying live endpoint (may take ~2 min) ..."
-sleep 90
-CODE="$(curl -s -o /tmp/sched-check.json -w '%{http_code}' \
-  -H "Authorization: Bearer $KEY" https://jadugarrajtilak.com/api/agents/cron || true)"
-echo "  HTTP $CODE"
-cat /tmp/sched-check.json 2>/dev/null || true; echo
-if [ "$CODE" = "200" ]; then
-  echo "✓ Production scheduler ACTIVE — cron 10:30 & 11:30 IST daily."
+  echo "  generated a new key (${#KEY} chars) and saved to .env"
 else
-  echo "✗ Not 200 yet — if the deploy is still building, retry the curl in a minute:"
-  echo "  curl -H \"Authorization: Bearer \$KEY\" https://jadugarrajtilak.com/api/agents/cron"
+  echo "  ✓ using existing key (${#KEY} chars)"
 fi
-rm -f /tmp/sched-check.json
+
+echo "→ 3/4 Setting AGENT_SCHEDULER_KEY + CRON_SECRET on project ..."
+for NAME in AGENT_SCHEDULER_KEY CRON_SECRET; do
+  # delete every existing occurrence (by ID, any target env)
+  IDS=$(curl -s -H "$AUTH" "https://api.vercel.com/v9/projects/$PID/env?$Q" \
+    | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+for e in d.get('envs',[]):
+    if e['key']=='$NAME': print(e['id'])" 2>/dev/null || true)
+  for ID in $IDS; do
+    curl -s -X DELETE -H "$AUTH" "https://api.vercel.com/v9/projects/$PID/env/$ID?$Q" >/dev/null \
+      && echo "  deleted old $NAME ($ID)" || true
+  done
+  # create fresh (production target — cron only fires in production)
+  RES=$(curl -s -X POST "https://api.vercel.com/v10/projects/$PID/env?$Q" \
+    -H "$AUTH" -H "Content-Type: application/json" \
+    -d "{\"key\":\"$NAME\",\"value\":\"$KEY\",\"type\":\"encrypted\",\"target\":[\"production\"]}")
+  OK=$(echo "$RES" | python3 -c "import json,sys;print(json.load(sys.stdin).get('key','ERROR'))" 2>/dev/null || echo ERROR)
+  echo "  set $NAME → $OK"
+done
+
+echo "→ 4/4 Final state ..."
+curl -s -H "$AUTH" "https://api.vercel.com/v9/projects/$PID/env?$Q" | python3 -c "
+import json,sys
+for e in json.load(sys.stdin).get('envs',[]):
+    print(f\"  {e['key']:28s} target={','.join(e.get('target',[]))}\")"
+echo "  registered cron jobs:"
+curl -s -H "$AUTH" "https://api.vercel.com/v1/projects/$PID/crons?$Q" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+crons=d.get('crons',[])
+if not crons: print('    (none registered yet — will register on next deploy)')
+for c in crons: print(f\"    {c.get('path')}  schedule={c.get('schedule')}  nextRun={c.get('nextRunAt','-')[:19]}\")" 2>/dev/null || true
+
+echo ""
+echo "✓ Env vars set. Now redeploy (git push) so functions pick them up,"
+echo "  then verify: curl -H 'Authorization: Bearer <KEY>' https://jadugarrajtilak.com/api/agents/cron"
