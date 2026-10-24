@@ -33,11 +33,14 @@ export async function POST(req: NextRequest) {
 }
 
 export function isSchedulerRequest(req: NextRequest): boolean {
-  // AGENT_SCHEDULER_KEY primary; CRON_SECRET fallback (single-var activation)
-  const key = process.env.AGENT_SCHEDULER_KEY || process.env.CRON_SECRET;
-  if (!key) return false;
+  // Accepts AGENT_SCHEDULER_KEY or CRON_SECRET (either value, header or Bearer)
+  const keys = [process.env.AGENT_SCHEDULER_KEY, process.env.CRON_SECRET].filter(
+    (k): k is string => Boolean(k)
+  );
+  if (!keys.length) return false;
   const header = req.headers.get("x-scheduler-key");
-  if (header && header === key) return true;
   const auth = req.headers.get("authorization");
-  return Boolean(auth && auth === `Bearer ${key}`);
+  const bearer = auth?.replace(/^Bearer\s+/i, "");
+  const presented = [header, bearer].filter(Boolean) as string[];
+  return presented.some((p) => keys.includes(p));
 }

@@ -11,18 +11,28 @@ export const maxDuration = 60;
 // Fired by Vercel Cron (Authorization: Bearer CRON_SECRET) and by the
 // workspace mini-service (x-scheduler-key). Decides which agents are due
 // (IST schedule) and runs them sequentially within the time budget.
-// NOTE: AGENT_SCHEDULER_KEY is the primary key; CRON_SECRET is accepted as a
-// fallback so owners can activate the Vercel cron by setting just ONE env
-// var in the dashboard (Vercel auto-sends "Authorization: Bearer $CRON_SECRET").
-async function handle(req: NextRequest) {
-  const key = process.env.AGENT_SCHEDULER_KEY || process.env.CRON_SECRET;
-  if (!key) {
-    return NextResponse.json({ ok: false, error: "Scheduler not configured (set AGENT_SCHEDULER_KEY or CRON_SECRET)" }, { status: 503 });
-  }
+// AUTH: a presented credential (x-scheduler-key value OR Bearer token) is
+// accepted if it equals AGENT_SCHEDULER_KEY OR CRON_SECRET. This covers every
+// owner setup: only AGENT_SCHEDULER_KEY set, only CRON_SECRET set (Vercel
+// auto-sends "Authorization: Bearer $CRON_SECRET" on cron invocations), or
+// both set to different values.
+function isSchedulerAuthed(req: NextRequest): boolean {
+  const keys = [process.env.AGENT_SCHEDULER_KEY, process.env.CRON_SECRET].filter(
+    (k): k is string => Boolean(k)
+  );
+  if (!keys.length) return false;
   const header = req.headers.get("x-scheduler-key");
   const auth = req.headers.get("authorization");
-  const authorized = (header && header === key) || (auth && auth === `Bearer ${key}`);
-  if (!authorized) {
+  const bearer = auth?.replace(/^Bearer\s+/i, "");
+  const presented = [header, bearer].filter(Boolean) as string[];
+  return presented.some((p) => keys.includes(p));
+}
+
+async function handle(req: NextRequest) {
+  if (!process.env.AGENT_SCHEDULER_KEY && !process.env.CRON_SECRET) {
+    return NextResponse.json({ ok: false, error: "Scheduler not configured (set AGENT_SCHEDULER_KEY or CRON_SECRET)" }, { status: 503 });
+  }
+  if (!isSchedulerAuthed(req)) {
     return NextResponse.json({ ok: false, error: "Unauthorized scheduler call" }, { status: 401 });
   }
 
