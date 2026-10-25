@@ -20,7 +20,8 @@ export type PageKey =
   | "faq"
   | "contact"
   | "footer"
-  | "brand";
+  | "brand"
+  | "seo";
 
 export const PAGE_LABELS: Record<PageKey, string> = {
   home: "Home",
@@ -35,6 +36,7 @@ export const PAGE_LABELS: Record<PageKey, string> = {
   contact: "Contact",
   footer: "Footer",
   brand: "Brand & Logo",
+  seo: "SEO & Analytics",
 };
 
 // ── Image slots ────────────────────────────────────────────────
@@ -331,6 +333,12 @@ export const TEXT_LINES: TextLine[] = [
     page: "seo",
     label: "Google Search Console — verification token (google-site-verification content value)",
     value: "",
+  },
+  {
+    key: "seo.adsense.accountId",
+    page: "seo",
+    label: "Google AdSense — Publisher ID (google-adsense-account content value)",
+    value: "ca-pub-8152770887372804",
   },
   // ── Home · hero ──
   { key: "home.hero.eyebrow", page: "home", label: "Hero eyebrow", value: "The Royal Stage · Udaipur · India" },

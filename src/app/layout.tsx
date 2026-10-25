@@ -29,19 +29,26 @@ const SITE_URL = "https://jadugarrajtilak.com";
 // ownership token below.
 const GA_ID = TEXT_LINE_MAP["seo.ga.measurementId"]?.value || "G-103JFH1Z6B";
 
+// Google AdSense publisher ID — ownership/verification meta tag
+// (google-adsense-account). Same DB-override pattern as GA4/GSC: the
+// shipped default can be swapped from Master Admin → Settings without
+// a redeploy.
+const ADSENSE_ID = TEXT_LINE_MAP["seo.adsense.accountId"]?.value || "";
+
 // Server-side lookup of the admin-saved keys. Falls back to the
 // shipped defaults when the DB is unreachable (build-time, offline).
-async function getSeoKeys(): Promise<{ gaId: string; gscToken: string }> {
-  const fallback = { gaId: GA_ID, gscToken: "" };
+async function getSeoKeys(): Promise<{ gaId: string; gscToken: string; adsenseId: string }> {
+  const fallback = { gaId: GA_ID, gscToken: "", adsenseId: ADSENSE_ID };
   try {
     const rows = await db.siteText.findMany({
-      where: { key: { in: ["seo.ga.measurementId", "seo.gsc.verificationToken"] } },
+      where: { key: { in: ["seo.ga.measurementId", "seo.gsc.verificationToken", "seo.adsense.accountId"] } },
       select: { key: true, value: true },
     });
     const map = new Map(rows.map((r) => [r.key, r.value]));
     return {
       gaId: map.get("seo.ga.measurementId") || GA_ID,
       gscToken: (map.get("seo.gsc.verificationToken") || "").trim(),
+      adsenseId: (map.get("seo.adsense.accountId") || ADSENSE_ID).trim(),
     };
   } catch {
     return fallback;
@@ -186,7 +193,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { gaId, gscToken } = await getSeoKeys();
+  const { gaId, gscToken, adsenseId } = await getSeoKeys();
   return (
     <html lang="en-IN" suppressHydrationWarning>
       <head>
@@ -198,6 +205,10 @@ export default async function RootLayout({
             Master Admin → Settings. Renders in raw HTML so Google's
             verifier (which does not execute JS) can read it. */}
         {gscToken ? <meta name="google-site-verification" content={gscToken} /> : null}
+        {/* Google AdSense ownership/verification — publisher ID saved in
+            Master Admin → Settings. Rendered in raw HTML so AdSense's
+            crawler (no JS) can read it. */}
+        {adsenseId ? <meta name="google-adsense-account" content={adsenseId} /> : null}
         {/* Geo meta — local SEO signal for Udaipur, Rajasthan */}
         <meta name="geo.region" content="IN-RJ" />
         <meta name="geo.placename" content="Udaipur" />

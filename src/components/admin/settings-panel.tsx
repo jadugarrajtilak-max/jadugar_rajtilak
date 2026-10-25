@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ShieldCheck, KeyRound, Lock, Mail, Loader2, Database, ServerCog, CheckCircle2, AlertTriangle, LineChart, SearchCheck } from "lucide-react";
+import { ShieldCheck, KeyRound, Lock, Mail, Loader2, Database, ServerCog, CheckCircle2, AlertTriangle, LineChart, SearchCheck, BadgeDollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +29,7 @@ export function SettingsPanel() {
   // ── Analytics & verification keys (saved as text lines) ──
   const [gaId, setGaId] = useState("");
   const [gscToken, setGscToken] = useState("");
+  const [adsenseId, setAdsenseId] = useState("");
   const [keysSaving, setKeysSaving] = useState(false);
   const [keysSaved, setKeysSaved] = useState(false);
 
@@ -36,14 +37,20 @@ export function SettingsPanel() {
   useEffect(() => {
     setGaId(text("seo.ga.measurementId"));
     setGscToken(text("seo.gsc.verificationToken"));
+    setAdsenseId(text("seo.adsense.accountId"));
   }, [text]);
 
   const saveKeys = async (e: React.FormEvent) => {
     e.preventDefault();
     const ga = gaId.trim();
     const gsc = gscToken.trim();
+    const ads = adsenseId.trim();
     if (ga && !/^G-[A-Za-z0-9]{4,}$/.test(ga)) {
       toast({ title: "Invalid GA4 ID", description: "Format looks like G-XXXXXXXXXX — copy it from Analytics → Admin → Data streams.", variant: "destructive" });
+      return;
+    }
+    if (ads && !/^ca-pub-\d{8,}$/.test(ads)) {
+      toast({ title: "Invalid AdSense publisher ID", description: "Format looks like ca-pub-0000000000000000 — copy it from AdSense → Account → Settings.", variant: "destructive" });
       return;
     }
     setKeysSaving(true);
@@ -53,6 +60,7 @@ export function SettingsPanel() {
         updates: [
           { key: "seo.ga.measurementId", value: ga },
           { key: "seo.gsc.verificationToken", value: gsc },
+          { key: "seo.adsense.accountId", value: ads },
         ],
       }),
     });
@@ -60,7 +68,7 @@ export function SettingsPanel() {
     if (res.ok) {
       setKeysSaved(true);
       announceCustomizationChanged();
-      toast({ title: "Keys saved", description: "Analytics + Search Console keys are live on the site now." });
+      toast({ title: "Keys saved", description: "Analytics + Search Console + AdSense keys are live on the site now." });
     } else {
       toast({ title: "Could not save", description: res.error ?? "Try again.", variant: "destructive" });
     }
@@ -114,16 +122,17 @@ export function SettingsPanel() {
             <LineChart className="h-4 w-4 text-[#b8923a]" aria-hidden="true" /> Analytics &amp; Verification
           </p>
           <p className="mt-2 text-sm leading-6 text-[#5b5266]">
-            Google Analytics 4 measurement ID and the Google Search Console ownership token.
-            Saving writes them straight into the live site — GA starts measuring with the new ID
-            immediately, and the GSC token renders as the <code className="rounded bg-[#f3ead3] px-1">google-site-verification</code> meta
-            tag in raw HTML for Search Console to verify ownership.
+            Google Analytics 4 measurement ID, the Google Search Console ownership token and
+            the Google AdSense publisher ID. Saving writes them straight into the live site — GA
+            starts measuring with the new ID immediately, the GSC token renders as the <code className="rounded bg-[#f3ead3] px-1">google-site-verification</code> meta
+            tag in raw HTML for Search Console to verify ownership, and the AdSense ID renders as the <code className="rounded bg-[#f3ead3] px-1">google-adsense-account</code> meta
+            tag for AdSense to verify and serve ads.
           </p>
 
           {keysSaved && (
             <div className="mt-4 flex items-start gap-2 rounded-xl border border-[#3e8e8a]/40 bg-[#3e8e8a]/10 p-4 text-sm text-[#2a1b3d]">
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#3e8e8a]" aria-hidden="true" />
-              <p>Keys saved and live. In Search Console choose “HTML tag” verification, paste the same token, then press Verify.</p>
+              <p>Keys saved and live. In Search Console choose “HTML tag” verification, paste the same token, then press Verify. In AdSense the site verifies automatically via the ca-pub meta tag.</p>
             </div>
           )}
 
@@ -166,9 +175,30 @@ export function SettingsPanel() {
                 copy only the token inside content="…". Paste it here, save, then press Verify in Search Console.
               </p>
             </div>
+            <div>
+              <Label htmlFor="adsense-id" className="text-sm font-semibold text-[#2a1b3d]">
+                AdSense publisher ID <span className="font-normal text-[#5b5266]">(ca-pub-XXXXXXXXXXXXXXXX)</span>
+              </Label>
+              <div className="relative mt-1.5">
+                <BadgeDollarSign className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#b8923a]" aria-hidden="true" />
+                <Input
+                  id="adsense-id"
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={adsenseId}
+                  onChange={(e) => setAdsenseId(e.target.value)}
+                  placeholder="ca-pub-8152770887372804"
+                  className="h-11 rounded-xl border-[#e3d9c6] bg-[#faf6ee] pl-11 font-mono text-sm text-[#2a1b3d]"
+                />
+              </div>
+              <p className="mt-2 text-xs leading-5 text-[#5b5266]">
+                AdSense → Account → Settings → Account information. The ID renders site-wide as the
+                google-adsense-account meta tag — AdSense verification and ads.txt checks read it.
+              </p>
+            </div>
             <Button
               type="submit"
-              disabled={keysSaving || (gaId.trim() === text("seo.ga.measurementId") && gscToken.trim() === text("seo.gsc.verificationToken"))}
+              disabled={keysSaving || (gaId.trim() === text("seo.ga.measurementId") && gscToken.trim() === text("seo.gsc.verificationToken") && adsenseId.trim() === text("seo.adsense.accountId"))}
               className="h-11 w-full rounded-xl bg-[#b3263e] font-semibold hover:bg-[#c2314c]"
             >
               {keysSaving ? (
