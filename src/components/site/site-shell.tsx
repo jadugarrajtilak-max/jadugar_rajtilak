@@ -21,6 +21,11 @@ import {
   VideoReel,
 } from "@/components/home/sections";
 import { VIEW_META } from "@/lib/content";
+import type { InitialPost } from "@/lib/post-types";
+// Static import (not next/dynamic): the Udaipur money page is the highest
+// organic-value URL on the site — it must ship fully formed in the raw
+// first-byte HTML, with no streamed-chunk fallback in between.
+import { UdaipurLandingView } from "@/components/views/udaipur-landing";
 
 const SITE_URL = "https://jadugarrajtilak.com";
 
@@ -72,11 +77,38 @@ const AdminConsole = dynamic(() => import("@/components/admin/admin-console").th
 // by React itself, which survives hydration (manual document.title
 // writes get reverted by the hydration commit). Real path URLs
 // (/about, /services, …) come from the rewrites in next.config.ts.
-function RouteSeoTags({ route, ogImage }: { route: RouteId; ogImage: string }) {
-  const meta = VIEW_META[route] ?? VIEW_META.home;
-  const canonicalPath = routeToPath(route);
+//
+// SEO fix (2026-10-28): /blog/<slug> deep links now stamp the POST's
+// own metaTitle/metaDescription, a self-referencing canonical and a
+// BlogPosting JSON-LD block. Previously every post inherited the blog
+// index's title/description and canonicalised to /blog — Google read
+// all ~25 posts as duplicates of the index and ranked none of them.
+function RouteSeoTags({ route, ogImage, post }: { route: RouteId; ogImage: string; post?: InitialPost | null }) {
+  const isPost = route === "blog" && !!post;
+  const meta = isPost
+    ? {
+        title: post!.metaTitle || post!.title,
+        description: post!.metaDescription || post!.excerpt,
+      }
+    : VIEW_META[route] ?? VIEW_META.home;
+  const canonicalPath = isPost ? `/blog/${post!.slug}` : routeToPath(route);
   const url = `${SITE_URL}${canonicalPath === "/" ? "/" : canonicalPath}`;
   const fullOg = `${SITE_URL}${ogImage}`;
+
+  const blogLd = isPost
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: (post!.metaTitle || post!.title).slice(0, 110),
+        author: { "@type": "Person", name: post!.author || "Jadugar Rajtilak", url: `${SITE_URL}/about` },
+        publisher: { "@id": `${SITE_URL}/#business` },
+        datePublished: post!.publishedISO,
+        dateModified: post!.updatedISO,
+        ...(post!.featuredImage ? { image: `${SITE_URL}${post!.featuredImage}` } : {}),
+        mainEntityOfPage: url,
+        description: meta.description,
+      }
+    : null;
 
   return (
     <>
@@ -87,18 +119,31 @@ function RouteSeoTags({ route, ogImage }: { route: RouteId; ogImage: string }) {
       <meta property="og:description" content={meta.description} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={fullOg} />
-      <meta property="og:type" content="website" />
+      <meta property="og:type" content={isPost ? "article" : "website"} />
       <meta property="og:site_name" content="Jadugar Rajtilak" />
       <meta property="og:locale" content="en_IN" />
+      {isPost ? <meta property="article:published_time" content={post!.publishedISO} /> : null}
+      {isPost ? <meta property="article:modified_time" content={post!.updatedISO} /> : null}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={meta.title} />
       <meta name="twitter:description" content={meta.description} />
       <meta name="twitter:image" content={fullOg} />
+      {blogLd ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogLd) }} />
+      ) : null}
     </>
   );
 }
 
-function Site({ initialRoute, initialBlogSlug }: { initialRoute: RouteId; initialBlogSlug: string | null }) {
+function Site({
+  initialRoute,
+  initialBlogSlug,
+  initialPost,
+}: {
+  initialRoute: RouteId;
+  initialBlogSlug: string | null;
+  initialPost?: InitialPost | null;
+}) {
   const { route, blogSlug, navigate } = useSiteRouter({
     route: initialRoute,
     blogSlug: initialBlogSlug,
@@ -114,7 +159,7 @@ function Site({ initialRoute, initialBlogSlug }: { initialRoute: RouteId; initia
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <RouteSeoTags route={route} ogImage={ogImage} />
+      <RouteSeoTags route={route} ogImage={ogImage} post={route === initialRoute ? initialPost : null} />
       {route !== "admin" && <Navbar route={route} navigate={navigate} />}
 
       <main className="flex-1">
@@ -140,11 +185,12 @@ function Site({ initialRoute, initialBlogSlug }: { initialRoute: RouteId; initia
         {route === "gallery" && <GalleryView navigate={navigate} />}
         {route === "testimonials" && <TestimonialsView navigate={navigate} />}
         {route === "booking" && <BookingWizard />}
-        {route === "blog" && <BlogView navigate={navigate} initialSlug={blogSlug} />}
+        {route === "blog" && <BlogView navigate={navigate} initialSlug={blogSlug} initialPost={initialPost} />}
         {route === "faq" && <FaqView navigate={navigate} />}
         {route === "contact" && <ContactView navigate={navigate} />}
         {route === "legal" && <LegalView />}
         {route === "admin" && <AdminConsole navigate={navigate} />}
+        {route === "udaipur" && <UdaipurLandingView navigate={navigate} />}
       </main>
 
       {route !== "admin" && <Footer navigate={navigate} />}
@@ -160,13 +206,15 @@ function Site({ initialRoute, initialBlogSlug }: { initialRoute: RouteId; initia
 export function SiteShell({
   initialRoute,
   initialBlogSlug,
+  initialPost,
 }: {
   initialRoute: RouteId;
   initialBlogSlug: string | null;
+  initialPost?: InitialPost | null;
 }) {
   return (
     <SiteCustomizationProvider>
-      <Site initialRoute={initialRoute} initialBlogSlug={initialBlogSlug} />
+      <Site initialRoute={initialRoute} initialBlogSlug={initialBlogSlug} initialPost={initialPost} />
     </SiteCustomizationProvider>
   );
 }

@@ -342,8 +342,11 @@ export const TEXT_LINES: TextLine[] = [
   },
   // ── Home · hero ──
   { key: "home.hero.eyebrow", page: "home", label: "Hero eyebrow", value: "The Royal Stage · Udaipur · India" },
-  { key: "home.hero.h1a", page: "home", label: "Headline line 1", value: "Where Reality" },
-  { key: "home.hero.h1b", page: "home", label: "Headline line 2 (gold italic)", value: "Bends." },
+  // SEO fix (audit O-03): the H1 now leads with the primary keyword
+  // ("Magician in Udaipur") — the poetic tagline stays as the gold-italic
+  // second line so the brand voice survives inside a keyword-rich H1.
+  { key: "home.hero.h1a", page: "home", label: "Headline line 1 (keyword H1)", value: "Magician in Udaipur & Across India" },
+  { key: "home.hero.h1b", page: "home", label: "Headline line 2 (gold italic tagline)", value: "— Where Reality Bends." },
   {
     key: "home.hero.sub",
     page: "home",
@@ -576,7 +579,7 @@ export const TEXT_LINES: TextLine[] = [
   { key: "about.cta", page: "about", label: "About CTA button", value: "Book a Show" },
   // ── Services (Shows) ──
   { key: "services.hero.eyebrow", page: "services", label: "Shows eyebrow", value: "Shows & Services" },
-  { key: "services.hero.title", page: "services", label: "Shows heading", value: "Six stages, one standard" },
+  { key: "services.hero.title", page: "services", label: "Shows heading (H1)", value: "Wedding, Corporate & Birthday Magic Shows" },
   {
     key: "services.hero.sub",
     page: "services",
@@ -671,7 +674,7 @@ export const TEXT_LINES: TextLine[] = [
       "Three tiers with stated inclusions. Pricing is shared as a written quote after your enquiry — travel and staging are never hidden line items.",
   },
   { key: "packages.signature.name", page: "packages", label: "Signature tier — name", value: "Signature" },
-  { key: "packages.signature.range", page: "packages", label: "Signature tier — price line", value: "Price on request" },
+  { key: "packages.signature.range", page: "packages", label: "Signature tier — price line", value: "From ₹25,000" },
   {
     key: "packages.signature.blurb",
     page: "packages",
@@ -688,7 +691,7 @@ export const TEXT_LINES: TextLine[] = [
       "30–40 min stage magic show\nSound system & stage lights\n2 crowd-participation routines\nTravel within your city included",
   },
   { key: "packages.royal.name", page: "packages", label: "Royal tier — name", value: "Royal" },
-  { key: "packages.royal.range", page: "packages", label: "Royal tier — price line", value: "Price on request" },
+  { key: "packages.royal.range", page: "packages", label: "Royal tier — price line", value: "From ₹75,000" },
   {
     key: "packages.royal.blurb",
     page: "packages",
@@ -705,7 +708,7 @@ export const TEXT_LINES: TextLine[] = [
       "60 min headline stage show\n90 min roaming close-up magic\nCustom routine woven to your occasion\nProfessional light & sound rider\nDedicated coordinator on call",
   },
   { key: "packages.grand.name", page: "packages", label: "Grand tier — name", value: "Grand" },
-  { key: "packages.grand.range", page: "packages", label: "Grand tier — price line", value: "Price on request" },
+  { key: "packages.grand.range", page: "packages", label: "Grand tier — price line", value: "From ₹1,50,000" },
   {
     key: "packages.grand.blurb",
     page: "packages",
@@ -888,7 +891,7 @@ export const TEXT_LINES: TextLine[] = [
   { key: "contact.channelStudioNote", page: "contact", label: "Channel — studio note", value: "Visits by appointment · touring pan-India" },
   // ── Blog ──
   { key: "blog.hero.eyebrow", page: "blog", label: "Blog eyebrow", value: "The Blog" },
-  { key: "blog.hero.title", page: "blog", label: "Blog heading", value: "Event planning, honestly written" },
+  { key: "blog.hero.title", page: "blog", label: "Blog heading (H1)", value: "Magician Booking Guides & Event Ideas" },
   {
     key: "blog.hero.sub",
     page: "blog",

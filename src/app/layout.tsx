@@ -70,28 +70,8 @@ export const metadata: Metadata = {
   // description + canonical "/" (duplicate-content signal — the exact bug
   // fixed 2026-10-24). og/twitter for non-JS scrapers (WhatsApp previews)
   // are also rendered per-route by RouteSeoTags, which SSRs into raw HTML.
-  keywords: [
-    "Jadugar Rajtilak",
-    "best magician in India",
-    "magician in India",
-    "magician for wedding India",
-    "wedding magician India",
-    "corporate magician India",
-    "hire magician India",
-    "book magician online India",
-    "stage magician India",
-    "birthday party magician India",
-    "kids birthday magician",
-    "mentalist India",
-    "magic show price in India",
-    "close-up magician India",
-    "college fest magician",
-    "magician in Udaipur",
-    "magician Udaipur Rajasthan",
-    "wedding magician Rajasthan",
-    "event entertainment Udaipur",
-    "best magician in Rajasthan",
-  ],
+  // The obsolete meta-keywords tag was removed 2026-10-28 (audit T-13):
+  // Google ignores it and it only handed competitors the keyword list.
   authors: [{ name: "Jadugar Rajtilak" }],
   creator: "Jadugar Rajtilak",
   publisher: "Jadugar Rajtilak",

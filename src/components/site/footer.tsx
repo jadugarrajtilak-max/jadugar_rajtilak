@@ -165,9 +165,10 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
             >
               Sitemap
             </a>
-            <button onClick={() => navigate("admin")} className="transition-colors hover:text-[var(--jr-gold)]">
-              Admin
-            </button>
+            {/* Admin link removed from the public footer (SEO audit T-08,
+                2026-10-28): the console stays reachable at /admin directly,
+                is disallowed in robots.txt and now carries X-Robots-Tag
+                noindex — no need to advertise it to crawlers or visitors. */}
           </div>
         </div>
       </div>

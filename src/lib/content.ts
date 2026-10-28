@@ -16,7 +16,8 @@ export type RouteId =
   | "faq"
   | "contact"
   | "legal"
-  | "admin";
+  | "admin"
+  | "udaipur";
 
 export const NAV_ITEMS: { id: RouteId; label: string }[] = [
   { id: "home", label: "Home" },
@@ -724,56 +725,71 @@ export const SITE = {
   justdialReviewCount: 195,
 } as const;
 
-// Per-view metadata (SPA titles — applied client-side per route)
+// Per-view metadata (SPA titles — applied client-side per route).
+// SEO fix (2026-10-28): titles ≤60 chars, keyword first, brand last;
+// descriptions ≤155 chars with a CTA. The old set led with the brand
+// and overran Google's display limits (home title was 88 chars).
 export const VIEW_META: Record<RouteId, { title: string; description: string }> = {
   home: {
-    title: "Jadugar Rajtilak — Magician in Udaipur & Across India | Wedding & Corporate Magic Shows",
+    title: "Magician in Udaipur & India | Jadugar Rajtilak",
     description:
-      "Book Jadugar Rajtilak — Udaipur's 4.8★ rated stage magician (181 Google reviews). Royal stage magic for weddings, corporate shows, birthdays and college fests across India. Check your date live.",
+      "Hire Jadugar Rajtilak – Udaipur's 4.8★ magician (181 Google reviews). Stage & close-up magic for weddings, corporate & birthday shows. Check your date.",
   },
   about: {
-    title: "About Jadugar Rajtilak — Stage Magician & Mentalist from Udaipur, India",
+    title: "About Jadugar Rajtilak | Udaipur Magician, 12+ Years",
     description:
-      "The story behind the vermilion mark — 12+ years on stage, 500+ shows across 40+ Indian cities. Meet Jadugar Rajtilak, Udaipur's royal stage magician.",
+      "Meet Jadugar Rajtilak: 12+ years on stage, 500+ shows, 40+ cities and an international magic competition award. Read his story.",
   },
   services: {
-    title: "Magic Show Services in India — Wedding, Corporate, Birthday & Fest Magician",
+    title: "Wedding, Corporate & Birthday Magic Shows | Rajtilak",
     description:
-      "Six calibrated show formats for hosts across India: wedding sangeet magic, corporate annual-day acts, age-safe birthday shows, college fest illusions, private salon evenings and virtual sets.",
+      "Six magic show formats by Jadugar Rajtilak: wedding sangeet, corporate annual day, kids birthday, college fest, private & virtual. Get a quote in 24 hrs.",
   },
   packages: {
-    title: "Magic Show Packages & Prices in India — Signature, Royal & Grand",
-    description: "Three honest tiers with stated inclusions for events across India — Signature, Royal and Grand. Every enquiry receives a written quote; travel and staging stated up front.",
+    title: "Magic Show Packages & Prices in India | Rajtilak",
+    description:
+      "Compare Signature, Royal and Grand magic show packages with inclusions and starting prices. Written quote within 24 hours.",
   },
   gallery: {
-    title: "Gallery — Live Magic Show Photographs from Across India | Jadugar Rajtilak",
-    description: "Frames from real shows: stage illusions, close-up magic, birthday finales and institutional galas across India.",
+    title: "Magic Show Photos & Videos | Jadugar Rajtilak",
+    description:
+      "See photos and video clips of Jadugar Rajtilak performing at weddings, corporate events, college fests and birthdays.",
   },
   testimonials: {
-    title: "Reviews — 4.8★ from 181 Google Reviews | Jadugar Rajtilak",
-    description: "What hosts say after the show — weddings, corporate annual days and birthday parties across India.",
+    title: "Reviews of Jadugar Rajtilak | 4.8★ Udaipur Magician",
+    description:
+      "Read verified client reviews of Jadugar Rajtilak from Google and Justdial – weddings, corporate shows and birthdays across India.",
   },
   booking: {
-    title: "Book a Magician in India — Check Date & Get a Written Quote",
-    description: "Live date availability, a written quote within 24 hours and a 72-hour soft-hold on your evening — for weddings, corporate events and birthdays across India.",
+    title: "Book a Magician in Udaipur | Check Your Date",
+    description:
+      "Enquire in 60 seconds: share date, city and event type and receive a written quote and 72-hour soft hold.",
   },
   blog: {
-    title: "Blog — Event Entertainment Guides & Magician Booking Tips | Jadugar Rajtilak",
-    description: "SEO-friendly guides on booking magicians in India: wedding entertainment ideas, honest magic show pricing, corporate event checklists, sangeet & mehendi ideas and more.",
+    title: "Magician Booking Guides & Event Ideas | Jadugar Rajtilak",
+    description:
+      "Practical guides on hiring a magician in India: costs, wedding & corporate entertainment ideas, birthday run-sheets and booking checklists.",
   },
   faq: {
-    title: "Magician Booking FAQ — Pricing, Travel, Tech Riders & Safety in India",
-    description: "Every question hosts ask before booking a magic show in India — answered plainly.",
+    title: "Magician Booking FAQs: Price, Travel & Setup",
+    description:
+      "Answers on magic show cost, travel, show length, sound/light setup, advance payment and cancellation for Jadugar Rajtilak bookings.",
   },
   contact: {
-    title: "Contact — Call +91 97994 68758 | Udaipur, Rajasthan",
-    description: "Call, WhatsApp or write to the studio in Udaipur. Serious enquiries get a written reply within one working day.",
+    title: "Contact Jadugar Rajtilak | Check Date & Get Quote",
+    description:
+      "Call, WhatsApp or email Jadugar Rajtilak to check date availability and get a written quote within 24 hours.",
   },
   legal: {
     title: "Legal — Privacy, Terms & Cancellation",
     description: "Privacy policy, terms of service and cancellation policy for Jadugar Rajtilak bookings.",
   },
   admin: { title: "Master Admin", description: "Control room" },
+  udaipur: {
+    title: "Magician in Udaipur | Wedding & Birthday Shows",
+    description:
+      "Looking for a magician in Udaipur? Jadugar Rajtilak – 4.8★ on Google – performs at weddings, hotels, corporate events & birthdays. Check your date.",
+  },
 };
 
 // Trust bar — rating figure verified on the live Google Business Profile.

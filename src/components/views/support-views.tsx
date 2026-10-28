@@ -11,6 +11,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Reveal, SectionHeading } from "@/components/home/sections";
 import { BLOG_POSTS, FAQS, FAQ_CATS, SITE, type RouteId } from "@/lib/content";
+import type { InitialPost } from "@/lib/post-types";
 import { trackEvent, trackPageView, trackCta } from "@/lib/router";
 import { useSiteCustomization } from "@/components/site/customization-provider";
 import { useToast } from "@/hooks/use-toast";
@@ -648,11 +649,26 @@ type ClientPost = {
   author?: string;
 };
 
-export function BlogView({ navigate, initialSlug }: { navigate: (r: RouteId) => void; initialSlug?: string | null }) {
+export function BlogView({
+  navigate,
+  initialSlug,
+  initialPost,
+}: {
+  navigate: (r: RouteId) => void;
+  initialSlug?: string | null;
+  /** server-loaded post for /blog/<slug> deep links — SSRs the article
+   *  straight into the raw HTML so crawlers index real content and
+   *  RouteSeoTags stamps the post's own title/canonical */
+  initialPost?: InitialPost | null;
+}) {
   const { text } = useSiteCustomization();
   const [cat, setCat] = useState("All");
-  const [readingSlug, setReadingSlug] = useState<string | null>(null);
-  const [apiPosts, setApiPosts] = useState<ClientPost[] | null>(null);
+  // Deep link: the Reading Room starts OPEN (server-rendered), not
+  // opened by a client effect — the article body ships in the HTML.
+  const [readingSlug, setReadingSlug] = useState<string | null>(initialSlug ?? null);
+  const [apiPosts, setApiPosts] = useState<ClientPost[] | null>(
+    initialPost ? [initialPost as unknown as ClientPost] : null
+  );
 
   // Published posts live in the CMS (Neon Postgres). The static array is
   // only a first-paint fallback — the moment /api.blog answers, the DB

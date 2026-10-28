@@ -33,8 +33,34 @@ const nextConfig: NextConfig = {
       "/reviews",
       "/journal",
       "/journal/:slug",
+      // Local money pages (SEO audit A-02) — exact keyword URLs.
+      "/magician-in-udaipur",
     ];
     return pages.map((source) => ({ source, destination: "/" }));
+  },
+  // SEO cleanup (audit N-02 / T-06, 2026-10-28): the two near-duplicate
+  // “Magician in Udaipur booking guide” posts consolidated into the new
+  // /magician-in-udaipur money page, and the auto-generated post slug
+  // renamed to a keyword slug in the CMS — permanent redirects keep
+  // every existing link and Google's index flowing to the right page.
+  async redirects() {
+    return [
+      {
+        source: "/blog/magician-in-udaipur-2026-booking-guide",
+        destination: "/magician-in-udaipur",
+        permanent: true,
+      },
+      {
+        source: "/blog/magician-in-udaipur-the-complete-2026-booking-guide",
+        destination: "/magician-in-udaipur",
+        permanent: true,
+      },
+      {
+        source: "/blog/post-20261024",
+        destination: "/blog/jadugar-udaipur-shaadi-magic-show-guide",
+        permanent: true,
+      },
+    ];
   },
   // Technical SEO + hardened security headers (doc 11)
   async headers() {

@@ -11,7 +11,14 @@ import { NextResponse, type NextRequest } from "next/server";
 export function middleware(req: NextRequest) {
   const headers = new Headers(req.headers);
   headers.set("x-pathname", req.nextUrl.pathname);
-  return NextResponse.next({ request: { headers } });
+  const res = NextResponse.next({ request: { headers } });
+  // SEO hygiene (audit T-08): the admin console must never enter the
+  // index — robots.txt already disallows it; this belt-and-braces
+  // X-Robots-Tag header covers any crawler that misses robots.txt.
+  if (req.nextUrl.pathname === "/admin" || req.nextUrl.pathname.startsWith("/admin/")) {
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+  return res;
 }
 
 export const config = {

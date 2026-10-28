@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { RouteId } from "./content";
-import { parseRoutePath, routeToPath } from "./routes";
+import { parseRoutePath, routeToPath, VALID, ALIASES } from "./routes";
 
 export { parseRoutePath, routeToPath } from "./routes";
+export type { RouteId } from "./content";
 
 // ── Measurement: GA4 + first-party analytics ─────────────────
 // gtag.js is loaded once in layout.tsx. GA4 only records the initial
