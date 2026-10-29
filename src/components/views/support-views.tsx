@@ -653,6 +653,7 @@ export function BlogView({
   navigate,
   initialSlug,
   initialPost,
+  initialPosts,
 }: {
   navigate: (r: RouteId) => void;
   initialSlug?: string | null;
@@ -660,6 +661,11 @@ export function BlogView({
    *  straight into the raw HTML so crawlers index real content and
    *  RouteSeoTags stamps the post's own title/canonical */
   initialPost?: InitialPost | null;
+  /** server-loaded FULL post list for the /blog index (manager audit
+   *  T-03, 2026-10-29): every published post ships in the raw HTML as a
+   *  real <a href="/blog/<slug>"> card — post discovery no longer depends
+   *  on JS rendering or the client-side /api/blog fetch. */
+  initialPosts?: InitialPost[];
 }) {
   const { text } = useSiteCustomization();
   const [cat, setCat] = useState("All");
@@ -667,7 +673,19 @@ export function BlogView({
   // opened by a client effect — the article body ships in the HTML.
   const [readingSlug, setReadingSlug] = useState<string | null>(initialSlug ?? null);
   const [apiPosts, setApiPosts] = useState<ClientPost[] | null>(
-    initialPost ? [initialPost as unknown as ClientPost] : null
+    initialPost
+      ? [initialPost as unknown as ClientPost]
+      : initialPosts && initialPosts.length > 0
+        ? // InitialPost carries `sections` but not the card `outline`
+          // (the deep-link single post never renders cards). Deriving
+          // outline here keeps the SSR'd listing cards identical to the
+          // /api/blog-mapped ones — without it p.outline.slice would
+          // crash the /blog index on first render.
+          (initialPosts.map((p) => ({
+            ...p,
+            outline: p.sections.map((s) => s.h),
+          })) as unknown as ClientPost[])
+        : null
   );
 
   // Published posts live in the CMS (Neon Postgres). The static array is
@@ -756,12 +774,16 @@ export function BlogView({
 
   const reading = readingSlug ? posts.find((p) => p.slug === readingSlug) ?? null : null;
 
-  // Cards act as buttons that open the Reading Room (keyboard included).
-  const cardKey = (e: React.KeyboardEvent, slug: string) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      openPost(slug);
-    }
+  // SEO fix (manager audit T-03, 2026-10-29): cards are real <a href>
+  // anchors — the post title (inside the card's h2) becomes the anchor
+  // text and crawlers follow every post from the raw HTML. Plain
+  // left-click still opens the SPA Reading Room via pushState; modified
+  // clicks (new tab / window) behave natively. Keyboard access (Enter /
+  // Space) now comes free from the anchor semantics.
+  const cardClick = (e: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    openPost(slug);
   };
 
   const openPost = (slug: string) => {
@@ -809,13 +831,11 @@ export function BlogView({
         {/* ── The featured reading — the desk's current obsession ── */}
         {featuredVisible && featured && (
           <Reveal>
-            <article
-              className="card-cine group relative cursor-pointer overflow-hidden rounded-3xl border border-[var(--jr-gold)]/50 bg-[var(--jr-card)] shadow-[0_35px_70px_-40px_color-mix(in_srgb,var(--jr-gold)_45%,transparent)] transition-transform duration-500 hover:-translate-y-1"
-              tabIndex={0}
-              role="button"
+            <a
+              href={`/blog/${featured.slug}`}
+              onClick={(e) => cardClick(e, featured.slug)}
+              className="card-cine group relative block cursor-pointer overflow-hidden rounded-3xl border border-[var(--jr-gold)]/50 bg-[var(--jr-card)] text-inherit shadow-[0_35px_70px_-40px_color-mix(in_srgb,var(--jr-gold)_45%,transparent)] transition-transform duration-500 hover:-translate-y-1"
               aria-label={`Read the full entry: ${featured.title}`}
-              onClick={() => openPost(featured.slug)}
-              onKeyDown={(e) => cardKey(e, featured.slug)}
             >
               <span className="absolute right-5 top-5 z-10 rounded-full bg-[var(--jr-crimson)] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--jr-ivory)]">
                 On the desk tonight
@@ -875,7 +895,7 @@ export function BlogView({
                   </div>
                 </div>
               </div>
-            </article>
+            </a>
           </Reveal>
         )}
 
@@ -908,13 +928,11 @@ export function BlogView({
         <div className="mt-10 grid gap-6 md:grid-cols-2">
           {rest.map((p, i) => (
             <Reveal key={p.slug} delay={(i % 2) * 0.1}>
-              <article
-                className="card-cine group flex h-full cursor-pointer flex-col rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-card)] p-7 transition-all duration-500 hover:-translate-y-1 hover:border-[var(--jr-gold)]/50"
-                tabIndex={0}
-                role="button"
+              <a
+                href={`/blog/${p.slug}`}
+                onClick={(e) => cardClick(e, p.slug)}
+                className="card-cine group flex h-full cursor-pointer flex-col rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-card)] p-7 text-inherit no-underline transition-all duration-500 hover:-translate-y-1 hover:border-[var(--jr-gold)]/50"
                 aria-label={`Read the full entry: ${p.title}`}
-                onClick={() => openPost(p.slug)}
-                onKeyDown={(e) => cardKey(e, p.slug)}
               >
                 <div className="flex items-center justify-between">
                   <span className="rounded-full border border-[var(--jr-gold)]/40 bg-[var(--jr-sand-light)]/60 px-3.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--jr-gold)]">
@@ -958,7 +976,7 @@ export function BlogView({
                     Read the entry <ArrowRight className="h-4 w-4 transition-transform duration-400 group-hover:translate-x-1" aria-hidden="true" />
                   </span>
                 </div>
-              </article>
+              </a>
             </Reveal>
           ))}
         </div>
@@ -1633,23 +1651,31 @@ export function ContactView({ navigate }: { navigate: (r: RouteId) => void }) {
                 <Clock className="h-4 w-4 text-[var(--jr-gold)]" aria-hidden="true" /> Before you write — quick answers
               </p>
               <ul className="mt-3 divide-y divide-[var(--jr-line)]">
+                {/* SEO fix (manager audit T-14, 2026-10-29): each mini-FAQ
+                    answer expanded to 2–3 sentences for real context, and
+                    the rows are real <a href="/faq"> anchors. */}
                 {[
                   {
                     q: "What does a show cost?",
-                    a: "Transparent Signature / Royal / Grand packages — written quote within 24 hours.",
+                    a: "Pricing follows transparent Signature, Royal and Grand packages, scaled by city, duration and guest count. Every quote lists travel and technical requirements up front, so there are no surprise line items. Share your date to receive a written quote within 24 hours.",
                   },
                   {
                     q: "Is my date available?",
-                    a: "Live availability on the booking page; enquiries place a 72-hour soft-hold.",
+                    a: "The booking page shows live availability for the coming months. Every enquiry places a free 72-hour soft-hold on your date while you decide. Peak-season weekends go first — checking early costs nothing.",
                   },
                   {
                     q: "Do you travel to my city?",
-                    a: "Udaipur home stage, touring pan-India — 40+ cities so far.",
+                    a: "Udaipur is the home stage, and touring is routine — 40+ cities performed so far, including Jaipur, Jodhpur, Ahmedabad, Delhi and Mumbai. Travel and stay are quoted transparently in writing. If your city is new to the map, ask — routing is often possible around existing bookings.",
                   },
                 ].map((f) => (
                   <li key={f.q}>
-                    <button
-                      onClick={() => navigate("faq")}
+                    <a
+                      href="/faq"
+                      onClick={(e) => {
+                        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                        e.preventDefault();
+                        navigate("faq");
+                      }}
                       className="group flex w-full items-center justify-between gap-3 py-2.5 text-left"
                     >
                       <span>
@@ -1657,7 +1683,7 @@ export function ContactView({ navigate }: { navigate: (r: RouteId) => void }) {
                         <span className="mt-0.5 block text-[12.5px] leading-5 text-[var(--jr-ink)]">{f.a}</span>
                       </span>
                       <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[var(--jr-gold)]/60 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
-                    </button>
+                    </a>
                   </li>
                 ))}
               </ul>

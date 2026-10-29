@@ -34,6 +34,12 @@ export function Navbar({
   route: RouteId;
   navigate: (r: RouteId) => void;
 }) {
+  // SEO fix (manager audit T-01a, 2026-10-29): every navigation item is
+  // now a real <a href> anchor — crawlable in the raw HTML (anchor-text
+  // signals, non-JS crawlers, AI answer engines, open-in-new-tab) —
+  // while onClick + preventDefault preserves the client-side SPA
+  // navigation. Before React hydrates, the anchors still work natively
+  // (full page load to the SSR'd route), which is the correct fallback.
   const [scrolled, setScrolled] = useState(false);
   // The mobile menu is also operable BEFORE React hydration finishes:
   // an inline script in layout.tsx toggles data-jr-menu on <html>, and
@@ -88,6 +94,15 @@ export function Navbar({
     navigate(r);
   };
 
+  // Anchor click handler: plain left-click → SPA navigate; modified
+  // clicks (new tab / window) fall through to the browser's default
+  // anchor behaviour. Same for middle-click: no onClick fires at all.
+  const navHref = (e: React.MouseEvent<HTMLAnchorElement>, r: RouteId) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    go(r);
+  };
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${
@@ -100,8 +115,9 @@ export function Navbar({
         className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6"
         aria-label="Main navigation"
       >
-        <button
-          onClick={() => go("home")}
+        <a
+          href="/"
+          onClick={(e) => navHref(e, "home")}
           className="flex items-center gap-3"
           aria-label="Jadugar Rajtilak — home"
         >
@@ -109,13 +125,14 @@ export function Navbar({
           <span className={`font-display text-xl font-semibold tracking-wide ${overHero ? "text-[var(--jr-ivory)]" : "text-[var(--jr-plum)]"}`}>
             {text("nav.brandFirst")} <span className={overHero ? "text-[var(--jr-gold-soft)]" : "text-[var(--jr-gold)]"}>{text("nav.brandLast")}</span>
           </span>
-        </button>
+        </a>
 
         <ul className="hidden items-center gap-1 lg:flex">
           {NAV_ITEMS.map((item) => (
             <li key={item.id}>
-              <button
-                onClick={() => go(item.id)}
+              <a
+                href={routeToPath(item.id)}
+                onClick={(e) => navHref(e, item.id)}
                 aria-current={route === item.id ? "page" : undefined}
                 className={`relative rounded-full px-4 py-2 text-[15px] font-medium transition-colors duration-300 ${
                   route === item.id
@@ -134,19 +151,20 @@ export function Navbar({
                     style={{ background: "linear-gradient(90deg, transparent, var(--jr-gold), transparent)" }}
                   />
                 )}
-              </button>
+              </a>
             </li>
           ))}
         </ul>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => go("booking")}
+          <a
+            href="/booking"
+            onClick={(e) => navHref(e, "booking")}
             className="hidden min-h-11 items-center gap-2 rounded-full bg-[var(--jr-crimson)] px-6 py-2.5 text-sm font-semibold text-[var(--jr-ivory)] shadow-[0_14px_30px_-12px_color-mix(in_srgb,var(--jr-crimson)_65%,transparent)] transition-all duration-500 hover:-translate-y-0.5 hover:bg-[var(--jr-crimson-hover)] sm:inline-flex"
           >
             <CalendarCheck className="h-4 w-4" aria-hidden="true" />
             Check Date
-          </button>
+          </a>
           <button
             onClick={() => setOpen((v) => !v)}
             data-jr-menu-toggle=""
@@ -192,8 +210,9 @@ export function Navbar({
             <ul className="flex flex-col">
               {NAV_ITEMS.map((item, i) => (
                 <li key={item.id} className="border-b border-[var(--jr-sand)]">
-                  <button
-                    onClick={() => go(item.id)}
+                  <a
+                    href={routeToPath(item.id)}
+                    onClick={(e) => navHref(e, item.id)}
                     data-jr-nav={routeToPath(item.id)}
                     className={`flex w-full items-center justify-between py-4 text-left font-display text-2xl font-medium transition-colors ${
                       route === item.id ? "text-[var(--jr-crimson)]" : "text-[var(--jr-plum)]"
@@ -206,18 +225,19 @@ export function Navbar({
                       {navLabel(item.id)}
                     </span>
                     <ArrowRight className="h-4 w-4 text-[var(--jr-gold)]/60" aria-hidden="true" />
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
-            <button
-              onClick={() => go("booking")}
+            <a
+              href="/booking"
+              onClick={(e) => navHref(e, "booking")}
               data-jr-nav={routeToPath("booking")}
               className="mt-8 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--jr-crimson)] px-6 py-3.5 text-sm font-semibold text-[var(--jr-ivory)] shadow-[0_18px_40px_-14px_color-mix(in_srgb,var(--jr-crimson)_65%,transparent)]"
             >
               <CalendarCheck className="h-4 w-4" aria-hidden="true" />
               Check Date Availability
-            </button>
+            </a>
             <p className="mt-6 text-center text-xs text-[var(--jr-ink)]/70">
               Weddings · Corporate · Birthdays · Fests — across India
             </p>

@@ -342,10 +342,12 @@ export const TEXT_LINES: TextLine[] = [
   },
   // ── Home · hero ──
   { key: "home.hero.eyebrow", page: "home", label: "Hero eyebrow", value: "The Royal Stage · Udaipur · India" },
-  // SEO fix (audit O-03): the H1 now leads with the primary keyword
-  // ("Magician in Udaipur") — the poetic tagline stays as the gold-italic
-  // second line so the brand voice survives inside a keyword-rich H1.
-  { key: "home.hero.h1a", page: "home", label: "Headline line 1 (keyword H1)", value: "Magician in Udaipur & Across India" },
+  // SEO fix (manager audit T-05, 2026-10-29): the homepage H1 now leads
+  // with the India-wide commercial intent — 'magician in udaipur' is
+  // owned by the /magician-in-udaipur landing page, so the homepage H1
+  // stops cannibalising the local head term. Same length class as the
+  // previous line, so the hero layout is unaffected.
+  { key: "home.hero.h1a", page: "home", label: "Headline line 1 (keyword H1)", value: "Wedding & Corporate Magician in India" },
   { key: "home.hero.h1b", page: "home", label: "Headline line 2 (gold italic tagline)", value: "— Where Reality Bends." },
   {
     key: "home.hero.sub",

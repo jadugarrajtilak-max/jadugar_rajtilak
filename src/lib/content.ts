@@ -704,6 +704,10 @@ export type LeadStatus = (typeof LEAD_STATUSES)[number]["id"];
 // Cities served — home city first, then touring circuit (doc 6 — unique local proof per city, no doorways)
 export const CITIES = ["Udaipur", "Jaipur", "Jodhpur", "Ahmedabad", "Delhi NCR", "Mumbai"];
 
+// Hindi-language posts — <html lang> switches to hi-IN on these routes
+// (manager audit T-07: a Hindi page must not declare lang="en-IN").
+export const HINDI_POST_SLUGS = ["jadugar-udaipur-shaadi-magic-show-guide"];
+
 // ── Real business identity (verified against the Google Business Profile) ──
 export const SITE = {
   name: "Jadugar Rajtilak",
@@ -717,6 +721,11 @@ export const SITE = {
   googleProfileUrl: "https://www.google.com/search?kgmid=/g/11c1p4hlsk&q=Jadugar+Rajtilak",
   facebookUrl: "https://www.facebook.com/rajtilak.jadugar",
   instagramPostUrl: "https://www.instagram.com/p/DCJ3hBhg8xh/",
+  // SEO fix (manager audit T-09, 2026-10-29): the Instagram PROFILE (not
+  // a single post) + the YouTube channel — both for the footer links and
+  // the JSON-LD sameAs entity consolidation.
+  instagramProfileUrl: "https://www.instagram.com/rajtilakjadugar/",
+  youtubeUrl: "https://www.youtube.com/@jadugarrajtilak2543",
   justdialUrl:
     "https://www.justdial.com/Udaipur-Rajasthan/Jadugar-Rajtilak-Opposite-Hotel-Rajkamal-Bhuwana/9999PX294-X294-180528141553-G5M2_BZDET",
   rating: "4.8",
@@ -731,9 +740,14 @@ export const SITE = {
 // and overran Google's display limits (home title was 88 chars).
 export const VIEW_META: Record<RouteId, { title: string; description: string }> = {
   home: {
-    title: "Magician in Udaipur & India | Jadugar Rajtilak",
+    // SEO fix (manager audit T-05, 2026-10-29): the homepage now targets
+    // India-wide commercial intent — 'magician in udaipur' belongs to the
+    // /magician-in-udaipur landing page (the observed top-5 ranker), so the
+    // homepage stops cannibalising it. Udaipur stays in the description as
+    // the verified home base for local proof.
+    title: "Wedding & Corporate Magician in India | Jadugar Rajtilak",
     description:
-      "Hire Jadugar Rajtilak – Udaipur's 4.8★ magician (181 Google reviews). Stage & close-up magic for weddings, corporate & birthday shows. Check your date.",
+      "Hire Jadugar Rajtilak — wedding, corporate & birthday magician touring all India (500+ shows, 4.8★, 181 Google reviews). Based in Udaipur. Check your date.",
   },
   about: {
     title: "About Jadugar Rajtilak | Udaipur Magician, 12+ Years",

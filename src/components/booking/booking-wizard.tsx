@@ -225,9 +225,15 @@ export function BookingWizard() {
         <h1 className="font-display mt-3 text-display-lg font-medium text-[var(--jr-plum)]">
           Four steps to your date
         </h1>
+        {/* SEO fix (manager audit T-14, 2026-10-29): context intro for the
+            conversion page — occasions served, cities, response promise. */}
         <p className="mx-auto mt-4 max-w-xl text-[var(--jr-ink)]">
           Live availability, honest quoting, and a 72-hour soft-hold on your date the
-          moment you enquire.
+          moment you enquire. Jadugar Rajtilak performs for weddings, sangeets,
+          corporate annual days, dealer meets, kids&rsquo; birthdays, college fests
+          and private evenings — touring Udaipur, Jaipur, Jodhpur, Ahmedabad and
+          every major Indian city. Share your date, city and occasion below; a
+          written quote with full inclusions reaches you within 24 hours.
         </p>
       </header>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useSiteRouter, routeToPath, type RouteId } from "@/lib/router";
 import { Navbar } from "@/components/site/navbar";
@@ -20,7 +21,7 @@ import {
   TrustBar,
   VideoReel,
 } from "@/components/home/sections";
-import { VIEW_META } from "@/lib/content";
+import { FAQS, HINDI_POST_SLUGS, VIEW_META } from "@/lib/content";
 import type { InitialPost } from "@/lib/post-types";
 // Static import (not next/dynamic): the Udaipur money page is the highest
 // organic-value URL on the site — it must ship fully formed in the raw
@@ -85,6 +86,10 @@ const AdminConsole = dynamic(() => import("@/components/admin/admin-console").th
 // all ~25 posts as duplicates of the index and ranked none of them.
 function RouteSeoTags({ route, ogImage, post }: { route: RouteId; ogImage: string; post?: InitialPost | null }) {
   const isPost = route === "blog" && !!post;
+  // SEO fix (manager audit T-07, 2026-10-29): Hindi posts also declare
+  // og:locale hi_IN so social scrapers and search engines serve the
+  // right language.
+  const isHindiPost = isPost && HINDI_POST_SLUGS.includes(post!.slug);
   const meta = isPost
     ? {
         title: post!.metaTitle || post!.title,
@@ -94,6 +99,21 @@ function RouteSeoTags({ route, ogImage, post }: { route: RouteId; ogImage: strin
   const canonicalPath = isPost ? `/blog/${post!.slug}` : routeToPath(route);
   const url = `${SITE_URL}${canonicalPath === "/" ? "/" : canonicalPath}`;
   const fullOg = `${SITE_URL}${ogImage}`;
+
+  // SEO fix (manager audit T-17, 2026-10-29): FAQPage schema for the
+  // VISIBLE on-page Q&A on /faq only — Google's guideline: every
+  // Question/Answer pair in the markup must be present on the page.
+  const faqLd = route === "faq"
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: FAQS.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }
+    : null;
 
   const blogLd = isPost
     ? {
@@ -121,7 +141,7 @@ function RouteSeoTags({ route, ogImage, post }: { route: RouteId; ogImage: strin
       <meta property="og:image" content={fullOg} />
       <meta property="og:type" content={isPost ? "article" : "website"} />
       <meta property="og:site_name" content="Jadugar Rajtilak" />
-      <meta property="og:locale" content="en_IN" />
+      <meta property="og:locale" content={isHindiPost ? "hi_IN" : "en_IN"} />
       {isPost ? <meta property="article:published_time" content={post!.publishedISO} /> : null}
       {isPost ? <meta property="article:modified_time" content={post!.updatedISO} /> : null}
       <meta name="twitter:card" content="summary_large_image" />
@@ -131,6 +151,9 @@ function RouteSeoTags({ route, ogImage, post }: { route: RouteId; ogImage: strin
       {blogLd ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogLd) }} />
       ) : null}
+      {faqLd ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      ) : null}
     </>
   );
 }
@@ -139,10 +162,12 @@ function Site({
   initialRoute,
   initialBlogSlug,
   initialPost,
+  initialPosts,
 }: {
   initialRoute: RouteId;
   initialBlogSlug: string | null;
   initialPost?: InitialPost | null;
+  initialPosts?: InitialPost[];
 }) {
   const { route, blogSlug, navigate } = useSiteRouter({
     route: initialRoute,
@@ -150,6 +175,14 @@ function Site({
   });
   const { asset } = useSiteCustomization();
   const ogImage = asset("meta.og.image").src;
+
+  // SEO fix (manager audit T-07, 2026-10-29): keep <html lang> in sync
+  // when the client router navigates into / out of Hindi posts (the SSR
+  // side — the first byte — is handled in layout.tsx via x-pathname).
+  useEffect(() => {
+    const isHindi = blogSlug ? HINDI_POST_SLUGS.includes(blogSlug) : false;
+    document.documentElement.lang = isHindi ? "hi-IN" : "en-IN";
+  }, [blogSlug]);
 
   const goBooking = () => navigate("booking");
   const scrollToReel = () => {
@@ -185,7 +218,7 @@ function Site({
         {route === "gallery" && <GalleryView navigate={navigate} />}
         {route === "testimonials" && <TestimonialsView navigate={navigate} />}
         {route === "booking" && <BookingWizard />}
-        {route === "blog" && <BlogView navigate={navigate} initialSlug={blogSlug} initialPost={initialPost} />}
+        {route === "blog" && <BlogView navigate={navigate} initialSlug={blogSlug} initialPost={initialPost} initialPosts={initialPosts} />}
         {route === "faq" && <FaqView navigate={navigate} />}
         {route === "contact" && <ContactView navigate={navigate} />}
         {route === "legal" && <LegalView />}
@@ -207,14 +240,16 @@ export function SiteShell({
   initialRoute,
   initialBlogSlug,
   initialPost,
+  initialPosts,
 }: {
   initialRoute: RouteId;
   initialBlogSlug: string | null;
   initialPost?: InitialPost | null;
+  initialPosts?: InitialPost[];
 }) {
   return (
     <SiteCustomizationProvider>
-      <Site initialRoute={initialRoute} initialBlogSlug={initialBlogSlug} initialPost={initialPost} />
+      <Site initialRoute={initialRoute} initialBlogSlug={initialBlogSlug} initialPost={initialPost} initialPosts={initialPosts} />
     </SiteCustomizationProvider>
   );
 }

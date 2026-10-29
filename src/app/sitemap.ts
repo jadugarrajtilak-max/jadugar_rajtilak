@@ -9,20 +9,22 @@ const SITE = "https://jadugarrajtilak.com";
 // SEO fix (audit T-05, 2026-10-28): lastmod used to be "today" on every
 // build for all static pages — an unreliable signal Google learns to
 // ignore. It now carries the real date of the last meaningful content
-// change per page (this deploy rewrites titles/H1s/prices on the pages
-// marked 2026-10-28; the rest keep their previous content dates).
+// change per page. 2026-10-29 (manager audit): homepage retuned to
+// India-wide positioning (T-05), /blog listing cards became crawlable
+// anchors with all posts SSR'd (T-03), /booking + /contact gained
+// context intros (T-14), /faq gained FAQPage schema (T-17).
 const LAST_CONTENT_CHANGE: Record<string, string> = {
-  "/": "2026-10-28",
+  "/": "2026-10-29",
   "/services": "2026-10-28",
   "/packages": "2026-10-28",
-  "/blog": "2026-10-28",
+  "/blog": "2026-10-29",
   "/magician-in-udaipur": "2026-10-28",
   "/about": "2026-10-22",
   "/gallery": "2026-10-22",
   "/testimonials": "2026-10-22",
-  "/booking": "2026-10-22",
-  "/faq": "2026-10-22",
-  "/contact": "2026-10-22",
+  "/booking": "2026-10-29",
+  "/faq": "2026-10-29",
+  "/contact": "2026-10-29",
   "/legal": "2026-10-18",
 };
 

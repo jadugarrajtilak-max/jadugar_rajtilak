@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { db } from "@/lib/db";
 import { TEXT_LINE_MAP } from "@/lib/customization";
+import { HINDI_POST_SLUGS } from "@/lib/content";
 
 // Self-hosted fonts for speed and privacy (doc 4.1)
 const cormorant = Cormorant_Garamond({
@@ -138,7 +140,11 @@ const jsonLd = {
       sameAs: [
         "https://www.google.com/search?kgmid=/g/11c1p4hlsk&q=Jadugar+Rajtilak",
         "https://www.facebook.com/rajtilak.jadugar",
-        "https://www.instagram.com/p/DCJ3hBhg8xh/",
+        // SEO fix (manager audit T-09, 2026-10-29): the Instagram PROFILE
+        // URL replaces the single-post link, and the YouTube channel joins
+        // the sameAs set — proper entity consolidation for the knowledge graph.
+        "https://www.instagram.com/rajtilakjadugar/",
+        "https://www.youtube.com/@jadugarrajtilak2543",
         "https://www.justdial.com/Udaipur-Rajasthan/Jadugar-Rajtilak-Opposite-Hotel-Rajkamal-Bhuwana/9999PX294-X294-180528141553-G5M2_BZDET",
       ],
       makesOffer: [
@@ -160,7 +166,9 @@ const jsonLd = {
       "@type": "WebPage",
       "@id": `${SITE_URL}/#webpage`,
       url: SITE_URL,
-      name: "Jadugar Rajtilak — Magician in Udaipur, Rajasthan",
+      // SEO fix (manager audit T-05, 2026-10-29): India-wide positioning —
+      // 'Magician in Udaipur' is owned by the /magician-in-udaipur page.
+      name: "Jadugar Rajtilak — Wedding & Corporate Magician in India",
       isPartOf: { "@id": `${SITE_URL}/#website` },
       about: { "@id": `${SITE_URL}/#business` },
       primaryImageOfPage: `${SITE_URL}/images/hero-portrait-v2.jpg`,
@@ -174,8 +182,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { gaId, gscToken, adsenseId } = await getSeoKeys();
+  // SEO fix (manager audit T-07, 2026-10-29): Hindi posts declare
+  // lang="hi-IN" in the server-rendered <html> — the middleware-stamped
+  // pathname tells us the route without extra DB lookups. Everything
+  // else stays en-IN.
+  const h = await headers();
+  const pathname = h.get("x-pathname") ?? "/";
+  const isHindiPost = HINDI_POST_SLUGS.some((slug) => pathname === `/blog/${slug}`);
   return (
-    <html lang="en-IN" suppressHydrationWarning>
+    <html lang={isHindiPost ? "hi-IN" : "en-IN"} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"

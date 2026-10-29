@@ -4,10 +4,20 @@ import { Phone, Mail, MessageCircle, MapPin, Star } from "lucide-react";
 import { BrandMark } from "./navbar";
 import { useSiteCustomization } from "@/components/site/customization-provider";
 import { EVENT_TYPES, NAV_ITEMS, SITE, type RouteId } from "@/lib/content";
+import { routeToPath } from "@/lib/routes";
 import { trackCta } from "@/lib/router";
 
 export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
   const { text } = useSiteCustomization();
+  // SEO fix (manager audit T-01b, 2026-10-29): footer navigation is now
+  // real <a href> anchors — crawlable sitewide (a second block of ~9
+  // internal links on every page) — while plain left-clicks keep the
+  // client-side SPA routing. Modified clicks (new tab) behave natively.
+  const navHref = (e: React.MouseEvent<HTMLAnchorElement>, r: RouteId) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    navigate(r);
+  };
   return (
     <footer className="mt-auto border-t border-[var(--jr-line)] bg-[var(--jr-sand)]">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
@@ -46,18 +56,32 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
                 Facebook
               </a>
               <a
-                href={SITE.instagramPostUrl}
+                href={SITE.instagramProfileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--jr-line)] bg-[var(--jr-card)] px-4 py-2 text-xs font-medium text-[var(--jr-ink)] transition-colors hover:border-[var(--jr-gold)] hover:text-[var(--jr-plum)]"
-                aria-label="Jadugar Rajtilak's show reel on Instagram"
+                aria-label="Jadugar Rajtilak on Instagram"
               >
                 <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-none stroke-[var(--jr-gold-dark)] stroke-2" aria-hidden="true">
                   <rect x="3" y="3" width="18" height="18" rx="5" />
                   <circle cx="12" cy="12" r="4" />
                   <circle cx="17.2" cy="6.8" r="1" fill="var(--jr-gold-dark)" stroke="none" />
                 </svg>
-                The Reel
+                Instagram
+              </a>
+              {/* SEO fix (manager audit T-09, 2026-10-29): the YouTube
+                  channel was missing from the footer entirely. */}
+              <a
+                href={SITE.youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--jr-line)] bg-[var(--jr-card)] px-4 py-2 text-xs font-medium text-[var(--jr-ink)] transition-colors hover:border-[var(--jr-gold)] hover:text-[var(--jr-plum)]"
+                aria-label="Jadugar Rajtilak's YouTube channel"
+              >
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-[var(--jr-gold-dark)]" aria-hidden="true">
+                  <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.2 3.6-6.2 3.6Z" />
+                </svg>
+                YouTube
               </a>
             </div>
           </div>
@@ -67,12 +91,13 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
             <ul className="space-y-2.5">
               {NAV_ITEMS.slice(1).map((n) => (
                 <li key={n.id}>
-                  <button
-                    onClick={() => navigate(n.id)}
+                  <a
+                    href={routeToPath(n.id)}
+                    onClick={(e) => navHref(e, n.id)}
                     className="text-sm text-[var(--jr-ink)] transition-colors hover:text-[var(--jr-crimson)]"
                   >
                     {text(`nav.label.${n.id}`) || n.label}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -83,12 +108,13 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
             <ul className="space-y-2.5">
               {EVENT_TYPES.map((e) => (
                 <li key={e.id}>
-                  <button
-                    onClick={() => navigate("services")}
+                  <a
+                    href="/services"
+                    onClick={(ev) => navHref(ev, "services")}
                     className="text-sm text-[var(--jr-ink)] transition-colors hover:text-[var(--jr-crimson)]"
                   >
                     {e.name}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -133,12 +159,13 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
                 </a>
               </li>
             </ul>
-            <button
-              onClick={() => navigate("booking")}
+            <a
+              href="/booking"
+              onClick={(e) => navHref(e, "booking")}
               className="mt-5 inline-flex min-h-11 items-center rounded-full bg-[var(--jr-crimson)] px-6 py-2.5 text-sm font-semibold text-[var(--jr-ivory)] transition-all duration-500 hover:bg-[var(--jr-crimson-hover)]"
             >
               Book a Show
-            </button>
+            </a>
           </div>
         </div>
 
@@ -147,15 +174,15 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
             {text("footer.copyright")}
           </p>
           <div className="flex items-center gap-5 text-xs text-[var(--jr-ink)]">
-            <button onClick={() => navigate("legal")} className="transition-colors hover:text-[var(--jr-crimson)]">
+            <a href="/legal" onClick={(e) => navHref(e, "legal")} className="transition-colors hover:text-[var(--jr-crimson)]">
               Privacy Policy
-            </button>
-            <button onClick={() => navigate("legal")} className="transition-colors hover:text-[var(--jr-crimson)]">
+            </a>
+            <a href="/legal" onClick={(e) => navHref(e, "legal")} className="transition-colors hover:text-[var(--jr-crimson)]">
               Terms
-            </button>
-            <button onClick={() => navigate("legal")} className="transition-colors hover:text-[var(--jr-crimson)]">
+            </a>
+            <a href="/legal" onClick={(e) => navHref(e, "legal")} className="transition-colors hover:text-[var(--jr-crimson)]">
               Cancellation
-            </button>
+            </a>
             {/* XML sitemap for crawlers + a visible link for visitors */}
             <a
               href="/sitemap.xml"
