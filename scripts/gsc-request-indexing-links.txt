@@ -1,0 +1,98 @@
+GSC REQUEST-INDEXING LINKS — jadugarrajtilak.com
+Generated 2026-10-29 · 36 priority URLs in 4 day-batches
+
+HOW TO USE (5-10 min/day):
+  1. Open each link below (you must be logged into the Google
+     account that owns Search Console).
+  2. Click REQUEST INDEXING on the page that opens.
+  3. GSC allows ~10-12 requests/day — that is why URLs are
+     split into 4 days, highest-value first.
+  4. ALSO resubmit the sitemap once (link at the bottom).
+
+── DAY 1 — MONEY PAGES (rank for money keywords) ──
+https://jadugarrajtilak.com/services/wedding-magician
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fservices%2Fwedding-magician
+https://jadugarrajtilak.com/services/corporate-shows
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fservices%2Fcorporate-shows
+https://jadugarrajtilak.com/services/birthday-kids
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fservices%2Fbirthday-kids
+https://jadugarrajtilak.com/services/college-stage
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fservices%2Fcollege-stage
+https://jadugarrajtilak.com/services/private-luxury
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fservices%2Fprivate-luxury
+https://jadugarrajtilak.com/services/virtual-magic
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fservices%2Fvirtual-magic
+https://jadugarrajtilak.com/destination-wedding-magician-udaipur
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fdestination-wedding-magician-udaipur
+https://jadugarrajtilak.com/magician-in-udaipur
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fmagician-in-udaipur
+
+── DAY 2 — BUYER-INTENT BLOG POSTS ──
+https://jadugarrajtilak.com/blog/magic-show-cost-india
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fmagic-show-cost-india
+https://jadugarrajtilak.com/blog/birthday-party-magician-cost-in-india-2026-city-wise-price-bands
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fbirthday-party-magician-cost-in-india-2026-city-wise-price-bands
+https://jadugarrajtilak.com/blog/how-much-does-a-wedding-magician-cost-in-rajasthan
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fhow-much-does-a-wedding-magician-cost-in-rajasthan
+https://jadugarrajtilak.com/blog/magician-for-wedding-in-india-what-top-hosts-book-and-what-they-avoid
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fmagician-for-wedding-in-india-what-top-hosts-book-and-what-they-avoid
+https://jadugarrajtilak.com/blog/best-magician-in-india-for-corporate-events-the-2026-booking-guide
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fbest-magician-in-india-for-corporate-events-the-2026-booking-guide
+https://jadugarrajtilak.com/blog/mentalist-for-corporate-events-in-india-what-mind-reading-adds-to-your-evening
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fmentalist-for-corporate-events-in-india-what-mind-reading-adds-to-your-evening
+https://jadugarrajtilak.com/blog/close-up-magician-for-indian-weddings-roaming-magic-explained
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fclose-up-magician-for-indian-weddings-roaming-magic-explained
+https://jadugarrajtilak.com/blog/virtual-magic-show-online-events
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fvirtual-magic-show-online-events
+https://jadugarrajtilak.com/blog/magician-in-jaipur
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fmagician-in-jaipur
+https://jadugarrajtilak.com/blog/magician-for-birthday-party-in-udaipur-full-planning-run-sheet
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fmagician-for-birthday-party-in-udaipur-full-planning-run-sheet
+
+── DAY 3 — THEMATIC SUPPORTING POSTS ──
+https://jadugarrajtilak.com/blog/wedding-entertainment-ideas
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fwedding-entertainment-ideas
+https://jadugarrajtilak.com/blog/sangeet-mehendi-entertainment-ideas
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fsangeet-mehendi-entertainment-ideas
+https://jadugarrajtilak.com/blog/10-close-up-magic-moments-that-stop-a-sangeet-crowd
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2F10-close-up-magic-moments-that-stop-a-sangeet-crowd
+https://jadugarrajtilak.com/blog/wedding-magician-vs-dj-vs-band-what-udaipur-couples-actually-pick
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fwedding-magician-vs-dj-vs-band-what-udaipur-couples-actually-pick
+https://jadugarrajtilak.com/blog/destination-wedding-in-udaipur-add-a-magician-to-the-timeline
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fdestination-wedding-in-udaipur-add-a-magician-to-the-timeline
+https://jadugarrajtilak.com/blog/corporate-event-entertainment
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fcorporate-event-entertainment
+https://jadugarrajtilak.com/blog/corporate-annual-day-magic-show-the-45-minute-format-that-works
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fcorporate-annual-day-magic-show-the-45-minute-format-that-works
+https://jadugarrajtilak.com/blog/college-fest-magic-headliner
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fcollege-fest-magic-headliner
+https://jadugarrajtilak.com/blog/birthday-party-magician-timeline
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fbirthday-party-magician-timeline
+https://jadugarrajtilak.com/blog/how-to-book-a-magician-in-india-the-complete-2026-checklist
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fhow-to-book-a-magician-in-india-the-complete-2026-checklist
+
+── DAY 4 — CORE + SUPPORTING PAGES ──
+https://jadugarrajtilak.com/
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2F
+https://jadugarrajtilak.com/services
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fservices
+https://jadugarrajtilak.com/blog/how-to-choose-a-magician
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fhow-to-choose-a-magician
+https://jadugarrajtilak.com/blog/mentalism-mind-reading-show-india
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fmentalism-mind-reading-show-india
+https://jadugarrajtilak.com/blog/magician-in-delhi-for-weddings-events-the-complete-booking-guide
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fmagician-in-delhi-for-weddings-events-the-complete-booking-guide
+https://jadugarrajtilak.com/blog/jadugar-udaipur-shaadi-magic-show-guide
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fblog%2Fjadugar-udaipur-shaadi-magic-show-guide
+https://jadugarrajtilak.com/faq
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Ffaq
+https://jadugarrajtilak.com/packages
+   https://search.google.com/search-console/inspect?resource_id=sc-domain%3Ajadugarrajtilak.com&id=https%3A%2F%2Fjadugarrajtilak.com%2Fpackages
+
+── SITEMAP (resubmit ONCE, takes 10 seconds) ──
+Sitemap URL: https://jadugarrajtilak.com/sitemap.xml
+Resubmit here: https://search.google.com/search-console/sitemaps?resource_id=sc-domain%3Ajadugarrajtilak.com
+
+NOTE: If your GSC property is a URL-prefix type instead of a
+Domain property, the inspect links may not open — in that case
+open Search Console -> URL Inspection manually and paste the URL.
