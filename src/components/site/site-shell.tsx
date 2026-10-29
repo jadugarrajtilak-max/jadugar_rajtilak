@@ -21,7 +21,7 @@ import {
   TrustBar,
   VideoReel,
 } from "@/components/home/sections";
-import { FAQS, HINDI_POST_SLUGS, VIEW_META } from "@/lib/content";
+import { FAQS, HINDI_POST_SLUGS, VIEW_META, SERVICE_PAGES } from "@/lib/content";
 import type { InitialPost } from "@/lib/post-types";
 // Static import (not next/dynamic): the Udaipur money page is the highest
 // organic-value URL on the site — it must ship fully formed in the raw
@@ -72,6 +72,17 @@ const LegalView = dynamic(() => import("@/components/views/support-views").then(
 // app (sessionStorage login) with zero public/SEO content — robots.txt
 // already disallows /admin.
 const AdminConsole = dynamic(() => import("@/components/admin/admin-console").then((m) => m.AdminConsole), { loading: ViewSkeleton, ssr: false });
+// Dedicated service money pages (audit T-13 / roadmap R-18..R-22 + O-01,
+// 2026-10-29): one URL per commercial keyword. next/dynamic keeps the
+// default SSR so crawlers get fully rendered HTML on direct visits —
+// same code-splitting pattern as /about, /services and /blog above.
+const WeddingMagicianView = dynamic(() => import("@/components/views/service-landings").then((m) => m.WeddingMagicianView), { loading: ViewSkeleton });
+const CorporateShowsView = dynamic(() => import("@/components/views/service-landings").then((m) => m.CorporateShowsView), { loading: ViewSkeleton });
+const BirthdayKidsView = dynamic(() => import("@/components/views/service-landings").then((m) => m.BirthdayKidsView), { loading: ViewSkeleton });
+const CollegeStageView = dynamic(() => import("@/components/views/service-landings").then((m) => m.CollegeStageView), { loading: ViewSkeleton });
+const VirtualMagicView = dynamic(() => import("@/components/views/service-landings").then((m) => m.VirtualMagicView), { loading: ViewSkeleton });
+const PrivateLuxuryView = dynamic(() => import("@/components/views/service-landings").then((m) => m.PrivateLuxuryView), { loading: ViewSkeleton });
+const DestinationWeddingView = dynamic(() => import("@/components/views/service-landings").then((m) => m.DestinationWeddingView), { loading: ViewSkeleton });
 
 // Per-route SEO via React 19 metadata elements — <title>, <meta> and
 // <link> rendered in the tree are hoisted into <head> and kept in sync
@@ -130,6 +141,38 @@ function RouteSeoTags({ route, ogImage, post }: { route: RouteId; ogImage: strin
       }
     : null;
 
+  // Service money pages (audit R-18..R-22/O-01, 2026-10-29): Service +
+  // BreadcrumbList JSON-LD. Provider references the homepage
+  // LocalBusiness entity (@id …/#business) so the whole site stays one
+  // connected graph; areaServed and serviceType carry the commercial
+  // keyword context Google uses for service rich results.
+  const svc = SERVICE_PAGES[route];
+  const serviceLd = svc
+    ? [
+        {
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: svc.serviceName,
+          serviceType: svc.serviceType,
+          description: meta.description,
+          url: `${SITE_URL}${svc.path}`,
+          provider: { "@id": `${SITE_URL}/#business` },
+          areaServed: svc.areaServed === "Worldwide" ? "Worldwide" : { "@type": "Place", name: svc.areaServed },
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+            ...(svc.path.startsWith("/services/")
+              ? [{ "@type": "ListItem", position: 2, name: "Shows & Services", item: `${SITE_URL}/services` }]
+              : []),
+            { "@type": "ListItem", position: svc.path.startsWith("/services/") ? 3 : 2, name: svc.serviceName.split(" — ")[0], item: `${SITE_URL}${svc.path}` },
+          ],
+        },
+      ]
+    : null;
+
   return (
     <>
       <title>{meta.title}</title>
@@ -151,6 +194,11 @@ function RouteSeoTags({ route, ogImage, post }: { route: RouteId; ogImage: strin
       {blogLd ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogLd) }} />
       ) : null}
+      {serviceLd
+        ? serviceLd.map((ld, i) => (
+            <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+          ))
+        : null}
       {faqLd ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       ) : null}
@@ -224,6 +272,13 @@ function Site({
         {route === "legal" && <LegalView />}
         {route === "admin" && <AdminConsole navigate={navigate} />}
         {route === "udaipur" && <UdaipurLandingView navigate={navigate} />}
+        {route === "svcWedding" && <WeddingMagicianView navigate={navigate} />}
+        {route === "svcCorporate" && <CorporateShowsView navigate={navigate} />}
+        {route === "svcBirthday" && <BirthdayKidsView navigate={navigate} />}
+        {route === "svcCollege" && <CollegeStageView navigate={navigate} />}
+        {route === "svcVirtual" && <VirtualMagicView navigate={navigate} />}
+        {route === "svcPrivate" && <PrivateLuxuryView navigate={navigate} />}
+        {route === "destWedding" && <DestinationWeddingView navigate={navigate} />}
       </main>
 
       {route !== "admin" && <Footer navigate={navigate} />}

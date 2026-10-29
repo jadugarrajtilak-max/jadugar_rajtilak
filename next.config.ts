@@ -35,6 +35,15 @@ const nextConfig: NextConfig = {
       "/journal/:slug",
       // Local money pages (SEO audit A-02) — exact keyword URLs.
       "/magician-in-udaipur",
+      // Dedicated service money pages (audit T-13 / roadmap R-18, R-19,
+      // R-20, R-22 + O-01, 2026-10-29) — one URL per commercial keyword.
+      "/services/wedding-magician",
+      "/services/corporate-shows",
+      "/services/birthday-kids",
+      "/services/college-stage",
+      "/services/virtual-magic",
+      "/services/private-luxury",
+      "/destination-wedding-magician-udaipur",
     ];
     return pages.map((source) => ({ source, destination: "/" }));
   },

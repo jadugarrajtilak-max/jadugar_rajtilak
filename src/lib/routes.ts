@@ -18,6 +18,13 @@ export const VALID: RouteId[] = [
   "legal",
   "admin",
   "udaipur",
+  "svcWedding",
+  "svcCorporate",
+  "svcBirthday",
+  "svcCollege",
+  "svcVirtual",
+  "svcPrivate",
+  "destWedding",
 ];
 
 // Legacy hash URLs (#/about) and friendly aliases resolve to real routes.
@@ -29,9 +36,18 @@ export const ALIASES: Record<string, RouteId> = {
 
 // Keyword money pages — the public URL differs from the internal route id
 // so the route table stays readable while the URL carries the exact search
-// phrase ("magician in udaipur" — the strongest local keyword).
+// phrase ("magician in udaipur" — the strongest local keyword). The seven
+// service money pages (audit T-13/R-18..R-22/O-01) follow the same pattern:
+// URL carries the commercial keyword, route id stays internal.
 const MONEY_PATHS: Partial<Record<RouteId, string>> = {
   udaipur: "/magician-in-udaipur",
+  svcWedding: "/services/wedding-magician",
+  svcCorporate: "/services/corporate-shows",
+  svcBirthday: "/services/birthday-kids",
+  svcCollege: "/services/college-stage",
+  svcVirtual: "/services/virtual-magic",
+  svcPrivate: "/services/private-luxury",
+  destWedding: "/destination-wedding-magician-udaipur",
 };
 
 export function routeToPath(route: RouteId): string {

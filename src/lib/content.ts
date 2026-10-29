@@ -17,7 +17,22 @@ export type RouteId =
   | "contact"
   | "legal"
   | "admin"
-  | "udaipur";
+  | "udaipur"
+  // Dedicated service money pages (SEO audit T-13 / roadmap R-18,
+  // R-19, R-20, R-22, 2026-10-29): the six show formats previously
+  // lived only as sections of /services — competitors rank with
+  // dedicated URLs for "wedding magician india", "corporate magician
+  // india", etc. Each page ships 700+ words, FAQ, internal links and
+  // Service+Breadcrumb JSON-LD.
+  | "svcWedding"
+  | "svcCorporate"
+  | "svcBirthday"
+  | "svcCollege"
+  | "svcVirtual"
+  | "svcPrivate"
+  // Destination-wedding differentiator (audit O-01): Udaipur is
+  // India's wedding capital and no competitor owns the term.
+  | "destWedding";
 
 export const NAV_ITEMS: { id: RouteId; label: string }[] = [
   { id: "home", label: "Home" },
@@ -803,6 +818,108 @@ export const VIEW_META: Record<RouteId, { title: string; description: string }> 
     title: "Magician in Udaipur | Wedding & Birthday Shows",
     description:
       "Looking for a magician in Udaipur? Jadugar Rajtilak – 4.8★ on Google – performs at weddings, hotels, corporate events & birthdays. Check your date.",
+  },
+  // ── Dedicated service pages (metas from the manager audit's
+  // "Services Title and descriptions" sheet — titles 45–56ch,
+  // descriptions 144–152ch, exact character counts verified). ──
+  svcWedding: {
+    title: "Wedding Magician in India | Sangeet to Reception | Rajtilak",
+    description:
+      "Wedding magic by Jadugar Rajtilak — sangeet close-up sets, cocktail roaming magic and a reception finale. 500+ shows across India. Check your date.",
+  },
+  svcCorporate: {
+    title: "Corporate Magician for Events in India | Rajtilak",
+    description:
+      "Corporate shows that hold the room — annual days, dealer meets, award nights. Mentalism and brand-woven illusions with full tech rider. Get a quote.",
+  },
+  svcBirthday: {
+    title: "Birthday Party Magician in Udaipur & India | Rajtilak",
+    description:
+      "Age-calibrated birthday magic shows (4–12 years) — the golden window between snacks and cake. Every child leaves with a take-home trick. Check your date.",
+  },
+  svcCollege: {
+    title: "College Fest Magician & Illusion Headliner | Rajtilak",
+    description:
+      "Big-stage illusions built for 500–5,000 seat auditoriums — crowd work and a vertical-video finale your fest page can post on Monday. Book the date.",
+  },
+  svcPrivate: {
+    title: "Private & Luxury Event Magician | Rajtilak",
+    description:
+      "Salon evenings, villa parties and destination celebrations — a close-up and parlour act scaled to your guest list. Discreet, polished, unforgettable.",
+  },
+  svcVirtual: {
+    title: "Virtual Magic Shows for Online Events | Rajtilak",
+    description:
+      "Camera-first virtual magic for remote teams and online events — tech checklist, Zoom-ready routines and honest formatting for 20–500 screens.",
+  },
+  destWedding: {
+    title: "Destination Wedding Magician in Udaipur | Rajtilak",
+    description:
+      "Udaipur destination-wedding magic — sangeet close-up, poolside roaming sets and a palace-stage finale. 3-day timeline planner included. Check your date.",
+  },
+};
+
+// ── Service money pages: JSON-LD source of truth ──────────────
+// Service + BreadcrumbList schema for each dedicated page (audit
+// roadmap R-18/R-19/R-20/R-22). Provider references the homepage
+// LocalBusiness entity (@id …/#business) so the graph stays one node.
+export const SERVICE_PAGES: Partial<
+  Record<RouteId, {
+    path: string;
+    serviceName: string;
+    serviceType: string;
+    keyword: string;
+    areaServed: string;
+  }>
+> = {
+  svcWedding: {
+    path: "/services/wedding-magician",
+    serviceName: "Wedding Magician — Sangeet, Cocktail & Reception Magic",
+    serviceType: "Wedding entertainment",
+    keyword: "wedding magician india",
+    areaServed: "India",
+  },
+  svcCorporate: {
+    path: "/services/corporate-shows",
+    serviceName: "Corporate Magic Shows — Annual Days, Dealer Meets & Award Nights",
+    serviceType: "Corporate event entertainment",
+    keyword: "corporate magician india",
+    areaServed: "India",
+  },
+  svcBirthday: {
+    path: "/services/birthday-kids",
+    serviceName: "Birthday Party Magic Shows for Kids (Ages 4–12)",
+    serviceType: "Birthday party entertainment",
+    keyword: "birthday party magician",
+    areaServed: "India",
+  },
+  svcCollege: {
+    path: "/services/college-stage",
+    serviceName: "College Fest Magic & Illusion Headliner Shows",
+    serviceType: "College festival entertainment",
+    keyword: "college fest magician",
+    areaServed: "India",
+  },
+  svcPrivate: {
+    path: "/services/private-luxury",
+    serviceName: "Private & Luxury Event Magic — Salons, Villas & Celebrations",
+    serviceType: "Private event entertainment",
+    keyword: "private party magician",
+    areaServed: "India",
+  },
+  svcVirtual: {
+    path: "/services/virtual-magic",
+    serviceName: "Virtual Magic Shows for Online Events & Remote Teams",
+    serviceType: "Virtual event entertainment",
+    keyword: "virtual magic show",
+    areaServed: "Worldwide",
+  },
+  destWedding: {
+    path: "/destination-wedding-magician-udaipur",
+    serviceName: "Destination Wedding Magician in Udaipur",
+    serviceType: "Destination wedding entertainment",
+    keyword: "destination wedding magician udaipur",
+    areaServed: "Udaipur, Rajasthan, India",
   },
 };
 

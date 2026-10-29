@@ -290,6 +290,18 @@ export function SignatureActs() {
 }
 
 // ── Event types grid ──
+// SEO (audit R-18..R-22, 2026-10-29): each card links straight to its
+// dedicated money page (/services/wedding-magician etc.) — the six
+// commercial keywords get homepage inlinks with relevant context.
+const EVENT_ROUTE: Record<string, RouteId> = {
+  wedding: "svcWedding",
+  corporate: "svcCorporate",
+  birthday: "svcBirthday",
+  college: "svcCollege",
+  private: "svcPrivate",
+  virtual: "svcVirtual",
+};
+
 export function EventTypesGrid({ navigate }: { navigate: (r: RouteId) => void }) {
   const { text } = useSiteCustomization();
   return (
@@ -306,7 +318,7 @@ export function EventTypesGrid({ navigate }: { navigate: (r: RouteId) => void })
             return (
               <Reveal key={e.id} delay={(i % 3) * 0.1}>
                 <button
-                  onClick={() => navigate("services")}
+                  onClick={() => navigate(EVENT_ROUTE[e.id] ?? "services")}
                   className="card-cine group h-full w-full rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-card)] p-7 text-left"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--jr-sand-light)] text-[var(--jr-gold)] transition-colors duration-500 group-hover:bg-[var(--jr-gold)] group-hover:text-[var(--jr-ivory)]">

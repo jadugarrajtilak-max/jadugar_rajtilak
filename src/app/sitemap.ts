@@ -15,7 +15,7 @@ const SITE = "https://jadugarrajtilak.com";
 // context intros (T-14), /faq gained FAQPage schema (T-17).
 const LAST_CONTENT_CHANGE: Record<string, string> = {
   "/": "2026-10-29",
-  "/services": "2026-10-28",
+  "/services": "2026-10-29",
   "/packages": "2026-10-28",
   "/blog": "2026-10-29",
   "/magician-in-udaipur": "2026-10-28",
@@ -26,6 +26,16 @@ const LAST_CONTENT_CHANGE: Record<string, string> = {
   "/faq": "2026-10-29",
   "/contact": "2026-10-29",
   "/legal": "2026-10-18",
+  // Dedicated service money pages (audit T-13 / roadmap R-18..R-22 +
+  // O-01) shipped 2026-10-29 — new URLs, priority 0.8, sitemap entry
+  // on day one per the audit's rule for every new page.
+  "/services/wedding-magician": "2026-10-29",
+  "/services/corporate-shows": "2026-10-29",
+  "/services/birthday-kids": "2026-10-29",
+  "/services/college-stage": "2026-10-29",
+  "/services/virtual-magic": "2026-10-29",
+  "/services/private-luxury": "2026-10-29",
+  "/destination-wedding-magician-udaipur": "2026-10-29",
 };
 
 // Static site pages (SPA shell routes — all real, crawlable URLs).
@@ -36,6 +46,15 @@ const STATIC_PAGES: MetadataRoute.Sitemap = [
   { url: `${SITE}/services`, changeFrequency: "monthly", priority: 0.9, lastModified: LAST_CONTENT_CHANGE["/services"] },
   { url: `${SITE}/booking`, changeFrequency: "monthly", priority: 0.9, lastModified: LAST_CONTENT_CHANGE["/booking"] },
   { url: `${SITE}/magician-in-udaipur`, changeFrequency: "monthly", priority: 0.9, lastModified: LAST_CONTENT_CHANGE["/magician-in-udaipur"] },
+  // Dedicated service money pages — one URL per commercial keyword
+  // (audit roadmap R-18, R-19, R-20, R-22 + O-01).
+  { url: `${SITE}/services/wedding-magician`, changeFrequency: "monthly", priority: 0.8, lastModified: LAST_CONTENT_CHANGE["/services/wedding-magician"] },
+  { url: `${SITE}/services/corporate-shows`, changeFrequency: "monthly", priority: 0.8, lastModified: LAST_CONTENT_CHANGE["/services/corporate-shows"] },
+  { url: `${SITE}/services/birthday-kids`, changeFrequency: "monthly", priority: 0.8, lastModified: LAST_CONTENT_CHANGE["/services/birthday-kids"] },
+  { url: `${SITE}/services/college-stage`, changeFrequency: "monthly", priority: 0.8, lastModified: LAST_CONTENT_CHANGE["/services/college-stage"] },
+  { url: `${SITE}/services/virtual-magic`, changeFrequency: "monthly", priority: 0.7, lastModified: LAST_CONTENT_CHANGE["/services/virtual-magic"] },
+  { url: `${SITE}/services/private-luxury`, changeFrequency: "monthly", priority: 0.7, lastModified: LAST_CONTENT_CHANGE["/services/private-luxury"] },
+  { url: `${SITE}/destination-wedding-magician-udaipur`, changeFrequency: "monthly", priority: 0.9, lastModified: LAST_CONTENT_CHANGE["/destination-wedding-magician-udaipur"] },
   { url: `${SITE}/about`, changeFrequency: "monthly", priority: 0.8, lastModified: LAST_CONTENT_CHANGE["/about"] },
   { url: `${SITE}/packages`, changeFrequency: "monthly", priority: 0.8, lastModified: LAST_CONTENT_CHANGE["/packages"] },
   { url: `${SITE}/contact`, changeFrequency: "monthly", priority: 0.8, lastModified: LAST_CONTENT_CHANGE["/contact"] },

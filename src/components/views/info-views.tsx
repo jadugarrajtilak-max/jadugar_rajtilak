@@ -5,6 +5,20 @@ import { Reveal, SectionHeading } from "@/components/home/sections";
 import { useSiteCustomization } from "@/components/site/customization-provider";
 import { imageFrame } from "@/lib/customization";
 import { EVENT_TYPES, SITE, type RouteId } from "@/lib/content";
+import { routeToPath } from "@/lib/routes";
+
+// Dedicated money pages (audit T-13 / roadmap R-18..R-22, 2026-10-29):
+// every /services section now links to its own keyword URL with a
+// real crawlable <a href> — the audit's required internal-link pattern
+// for the new service pages (3 links IN minimum on day one).
+const SECTION_MONEY_PAGE: Record<string, { route: RouteId; label: string }> = {
+  wedding: { route: "svcWedding", label: "Wedding Magician in India — the dedicated page" },
+  corporate: { route: "svcCorporate", label: "Corporate Magic Shows — the dedicated page" },
+  birthday: { route: "svcBirthday", label: "Birthday Party Magician — the dedicated page" },
+  college: { route: "svcCollege", label: "College Fest Magician — the dedicated page" },
+  private: { route: "svcPrivate", label: "Private & Luxury Event Magician — the dedicated page" },
+  virtual: { route: "svcVirtual", label: "Virtual Magic Shows — the dedicated page" },
+};
 
 function PageHero({
   eyebrow,
@@ -254,6 +268,11 @@ const SERVICE_PHOTO_KEYS: Record<string, string> = {
 
 export function ServicesView({ navigate }: { navigate: (r: RouteId) => void }) {
   const { text, asset } = useSiteCustomization();
+  const navHref = (e: React.MouseEvent<HTMLAnchorElement>, r: RouteId) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    navigate(r);
+  };
   return (
     <div>
       <PageHero
@@ -314,6 +333,15 @@ export function ServicesView({ navigate }: { navigate: (r: RouteId) => void }) {
                   >
                     Get a Quote <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </button>
+                  {SECTION_MONEY_PAGE[e.id] && (
+                    <a
+                      href={routeToPath(SECTION_MONEY_PAGE[e.id].route)}
+                      onClick={(e2) => navHref(e2, SECTION_MONEY_PAGE[e.id].route)}
+                      className="mt-4 inline-flex items-center gap-2 text-[15px] font-semibold text-[var(--jr-crimson)] underline-offset-4 transition-colors hover:underline"
+                    >
+                      {SECTION_MONEY_PAGE[e.id].label} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </a>
+                  )}
                 </div>
               </Reveal>
 

@@ -106,17 +106,47 @@ export function Footer({ navigate }: { navigate: (r: RouteId) => void }) {
           <nav aria-label="Footer — shows">
             <p className="eyebrow mb-4">{text("footer.showsLabel")}</p>
             <ul className="space-y-2.5">
-              {EVENT_TYPES.map((e) => (
-                <li key={e.id}>
-                  <a
-                    href="/services"
-                    onClick={(ev) => navHref(ev, "services")}
-                    className="text-sm text-[var(--jr-ink)] transition-colors hover:text-[var(--jr-crimson)]"
-                  >
-                    {e.name}
-                  </a>
-                </li>
-              ))}
+              {EVENT_TYPES.map((e) => {
+                // SEO (audit R-18..R-22, 2026-10-29): footer show links point
+                // at the dedicated money pages — sitewide crawlable inlinks
+                // with descriptive anchor text for the six commercial keywords.
+                const target =
+                  e.id === "wedding" ? "svcWedding"
+                  : e.id === "corporate" ? "svcCorporate"
+                  : e.id === "birthday" ? "svcBirthday"
+                  : e.id === "college" ? "svcCollege"
+                  : e.id === "private" ? "svcPrivate"
+                  : "svcVirtual" as RouteId;
+                return (
+                  <li key={e.id}>
+                    <a
+                      href={routeToPath(target)}
+                      onClick={(ev) => navHref(ev, target)}
+                      className="text-sm text-[var(--jr-ink)] transition-colors hover:text-[var(--jr-crimson)]"
+                    >
+                      {e.name}
+                    </a>
+                  </li>
+                );
+              })}
+              <li>
+                <a
+                  href={routeToPath("destWedding")}
+                  onClick={(ev) => navHref(ev, "destWedding")}
+                  className="text-sm font-medium text-[var(--jr-plum)] transition-colors hover:text-[var(--jr-crimson)]"
+                >
+                  Destination Weddings · Udaipur
+                </a>
+              </li>
+              <li>
+                <a
+                  href={routeToPath("udaipur")}
+                  onClick={(ev) => navHref(ev, "udaipur")}
+                  className="text-sm font-medium text-[var(--jr-plum)] transition-colors hover:text-[var(--jr-crimson)]"
+                >
+                  Magician in Udaipur
+                </a>
+              </li>
             </ul>
           </nav>
 
