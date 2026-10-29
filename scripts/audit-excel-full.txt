@@ -1,0 +1,698 @@
+SHEETS: ['Project Requirements', 'Reporting', 'Content Calendar', 'Keywords Ranking', 'Weekly updates', 'On Page & technical checklist', 'GMB Post', 'Website Blogs', 'Off page activites', 'Keywords Research', 'Meta title and descriptions', 'Google Console Errors', 'Services Pages', 'Services Title and descriptions', 'Competitor Analysis', 'Console Queries (28 Oct 26)', 'Keywords Mapping URLs', 'Local Keywords Targeting', 'New Pages Suggestions', 'Errors Technical & On Page', 'Hreflang conflicts within page', 'Broken external links', 'Low text to HTML ratio', 'Low word count', 'Long title element', 'Orphaned sitemap pages', 'Multiple h1 tags', 'Pages with only one internal li', 'Blocked from crawling', 'Google Reviews', 'Executive Summary & Scorecard', 'Implementation Roadmap']
+
+
+==========================================================================================
+SHEET: Project Requirements  (27 rows x 5 cols)
+==========================================================================================
+R2: Project Requirements — Jadugar Rajtilak (jadugarrajtilak.com)
+R3: Audit baseline recorded 28 Oct 2026. 'Data Required' = needs business owner input; nothing invented.
+R4: SEO Requirements | Full technical + on-page audit, keyword strategy & mapping, content plan, local SEO (GBP), off-page authority plan, AI-search readiness, prioritised implementation roadmap — delivered in this workbook.
+R5: Existing Keywords (from site) | magician in udaipur; wedding magician; corporate magician india; birthday party magician; mentalist; close-up magic; virtual magic show; jadugar rajtilak (brand)
+R6: Business Name | Jadugar Rajtilak (alternate: Magician Rajtilak — used in schema alternateName)
+R7: Website | https://jadugarrajtilak.com/
+R8: Business Address | Shiv Colony, Bedla, Udaipur, Rajasthan 313001 (visits by appointment; touring pan-India)
+R9: Business Phone | +91 97994 68758 (call + WhatsApp on same number)
+R10: Target Area | India (pan-India touring, 40+ cities performed). Home market: Udaipur; schema areaServed also lists Jaipur, Jodhpur, Ahmedabad, Rajasthan, India
+R11: Business OPENING (hours) | Mon–Sat, 10:00–19:00 IST (as published on /contact)
+R12: Business Email (customer-facing) | jadugar.rajtilak@gmail.com
+R13: GA Access | GA4 is LIVE on all pages (measurement ID G-103JFH1Z6B, verified in page source). Analytics account access for reporting: Data Required
+R14: GSC Access | Not verified — no access provided yet. Required for queries, coverage, CWV and indexing status. Owner should add the SEO manager as user on the existing property (if any)
+R15: Off-Page Email ID | Data Required — recommend a dedicated alias (e.g. hello@jadugarrajtilak.com or a work Gmail) for directory/quora accounts
+R16: Off-page ID password | Data Required — to be stored in a password manager only, never inside report files
+R17: Facebook | https://www.facebook.com/rajtilak.jadugar
+R18: X (Twitter) | No profile linked on site and none found in brand search — decide whether to create (optional channel)
+R19: Instagram | https://www.instagram.com/rajtilakjadugar/ (~1.8K followers, public-figure profile)
+R20: YouTube | https://www.youtube.com/@jadugarrajtilak2543
+R21: Google My Business (GMP) | Profile is live: 4.8★ with 181 reviews (per site badge + LocalBusiness schema aggregateRating; knowledge-graph id /g/11c1p4hlsk). Share link / manager access: Data Required
+R22: Justdial | Live listing: 4.8 / 192 ratings — 'Jadugar Rajtilak, Opposite Hotel Rajkamal, Bhuwana, Udaipur'
+R23: Website Platform | Custom Next.js (App Router) hosted on Vercel — SSR pages, GA4 via gtag. Not WordPress/Shopify
+R24: Business Type | B2C service business (live entertainment: weddings, corporate, birthdays, college fests, private, virtual)
+R25: Primary SEO Goal | Qualified booking enquiries (date checks + quote requests) and local visibility in Udaipur/Rajasthan + national commercial queries
+R27: Sources: live crawl of jadugarrajtilak.com (28 Oct 2026), brand web search, site contact page, JSON-LD LocalBusiness entity. Social URLs verified via search results; follower counts as displayed publicly.
+
+==========================================================================================
+SHEET: Reporting  (8 rows x 18 cols)
+==========================================================================================
+R2: Jadugar Rajtilak — Weekly Marketing Report
+R3: OCTOBER 2026 — project starts with full audit (this workbook). Metrics columns activate once GA/GSC access is granted.
+R4: Week | SEO Task (This Week) | Next Week Projection | Website Traffic (Sessions) | Impressions | Facebook Published | Instagram Published | LinkedIn Published | Total Posts Created | Total Reels Created | Total Reels Published | Total Posts Published | LinkedIn Connection req sent | LinkedIn Connection req Accepted | Meta Ads Spend | Meta Ads Leads | Meta Ads CPL
+R5: 26 Oct – 31 Oct 2026 | Started the project with a full evidence-based audit: crawled all 35 discoverable URLs (11 core pages, 23 blog posts, 1 city landing page); verified robots.txt, sitemap.xml, redirects (http→https, www→non-www, trailing-slash all 308), HSTS/CSP headers, 404 handling; extracted every page title, meta description, canonical, H1, schema block and image alt; audited the Google Business Profile signals (4.8★, 181 reviews) and social profiles; analysed organic competitors (StarClinch, Justdial, Venuelook, Illusionist Sumit, local Udaipur magicians); built the keyword master (50+ keywords), keyword-to-URL mapping, local keyword grid and a 5-phase implementation roadmap. KEY FINDINGS: sitemap.xml lists only 21 of 35 URLs (13 new blog posts + the /magician-in-udaipur landing page are missing); site navigation and footer are built with <button> elements instead of crawlable <a href> links (zero internal links in raw HTML of core pages). | Developer: regenerate sitemap.xml to include all 23 blog posts + /magician-in-udaipur; convert nav & footer buttons to server-rendered <Link> anchors. SEO: request GA4 + GSC + GBP access; set up weekly keyword rank tracking with screenshots (as per Keywords Ranking sheet); submit updated sitemap in GSC; fix long meta descriptions on 9 blog posts. Content: begin November calendar (2 blogs/week + 2 GBP posts/week). Owner: provide GBP share link + decide on off-page email alias. | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA
+R6: TOTAL | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | NA
+R8: NA = not available this week. GA4 property exists on-site (G-103JFH1Z6B) — sessions & impressions columns populate from Week 2 once read access is granted. LinkedIn is not currently used by this brand; keep columns for the optional corporate-networking play ( magician's personal profile). Meta Ads paused / not started — columns retained to match report format.
+
+==========================================================================================
+SHEET: Content Calendar  (13 rows x 5 cols)
+==========================================================================================
+R2: Content Calendar — November 2026 (blog + social + GBP)
+R3: Format follows reference template: Week | Monday | Wednesday | Friday. Blog topics close keyword gaps found in audit.
+R4: Week | Monday | Wednesday | Friday
+R5: Week 1 ⏎ (2–6 Nov) | Blog: 'Destination Wedding Entertainment in Udaipur: The 3-Day Timeline Planner' — target: destination wedding magician udaipur; internal links to /magician-in-udaipur + /packages | Reel: 30-sec sangeet close-up moment with Hindi+English caption + location tag (IG). GBP post: 'November weekend dates — only a few left' with stage photo | Blog (Hindi): 'शादी में मैजिक शो की कीमत — पूरी ईमानदार जानकारी' — target: शादी मैजिक शो कीमत; extends Hindi cluster started by jadugar-udaipur-shaadi-magic-show-guide
+R6: Week 2 ⏎ (9–13 Nov) | Blog: 'Corporate Annual Day Entertainment: The Budget Case HR Teams Can Approve' — target: corporate annual day magic show; supports /services corporate section | GBP post: December corporate-booking reminder + IG static: stage photo from latest corporate show | Blog: 'Mentalism for Dealer Meets & Product Launches: 5 Routines That Sell' — target: mentalist for corporate events india
+R7: Week 3 ⏎ (16–20 Nov) | Blog: 'College Fest Headliner Fees: Budgets From 40+ Fests, Explained' — target: college fest magician fee; supports /services college section | Reel: college-fest finale illusion (vertical format) + GBP post: winter fest availability | Blog: 'Kids' Birthday Magic Show by Age (4–12): Format Guide for Parents' — target: birthday party magician udaipur
+R8: Week 4 ⏎ (23–27 Nov) | Blog: 'Close-Up Magic for Cocktail Hours: A Room-by-Room Plan' — target: close-up magician indian weddings | GBP post: wedding-season dates update + IG static: wedding crowd reaction photo | Blog: 'Virtual Magic Shows for HR Teams: Tech Checklist & Formats' — target: virtual magic show for corporate
+R9: Week 5 ⏎ (30 Nov) | Blog: 'Jaipur Wedding Entertainment: Venue-by-Venue Planner Notes' — target: wedding magician jaipur; bridges blog/magician-in-jaipur to future /magician-in-jaipur decision | Reel: Jaipur show moment + GBP post: Jaipur travel weekend announcement | Blog (Hindi): 'जादूगर जयपुर — शादी और कॉर्पोरेट इवेंट के लिए मैजिक शो गाइड' — Hindi cluster expansion
+R11: Target totals ⏎ (Nov) | Blogs: 10 (8 English + 2 Hindi) | GBP posts: 8 (2/week) — requires GBP access | Reels: 4 + Static IG posts: 4
+R13: Every blog must (a) target a keyword from the Keywords Research sheet, (b) include 2–3 internal links to /services, /packages or /magician-in-udaipur, (c) be added to sitemap.xml on publish day and submitted in GSC. Rewrite/expand the 13 templated Oct posts BEFORE publishing net-new topics (see Errors sheet, finding C-05).
+
+==========================================================================================
+SHEET: Keywords Ranking  (29 rows x 8 cols)
+==========================================================================================
+R2: Keywords Ranking — Baseline 28 Oct 2026
+R3: Positions marked 'Not Verified' have no tracking yet. Weekly screenshot tracking starts Week 2 (template practice). 'Observed' positions come from controlled web-search tests on 28 Oct 2026 — treat as indicative, not lab-grade.
+R4: CORE KEYWORDS (national / commercial)
+R5: Sr. No | Core Keywords | Search Engine | Search URL | 28/10/2026 | Screenshot | Notes
+R6: 1 | magician in udaipur | Google | https://jadugarrajtilak.com/magician-in-udaipur (indexed via legacy URL /blog/magician-in-udaipur-2026-booking-guide which 308-redirects to it) | 4 (observed) | To capture in weekly tracker | Observed in top-5 of web-search test on 28 Oct 2026. Consolidate: homepage also targets this term — define landing page as the local winner and differentiate homepage to India-wide intent
+R7: 2 | jadugar rajtilak | Google | https://jadugarrajtilak.com/ + YouTube, Justdial, Instagram, Facebook all rank in brand search | 1 (observed) | To capture | Brand SERP is strong: site + 4 social/directory properties visible
+R8: 3 | magician for wedding in india | Google | https://jadugarrajtilak.com/blog/magician-for-wedding-in-india-… | Not Verified | To capture | Post exists (Oct batch, ~870 words) — expand to 1,200+ words with real show examples
+R9: 4 | corporate magician india | Google | https://jadugarrajtilak.com/blog/best-magician-in-india-for-corporate-… | Not Verified | To capture | Post exists; dedicated /services corporate page is the bigger win (see New Pages)
+R10: 5 | how much does a magic show cost in india | Google | https://jadugarrajtilak.com/blog/magic-show-cost-india | Not Verified | To capture | Strong 1,065-word honest-pricing post; promote internally from /packages
+R11: 6 | birthday party magician cost india | Google | https://jadugarrajtilak.com/blog/birthday-party-magician-cost-… | Not Verified | To capture | Oct batch post; city-wise price bands angle is good — needs depth + fresh data
+R12: 7 | mentalist for corporate events india | Google | https://jadugarrajtilak.com/blog/mentalist-for-corporate-events-… | Not Verified | To capture | Also has 1,311-word mentalism explainer — avoid cannibalisation: keep explainer informational, this one commercial
+R13: 8 | close-up magician indian weddings | Google | https://jadugarrajtilak.com/blog/close-up-magician-for-indian-… | Not Verified | To capture | Oct batch post
+R14: 9 | virtual magic show online events | Google | https://jadugarrajtilak.com/blog/virtual-magic-show-online-events | Not Verified | To capture | 1,368-word guide exists
+R15: 10 | best magician in jaipur | Google | https://jadugarrajtilak.com/blog/magician-in-jaipur | Not Verified | To capture | 1,403-word post exists; decide blog vs dedicated /magician-in-jaipur landing page
+R17: LOCAL KEYWORDS (Udaipur / Rajasthan focus)
+R18: Sr. No | Core Keywords | Search Engine | Search URL | 28/10/2026 | Screenshot | Notes
+R19: 1 | wedding magician udaipur | Google (local) | https://jadugarrajtilak.com/magician-in-udaipur | Not Verified | To capture | Primary local commercial term — landing page exists but is missing from sitemap
+R20: 2 | magician for birthday party in udaipur | Google (local) | https://jadugarrajtilak.com/blog/magician-for-birthday-… | Not Verified | To capture | Oct batch post targets this
+R21: 3 | destination wedding magician udaipur | Google (local) | Proposed: /magician-in-udaipur section or dedicated page | Not Verified | To capture | Udaipur = India's destination-wedding capital — highest-value local gap
+R22: 4 | जादूगर उदयपुर (jadugar udaipur) | Google (Hindi) | https://jadugarrajtilak.com/blog/jadugar-udaipur-shaadi-magic-show-guide | Not Verified | To capture | Hindi post exists; page declares lang='en-IN' — fix to hi-IN
+R23: 5 | magician in rajasthan | Google | https://jadugarrajtilak.com/ | Not Verified | To capture | Homepage secondary target
+R24: 6 | wedding magician rajasthan | Google | https://jadugarrajtilak.com/blog/how-much-does-a-wedding-magician-cost-… | Not Verified | To capture | Oct batch post
+R25: 7 | magician in jodhpur | Google (local) | No page yet — schema areaServed already lists Jodhpur | Not Verified | To capture | Validate demand first (see Local Keywords Targeting)
+R26: 8 | magician in ahmedabad | Google (local) | No page yet — schema areaServed lists Ahmedabad | Not Verified | To capture | Validate demand first
+R27: 9 | magician for sangeet | Google | https://jadugarrajtilak.com/blog/10-close-up-magic-moments-that-stop-… | Not Verified | To capture | Oct batch post + wedding-entertainment-ideas post cover this theme
+R29: No rank tracker is connected yet. Recommendation: capture manual screenshots weekly for the 19 keywords above (Google, incognito, India location) until GSC data is available; log positions + screenshot links here exactly as the reference template does. Positions 'observed' = seen in web-search tests on 28 Oct 2026 — they fluctuate and must not be treated as guaranteed standings.
+
+==========================================================================================
+SHEET: Weekly updates  (7 rows x 3 cols)
+==========================================================================================
+R2: Weekly Updates — Jadugar Rajtilak SEO
+R4: Date Range | Task Completed
+R5: 26 Oct 26 to 31 Oct 26 | Created comprehensive SEO audit for jadugarrajtilak.com: crawled all 35 discoverable URLs; verified robots.txt (well-configured), sitemap.xml (found 14 missing URLs), redirect chain (all 308, clean), HSTS + CSP + security headers (excellent), 404 handling (correct). Extracted titles, meta descriptions, canonicals, H1s, JSON-LD schema and image alt text for every page — titles and H1s are unique and within limits on all 35 pages. Identified critical findings: (1) navigation and footer built with <button> not crawlable <a> links; (2) sitemap.xml missing 13 blog posts + /magician-in-udaipur landing page; (3) 13 templated blog posts with formulaic copy. Audited GBP signals (4.8★, 181 reviews), Justdial (4.8, 192 ratings), Facebook, Instagram (~1.8K), YouTube. Competitor analysis completed (StarClinch, Justdial, Venuelook, Illusionist Sumit, local Udaipur magicians). Keyword master, keyword-to-URL mapping, local keyword grid and 5-phase roadmap delivered in this workbook. Baseline brand search verified (site + socials rank #1 for brand; top-5 observed for 'magician in udaipur').
+R7: Next week's log will record: sitemap regeneration, nav-link fix, GSC/GA/GBP access requests, first weekly rank screenshots, and the first two November blogs.
+
+==========================================================================================
+SHEET: On Page & technical checklist  (11 rows x 7 cols)
+==========================================================================================
+R2: On-Page & Technical Checklist — status as of 28 Oct 2026
+R3: Structure matches reference template: On-Page | Technical | Developer actions with status.
+R4: On-Page Actions | Status | Technical Actions | Status | Developer Actions | Status
+R5: Alt text Images optimization | Done | Schema Markup | Done | Navigation & footer built with <button> — no crawlable <a> links in raw HTML | Issue — fix
+R6: Heading Tags optimization (single H1 on all 35 pages) | Done | Robots.txt (Googlebot/Bingbot/social crawlers allowed; /api/ & /admin blocked; sitemap declared) | Done | Unminified JavaScript and CSS files | Not Verified
+R7: Meta title & Descriptions (titles 37–59ch, all unique; 9 descriptions >160ch) | Need Action | XML Sitemaps (21 of 35 URLs — 14 missing) | Need Action | Resources formatted as page links (blog cards are buttons too) | Issue — fix
+R8: Content optimization (13 templated ~860-word posts need differentiation) | Working | Favicon (512px + apple-touch icon + web manifest) | Done | No HSTS support — RESOLVED: HSTS enabled site-wide (max-age 2y, preload, includeSubDomains) | Done
+R9: Competitor Analysis | Done | Google Search Console errors | Data Required | Low text to HTML ratio (typical for Next.js SSR; content IS server-rendered) | Monitor
+R11: Done = verified on live site 28 Oct 2026. 'Issue — fix' items are the two highest-impact developer tasks (see Errors Technical & On Page sheet, findings T-01 and T-02). 'Not Verified' = needs PageSpeed/Lighthouse run (API quota blocked automated check).
+
+==========================================================================================
+SHEET: GMB Post  (14 rows x 6 cols)
+==========================================================================================
+R2: Google Business Profile Post Plan
+R3: GBP is live (4.8★, 181 reviews) but manager access is not yet provided — all posts are PLANNED. Format matches reference template: Sr. No. | GMB post | Date of publish | Status.
+R4: Sr. No. | GMB post (proposed) | Date of publish | Status | Notes
+R5: 1 | November weekend availability — '3 weekend dates left this month. Check yours before the calendar fills.' + stage photo | Week 1 Nov | Planned | Requires GBP access
+R6: 2 | Sangeet close-up reel embed — 20-sec vertical clip with couple reaction | Week 1 Nov | Planned | Reuse IG reel
+R7: 3 | Corporate December planning — 'Annual day committees: December slots close 6–8 weeks ahead' | Week 2 Nov | Planned
+R8: 4 | Review spotlight — thank-you note to wedding clients (4.8★ badge visual) | Week 2 Nov | Planned
+R9: 5 | Birthday-party tip — 'The golden window: after snacks, before cake' (from blog run-sheet) | Week 3 Nov | Planned | Links to blog
+R10: 6 | College fest availability + vertical-finale reel | Week 3 Nov | Planned
+R11: 7 | Jaipur travel weekend announcement (areaServed city) | Week 4 Nov | Planned
+R12: 8 | Wedding-season PSA — soft-hold policy reminder (72-hour holds) | Week 4 Nov | Planned
+R14: Cadence: 2 GBP posts/week (matches reference template's practice of 2–3/week). Each post uses a real photo/video from the Gallery — no stock. Also complete on GBP: services list (6 show formats), service areas (Udaipur + Jaipur/Jodhpur/Ahmedabad), booking link to /booking, and Q&A seeding with honest answers.
+
+==========================================================================================
+SHEET: Website Blogs  (31 rows x 8 cols)
+==========================================================================================
+R2: Website Blogs — full inventory (23 posts + 1 landing page), audited 28 Oct 2026
+R3: GSC indexing status will be confirmed once GSC access is granted; 'Found in search' = page observed in web-search tests on 28 Oct 2026.
+R4: # | Live URL | Blog Topics | Targeted URL | Keywords Targeted | Status | Sitemap / Indexing
+R5: 1 | https://jadugarrajtilak.com/blog/wedding-entertainment-ideas | 9 Ways a Magician Elevates a Wedding Evening | https://jadugarrajtilak.com/services | wedding entertainment ideas; magician for sangeet | Published | In sitemap — submit & verify
+R6: 2 | https://jadugarrajtilak.com/blog/magic-show-cost-india | How Much Does a Magic Show Cost? An Honest Breakdown | https://jadugarrajtilak.com/packages | magic show cost india; magician price | Published | In sitemap — submit & verify
+R7: 3 | https://jadugarrajtilak.com/blog/college-fest-magic-headliner | Fest Night Architecture: Scheduling a Magic Headliner | https://jadugarrajtilak.com/services | college fest magician; fest headliner | Published | In sitemap — submit & verify
+R8: 4 | https://jadugarrajtilak.com/blog/magician-in-jaipur | Best Magician in Jaipur (2026 Guide) | https://jadugarrajtilak.com/services | best magician in jaipur; magician jaipur wedding | Published | In sitemap — submit & verify
+R9: 5 | https://jadugarrajtilak.com/blog/virtual-magic-show-online-events | Virtual Magic Shows: Complete Hosting Guide | https://jadugarrajtilak.com/services | virtual magic show; online magic show | Published | In sitemap — submit & verify
+R10: 6 | https://jadugarrajtilak.com/blog/mentalism-mind-reading-show-india | Mentalism & Mind Reading Shows in India | https://jadugarrajtilak.com/services | mentalism show india; mind reading show | Published | In sitemap — submit & verify
+R11: 7 | https://jadugarrajtilak.com/blog/sangeet-mehendi-entertainment-ideas | 15 Sangeet & Mehendi Entertainment Ideas | https://jadugarrajtilak.com/services | sangeet entertainment ideas; mehendi entertainment | Published | In sitemap — submit & verify
+R12: 8 | https://jadugarrajtilak.com/blog/how-to-choose-a-magician | How to Choose a Magician: 10-Point Checklist | https://jadugarrajtilak.com/services | how to choose a magician; hiring a magician india | Published | In sitemap — submit & verify
+R13: 9 | https://jadugarrajtilak.com/blog/corporate-event-entertainment | Corporate Event Entertainment That Isn't Background Noise | https://jadugarrajtilak.com/services | corporate event entertainment; corporate magician | Published | In sitemap — submit & verify
+R14: 10 | https://jadugarrajtilak.com/blog/birthday-party-magician-timeline | Birthday Party Run-Sheet: Where the Magic Slot Goes | https://jadugarrajtilak.com/services | birthday party magician; kids party magician timeline | Published | In sitemap — submit & verify
+R15: 11 | https://jadugarrajtilak.com/blog/mentalist-for-corporate-events-in-india-what-mind-reading-adds-to-your-evening | Mentalist for Corporate Events in India | https://jadugarrajtilak.com/services | mentalist for corporate events india | Published | NOT in sitemap — add & submit
+R16: 12 | https://jadugarrajtilak.com/blog/close-up-magician-for-indian-weddings-roaming-magic-explained | Close-Up Magician for Indian Weddings | https://jadugarrajtilak.com/services | close-up magician indian weddings | Published | NOT in sitemap — add & submit
+R17: 13 | https://jadugarrajtilak.com/blog/birthday-party-magician-cost-in-india-2026-city-wise-price-bands | Birthday Party Magician Cost in India: City-Wise Price Bands | https://jadugarrajtilak.com/services | birthday party magician cost india | Published | NOT in sitemap — add & submit
+R18: 14 | https://jadugarrajtilak.com/blog/how-to-book-a-magician-in-india-the-complete-2026-checklist | How to Book a Magician in India: 2026 Checklist | https://jadugarrajtilak.com/booking | how to book a magician india | Published | NOT in sitemap — add & submit
+R19: 15 | https://jadugarrajtilak.com/blog/best-magician-in-india-for-corporate-events-the-2026-booking-guide | Best Magician in India for Corporate Events | https://jadugarrajtilak.com/services | best magician in india; corporate magician india | Published | NOT in sitemap — add & submit
+R20: 16 | https://jadugarrajtilak.com/blog/magician-for-wedding-in-india-what-top-hosts-book-and-what-they-avoid | Magician for Wedding in India: What Top Hosts Book | https://jadugarrajtilak.com/services | magician for wedding in india | Published | NOT in sitemap — add & submit
+R21: 17 | https://jadugarrajtilak.com/blog/jadugar-udaipur-shaadi-magic-show-guide | जादूगर उदयपुर: शादी के लिए मैजिक शो गाइड (Hindi) | https://jadugarrajtilak.com/booking | जादूगर उदयपुर; शादी मैजिक शो (Hindi) | Published | NOT in sitemap — add & submit; fix lang to hi-IN
+R22: 18 | https://jadugarrajtilak.com/blog/destination-wedding-in-udaipur-add-a-magician-to-the-timeline | Destination Wedding in Udaipur? | https://jadugarrajtilak.com/services | destination wedding magician udaipur | Published | NOT in sitemap — add & submit
+R23: 19 | https://jadugarrajtilak.com/blog/corporate-annual-day-magic-show-the-45-minute-format-that-works | Corporate Annual Day Magic Show: The 45-Minute Format | https://jadugarrajtilak.com/services | corporate annual day magic show | Published | NOT in sitemap — add & submit
+R24: 20 | https://jadugarrajtilak.com/blog/magician-for-birthday-party-in-udaipur-full-planning-run-sheet | Magician for Birthday Party in Udaipur: Run-Sheet | https://jadugarrajtilak.com/booking | magician for birthday party in udaipur | Published | NOT in sitemap — add & submit
+R25: 21 | https://jadugarrajtilak.com/blog/10-close-up-magic-moments-that-stop-a-sangeet-crowd | 10 Close-Up Magic Moments That Stop a Sangeet Crowd | https://jadugarrajtilak.com/services | magician for sangeet; sangeet magic | Published | NOT in sitemap — add & submit
+R26: 22 | https://jadugarrajtilak.com/blog/how-much-does-a-wedding-magician-cost-in-rajasthan | How Much Does a Wedding Magician Cost in Rajasthan? | https://jadugarrajtilak.com/packages | wedding magician rajasthan cost | Published | NOT in sitemap — add & submit
+R27: 23 | https://jadugarrajtilak.com/blog/wedding-magician-vs-dj-vs-band-what-udaipur-couples-actually-pick | Wedding Magician vs DJ vs Band | https://jadugarrajtilak.com/services | wedding magician udaipur; magician vs dj | Published | NOT in sitemap — add & submit
+R28: CITY LANDING PAGE (blog-equivalent)
+R29: 24 | https://jadugarrajtilak.com/magician-in-udaipur | Magician in Udaipur — city landing page (884 words, full meta set, JSON-LD) | https://jadugarrajtilak.com/booking | magician in udaipur; wedding magician udaipur | Published | NOT in sitemap — add & submit; observed top-5 for 'magician in udaipur'
+R31: Posts #11–#23 were published as an October batch: all ~750–875 words with templated intro/outro copy and templated meta descriptions (see Errors sheet C-05) — they need differentiation & expansion, and were never added to sitemap.xml. Publish dates per post: Data Required (not exposed on pages). Legacy URL /blog/magician-in-udaipur-2026-booking-guide 308-redirects to /magician-in-udaipur — keep redirect, list destination in sitemap.
+
+==========================================================================================
+SHEET: Off page activites  (14 rows x 8 cols)
+==========================================================================================
+R2: Off-Page Activity Plan — ethical authority building
+R3: Nothing executed yet (no off-page accounts provided). No passwords are stored in this workbook — use a password manager. Reference-template columns adapted: credentials replaced by account status.
+R4: S.No | Target URL | Keyword / Anchor | Platform (Live URL to be logged when done) | Off Page Task | Status | Account / Credential
+R5: 1 | https://jadugarrajtilak.com/ | Jadugar Rajtilak (brand) | Google Business Profile (live: 4.8★, 181 reviews) | Weekly GBP posts + photos + services list + Q&A seeding + review replies | Proposed | GBP manager access — Data Required
+R6: 2 | https://jadugarrajtilak.com/ | Jadugar Rajtilak (brand) | Justdial listing (live: 4.8, 192 ratings) | Reply to all pending reviews; refresh photos & description; verify NAP matches site | Proposed | Listing owner login — Data Required
+R7: 3 | https://jadugarrajtilak.com/magician-in-udaipur | magician in udaipur | WedMeGood / ShaadiSaga / WeddingWire India vendor profiles | Create vendor/entertainer profiles with real gallery photos & review requests to wedding clients | Proposed | Dedicated off-page email — Data Required
+R8: 4 | https://jadugarrajtilak.com/blog/magic-show-cost-india | magic show cost india (helpful answer) | Quora | Answer 2–3 genuine questions on magic show costs & hiring with honest detail; profile links to site | Proposed | Quora account — to create
+R9: 5 | https://jadugarrajtilak.com/ | Jadugar Rajtilak (brand) | YouTube channel (live: @jadugarrajtilak2543) | Optimise channel art, about section, video titles/descriptions/tags with target keywords; add site link | Proposed | Channel owner access
+R10: 6 | https://jadugarrajtilak.com/services | wedding magician udaipur (location tags) | Instagram (live: @rajtilakjadugar) | Reels with location tags + keyword-aware captions; link-in-bio to /booking | Proposed | IG account access
+R11: 7 | https://jadugarrajtilak.com/about | Jadugar Rajtilak — 500+ shows (story pitch) | Regional & event-industry press (Dainik Bhaskar, Rajasthan Patrika, EventXtra, WeddingVows etc.) | Digital PR: pitch the 500+ shows / 40+ cities / international-award story with real photos | Proposed | Press kit to prepare first
+R12: 8 | https://jadugarrajtilak.com/magician-in-udaipur | wedding magician udaipur | Udaipur hotels & wedding planners (collaboration pages) | Mutual referral: 'preferred entertainment partner' listings on venue/planner sites (5–10 quality links target) | Proposed | Outreach list to build
+R14: Policy (non-negotiable): no paid links, no PBNs, no automated spam submissions, no fake reviews, no mass low-quality directories — these violate Google guidelines and the reference template's own lesson (LaxRee's 89 monthly low-value submissions produced weak authority). One real wedding-planner link outweighs 100 bookmarking links. Disavow only with documented evidence of toxic links — none observed so far.
+
+==========================================================================================
+SHEET: Keywords Research  (39 rows x 8 cols)
+==========================================================================================
+R2: Keyword Master
+R3: Volumes/KD/CPC: Not Verified — no keyword-tool access yet (connect Google Keyword Planner or Ahrefs/Semrush trial to quantify). Priority = business value x realism for a single-performer brand.
+R4: Sr. no. | Keyword | Keyword Cluster | Search Intent | Priority | Related / Supporting Keywords | Target URL
+R5: 1 | jadugar rajtilak | Brand | Navigational | High | rajtilak magician; jadugar rajtilak udaipur | https://jadugarrajtilak.com/
+R6: 2 | magician rajtilak | Brand | Navigational | High | jadugar rajtilak shows | https://jadugarrajtilak.com/
+R7: 3 | जादूगर राजतिलक | Brand (Hindi) | Navigational | Medium | राजतिलक जादूगर | https://jadugarrajtilak.com/
+R8: 4 | magician in udaipur | Local — Udaipur | Commercial | High | magician udaipur; best magician in udaipur | https://jadugarrajtilak.com/magician-in-udaipur
+R9: 5 | wedding magician udaipur | Local — Udaipur | Commercial | High | wedding magician in udaipur; shaadi magician | https://jadugarrajtilak.com/magician-in-udaipur
+R10: 6 | magician for birthday party in udaipur | Local — Udaipur | Commercial | High | birthday magician udaipur; kids magician udaipur | https://jadugarrajtilak.com/blog/magician-for-birthday-party-in-udaipur-full-planning-run-sheet
+R11: 7 | destination wedding magician udaipur | Local — Udaipur | Commercial | High | udaipur wedding entertainment; destination wedding entertainment | https://jadugarrajtilak.com/magician-in-udaipur (new section)
+R12: 8 | जादूगर उदयपुर | Local — Udaipur (Hindi) | Commercial | Medium | उदयपुर मैजिक शो; शादी मैजिक शो | https://jadugarrajtilak.com/blog/jadugar-udaipur-shaadi-magic-show-guide
+R13: 9 | magician for sangeet | Local — Udaipur | Commercial | Medium | sangeet magician; mehendi entertainment | https://jadugarrajtilak.com/blog/10-close-up-magic-moments-that-stop-a-sangeet-crowd
+R14: 10 | magician in jaipur | Local — Jaipur | Commercial | Medium | best magician jaipur; jaipur wedding magician | https://jadugarrajtilak.com/blog/magician-in-jaipur
+R15: 11 | magician in jodhpur | Local — Jodhpur | Commercial | Medium | jodhpur event magician | No page yet — validate demand first
+R16: 12 | magician in ahmedabad | Local — Ahmedabad | Commercial | Medium | ahmedabad corporate magician | No page yet — validate demand first
+R17: 13 | magician in rajasthan | Local — Rajasthan | Commercial | Medium | rajasthan magician; wedding magician rajasthan | https://jadugarrajtilak.com/
+R18: 14 | magician for wedding in india | Core commercial | Commercial | High | wedding magician india; shaadi magician india | https://jadugarrajtilak.com/blog/magician-for-wedding-in-india-what-top-hosts-book-and-what-they-avoid
+R19: 15 | corporate magician india | Core commercial | Commercial | High | corporate magician for events; corporate entertainer india | Proposed: /services/corporate-shows
+R20: 16 | best magician in india for corporate events | Core commercial | Commercial | Medium | top magicians india corporate | https://jadugarrajtilak.com/blog/best-magician-in-india-for-corporate-events-the-2026-booking-guide
+R21: 17 | birthday party magician india | Core commercial | Commercial | High | kids birthday magician; children's party magician | Proposed: /services/birthday-kids
+R22: 18 | college fest magician | Core commercial | Commercial | Medium | college fest entertainment; fest headliner | Proposed: /services/college-stage
+R23: 19 | close-up magician for weddings | Core commercial | Commercial | Medium | roaming magician; table magic | https://jadugarrajtilak.com/blog/close-up-magician-for-indian-weddings-roaming-magic-explained
+R24: 20 | virtual magic show | Core commercial | Commercial | Medium | online magic show; zoom magician | Proposed: /services/virtual-magic
+R25: 21 | private party magician | Core commercial | Commercial | Low | luxury event entertainer | Proposed: /services/private-luxury
+R26: 22 | mentalist for corporate events india | Mentalism | Commercial | Medium | corporate mentalist india; mind reader show | https://jadugarrajtilak.com/blog/mentalist-for-corporate-events-in-india-what-mind-reading-adds-to-your-evening
+R27: 23 | mentalism show india | Mentalism | Informational | Low | what is mentalism; mind reading explained | https://jadugarrajtilak.com/blog/mentalism-mind-reading-show-india
+R28: 24 | how much does a magic show cost in india | Pricing | Commercial | High | magic show price; magician fees india | https://jadugarrajtilak.com/blog/magic-show-cost-india
+R29: 25 | birthday party magician cost in india | Pricing | Commercial | Medium | magician charges birthday party | https://jadugarrajtilak.com/blog/birthday-party-magician-cost-in-india-2026-city-wise-price-bands
+R30: 26 | wedding magician cost rajasthan | Pricing | Commercial | Medium | wedding magician rajasthan price | https://jadugarrajtilak.com/blog/how-much-does-a-wedding-magician-cost-in-rajasthan
+R31: 27 | magician charges per show | Pricing | Commercial | Low | magician per show fee india | https://jadugarrajtilak.com/blog/magic-show-cost-india
+R32: 28 | how to choose a magician | Informational | Informational | Medium | hiring a magician checklist; questions to ask magician | https://jadugarrajtilak.com/blog/how-to-choose-a-magician
+R33: 29 | how to book a magician in india | Informational | Informational | Medium | booking process magician | https://jadugarrajtilak.com/blog/how-to-book-a-magician-in-india-the-complete-2026-checklist
+R34: 30 | wedding entertainment ideas | Informational | Informational | Medium | indian wedding entertainment; sangeet ideas | https://jadugarrajtilak.com/blog/wedding-entertainment-ideas
+R35: 31 | sangeet mehendi entertainment ideas | Informational | Informational | Medium | mehendi function ideas | https://jadugarrajtilak.com/blog/sangeet-mehendi-entertainment-ideas
+R36: 32 | corporate annual day entertainment ideas | Informational | Informational | Medium | annual day show ideas | https://jadugarrajtilak.com/blog/corporate-annual-day-magic-show-the-45-minute-format-that-works
+R37: 33 | wedding magician vs dj | Comparison | Commercial | Low | dj vs magician wedding; band vs dj | https://jadugarrajtilak.com/blog/wedding-magician-vs-dj-vs-band-what-udaipur-couples-actually-pick
+R39: Cannibalisation watch: 'magician in udaipur' is currently targeted by BOTH the homepage title and the /magician-in-udaipur landing page (which ranks). Keep landing page = local intent; retune homepage to India-wide 'magician for weddings corporate events India' positioning. Mentalism cluster: keep the explainer post informational and the corporate post commercial — do not merge.
+
+==========================================================================================
+SHEET: Meta title and descriptions  (41 rows x 10 cols)
+==========================================================================================
+R2: Meta Titles & Descriptions — live values for all 35 discoverable URLs (crawled 28 Oct 2026)
+R4: Sr.no | Page URL | Page Type | Primary Target Keyword | Meta Title (Tag) | Title Length | Meta Description | Description Length | Status
+R5: 1 | / | Homepage | magician in udaipur; magician india (brand) | Magician in Udaipur & India | Jadugar Rajtilak | 46 | Hire Jadugar Rajtilak – Udaipur's 4.8★ magician (181 Google reviews). Stage & close-up magic for weddings, corporate & birthday shows. Check your date. | 151 | OK
+R6: 2 | /services | Core Service Hub | wedding, corporate & birthday magic shows | Wedding, Corporate & Birthday Magic Shows | Rajtilak | 52 | Six magic show formats by Jadugar Rajtilak: wedding sangeet, corporate annual day, kids birthday, college fest, private & virtual. Get a quote in 24 hrs. | 153 | OK
+R7: 3 | /booking | Conversion | book a magician udaipur | Book a Magician in Udaipur | Check Your Date | 44 | Enquire in 60 seconds: share date, city and event type and receive a written quote and 72-hour soft hold. | 105 | OK
+R8: 4 | /about | Trust/Authority | jadugar rajtilak (brand/authority) | About Jadugar Rajtilak | Udaipur Magician, 12+ Years | 52 | Meet Jadugar Rajtilak: 12+ years on stage, 500+ shows, 40+ cities and an international magic competition award. Read his story. | 127 | OK
+R9: 5 | /packages | Commercial | magic show packages & prices india | Magic Show Packages & Prices in India | Rajtilak | 48 | Compare Signature, Royal and Grand magic show packages with inclusions and starting prices. Written quote within 24 hours. | 122 | OK
+R10: 6 | /contact | Conversion | contact magician udaipur | Contact Jadugar Rajtilak | Check Date & Get Quote | 49 | Call, WhatsApp or email Jadugar Rajtilak to check date availability and get a written quote within 24 hours. | 108 | OK
+R11: 7 | /gallery | Trust/Proof | magic show photos videos | Magic Show Photos & Videos | Jadugar Rajtilak | 45 | See photos and video clips of Jadugar Rajtilak performing at weddings, corporate events, college fests and birthdays. | 117 | OK
+R12: 8 | /testimonials | Trust/Proof | jadugar rajtilak reviews | Reviews of Jadugar Rajtilak | 4.8★ Udaipur Magician | 51 | Read verified client reviews of Jadugar Rajtilak from Google and Justdial – weddings, corporate shows and birthdays across India. | 129 | OK
+R13: 9 | /blog | Blog Hub | magician booking guides | Magician Booking Guides & Event Ideas | Jadugar Rajtilak | 56 | Practical guides on hiring a magician in India: costs, wedding & corporate entertainment ideas, birthday run-sheets and booking checklists. | 139 | OK
+R14: 10 | /faq | Info/Support | magician booking faq price travel | Magician Booking FAQs: Price, Travel & Setup | 44 | Answers on magic show cost, travel, show length, sound/light setup, advance payment and cancellation for Jadugar Rajtilak bookings. | 131 | OK
+R15: 11 | /legal | Legal | — (legal) | Legal — Privacy, Terms & Cancellation | 37 | Privacy policy, terms of service and cancellation policy for Jadugar Rajtilak bookings. | 87 | OK
+R16: 12 | /blog/wedding-entertainment-ideas | Blog Post | see Keywords Research | Wedding Entertainment Ideas: 9 Ways Magic Elevates It | 53 | Nine ways a magician elevates a wedding evening beyond the stage show — sangeet table-side sets, cocktail roaming magic and a reception finale built for the couple. | 164 | Need Action — description >160ch (truncates)
+R17: 13 | /blog/magic-show-cost-india | Blog Post | see Keywords Research | How Much Does a Magic Show Cost in India? Honest Breakdown | 58 | What a magic show costs in India — honest price ranges by format and duration, what moves a quote up or down, and how to read a performer's pricing before booking. | 163 | Need Action — description >160ch (truncates)
+R18: 14 | /blog/college-fest-magic-headliner | Blog Post | see Keywords Research | College Fest Magic Headliner: Scheduling a Show That Trends | 59 | How to schedule a magic headliner at a college fest — stage slots, tech riders, crowd management and the finale that ends up on every student's story the same night. | 165 | Need Action — description >160ch (truncates)
+R19: 15 | /blog/magician-in-jaipur | Blog Post | see Keywords Research | Best Magician in Jaipur for Weddings & Events (2026) | 52 | Searching for the best magician in Jaipur? Stage illusion shows, wedding sangeet magic and corporate gala entertainment by Jadugar Rajtilak — 4.8★ rated, touring all of Rajasthan. Check your date. | 196 | Need Action — description >160ch (truncates)
+R20: 16 | /blog/virtual-magic-show-online-events | Blog Post | see Keywords Research | Virtual Magic Shows: Complete Online Event Guide | 48 | Virtual magic shows explained — the tech rider, camera-first tricks, corporate online event formats and honest India pricing. Host an online magic show your team actually remembers. | 181 | Need Action — description >160ch (truncates)
+R21: 17 | /blog/mentalism-mind-reading-show-india | Blog Post | see Keywords Research | Mentalism & Mind Reading Shows in India Explained | 49 | Curious about mentalism? What a mind-reading show actually performs, why corporate India books mentalists, staging and rider needs — plus six checks before you book one. | 169 | Need Action — description >160ch (truncates)
+R22: 18 | /blog/sangeet-mehendi-entertainment-ideas | Blog Post | see Keywords Research | 15 Sangeet & Mehendi Entertainment Ideas (Beyond a DJ) | 54 | Sangeet entertainment beyond the DJ: close-up magic, mentalism, ghoomar troupes, silent discos and 11 more ideas — with a timing map for mehendi, sangeet and reception days. | 173 | Need Action — description >160ch (truncates)
+R23: 19 | /blog/how-to-choose-a-magician | Blog Post | see Keywords Research | How to Choose a Magician: 10-Point Checklist | 44 | The 10-point checklist for choosing a magician in India — show reels, contracts, GST invoices, tech riders and the red flags that look harmless until showtime. | 159 | OK
+R24: 20 | /blog/corporate-event-entertainment | Blog Post | see Keywords Research | Corporate Event Entertainment That Isn't Background Noise | 57 | Corporate event entertainment that holds the room — stage shows, mentalism for dealer meets and award nights, with pacing, riders and brand-safe scripting explained. | 165 | Need Action — description >160ch (truncates)
+R25: 21 | /blog/birthday-party-magician-timeline | Blog Post | see Keywords Research | Birthday Party Magician Timeline: Where the Magic Slot Goes | 59 | The birthday party run-sheet, decoded — where the magician's slot actually goes, what a kids' show includes and the timing mistakes that ruin the cake moment. | 158 | OK
+R26: 22 | /magician-in-udaipur | City Landing | magician in udaipur | Magician in Udaipur | Wedding & Birthday Shows | 46 | Looking for a magician in Udaipur? Jadugar Rajtilak – 4.8★ on Google – performs at weddings, hotels, corporate events & birthdays. Check your date. | 147 | OK
+R27: 23 | /blog/mentalist-for-corporate-events-in-india-what-mind-reading-adds-to-your-evening | Blog Post | see Keywords Research | Mentalist for Corporate Events in India: What Mind Reading Adds t | 65 | Mentalist for Corporate Events in India: What Mind Reading Adds to Your Evening — formats, honest pricing, the checks to run before you book, and the timel | 155 | Need Action — title >60ch
+R28: 24 | /blog/close-up-magician-for-indian-weddings-roaming-magic-explained | Blog Post | see Keywords Research | Close-Up Magician for Indian Weddings: Roaming Magic, Explained | 63 | Close-Up Magician for Indian Weddings: Roaming Magic, Explained — formats, honest pricing, the checks to run before you book, and the timeline that keeps y | 155 | Need Action — title >60ch
+R29: 25 | /blog/birthday-party-magician-cost-in-india-2026-city-wise-price-bands | Blog Post | see Keywords Research | Birthday Party Magician Cost in India: 2026 City-Wise Price Bands | 65 | Birthday Party Magician Cost in India: 2026 City-Wise Price Bands — formats, honest pricing, the checks to run before you book, and the timeline that keeps | 155 | Need Action — title >60ch
+R30: 26 | /blog/how-to-book-a-magician-in-india-the-complete-2026-checklist | Blog Post | see Keywords Research | How to Book a Magician in India: The Complete 2026 Checklist | 60 | How to Book a Magician in India: The Complete 2026 Checklist — formats, honest pricing, the checks to run before you book, and the timeline that keeps your | 155 | OK
+R31: 27 | /blog/best-magician-in-india-for-corporate-events-the-2026-booking-guide | Blog Post | see Keywords Research | Best Magician in India for Corporate Events: The 2026 Booking Gui | 65 | Best Magician in India for Corporate Events: The 2026 Booking Guide — formats, honest pricing, the checks to run before you book, and the timeline that kee | 155 | Need Action — title >60ch
+R32: 28 | /blog/magician-for-wedding-in-india-what-top-hosts-book-and-what-they-avoid | Blog Post | see Keywords Research | Magician for Wedding in India: What Top Hosts Book (and What They | 65 | Magician for Wedding in India: What Top Hosts Book (and What They Avoid) — formats, honest pricing, the checks to run before you book, and the timeline tha | 155 | Need Action — title >60ch
+R33: 29 | /blog/jadugar-udaipur-shaadi-magic-show-guide | Blog Post | see Keywords Research | जादूगर उदयपुर: शादी के लिए मैजिक शो बुक करने की पूरी गाइड | 57 | जादूगर राजतिलक — जादूगर उदयपुर के लिए पूरी गाइड: शो के फॉर्मेट, कीमत कैसे तय होती है, बुकिंग का सही समय और तीन ज़रूरी सवाल। | 123 | OK
+R34: 30 | /blog/destination-wedding-in-udaipur-add-a-magician-to-the-timeline | Blog Post | see Keywords Research | Destination Wedding in Udaipur? Add a Magician to the Timeline | 62 | Destination Wedding in Udaipur? Add a Magician to the Timeline — formats, honest pricing, the checks to run before you book, and the timeline that keeps yo | 155 | Need Action — title >60ch
+R35: 31 | /blog/corporate-annual-day-magic-show-the-45-minute-format-that-works | Blog Post | see Keywords Research | Corporate Annual Day Magic Show: The 45-Minute Format That Works | 64 | Corporate Annual Day Magic Show: The 45-Minute Format That Works — formats, honest pricing, the checks to run before you book, and the timeline that keeps | 154 | Need Action — title >60ch
+R36: 32 | /blog/magician-for-birthday-party-in-udaipur-full-planning-run-sheet | Blog Post | see Keywords Research | Magician for Birthday Party in Udaipur: Full Planning Run-Sheet | 63 | Magician for Birthday Party in Udaipur: Full Planning Run-Sheet — formats, honest pricing, the checks to run before you book, and the timeline that keeps y | 155 | Need Action — title >60ch
+R37: 33 | /blog/10-close-up-magic-moments-that-stop-a-sangeet-crowd | Blog Post | see Keywords Research | 10 Close-Up Magic Moments That Stop a Sangeet Crowd | 51 | 10 Close-Up Magic Moments That Stop a Sangeet Crowd — formats, honest pricing, the checks to run before you book, and the timeline that keeps your date saf | 155 | OK
+R38: 34 | /blog/how-much-does-a-wedding-magician-cost-in-rajasthan | Blog Post | see Keywords Research | How Much Does a Wedding Magician Cost in Rajasthan? | 51 | How Much Does a Wedding Magician Cost in Rajasthan? — formats, honest pricing, the checks to run before you book, and the timeline that keeps your date saf | 155 | OK
+R39: 35 | /blog/wedding-magician-vs-dj-vs-band-what-udaipur-couples-actually-pick | Blog Post | see Keywords Research | Wedding Magician vs DJ vs Band: What Udaipur Couples Actually Pic | 65 | Wedding Magician vs DJ vs Band: What Udaipur Couples Actually Pick — formats, honest pricing, the checks to run before you book, and the timeline that keep | 155 | Need Action — title >60ch
+R41: All 35 titles are unique and within 37–59 characters (excellent). 9 blog descriptions exceed 160 characters (longest: /blog/magician-in-jaipur at 196ch) — rewrite to 140–160ch with the keyword in the first 90 characters. The 13 October-batch posts share a templated description tail ('— formats, honest pricing, the five checks…') — differentiate each (see Errors sheet C-05).
+
+==========================================================================================
+SHEET: Google Console Errors  (9 rows x 5 cols)
+==========================================================================================
+R2: Google Search Console — Errors & Coverage
+R3: GSC access not yet provided — coverage data is Data Required. Live HTTP tests (28 Oct 2026) below show what could be verified without access.
+R4: Not found (404) | Excluded by 'noindex' tag | Page with redirect
+R5: No 404 errors observable from live crawl — all 35 URLs return HTTP 200. | No noindex directives found: all pages declare 'index, follow' (verified on all 35 URLs). | One live redirect found: /blog/magician-in-udaipur-2026-booking-guide → 308 → /magician-in-udaipur (correct, keep).
+R6: Random URL test returns proper 404 status (no soft-404): /nonexistent-page-test → 404. | /api/ and /admin are disallowed in robots.txt (intentional — no public content). | http→https (308), www→non-www (308), trailing-slash→clean (308) — all correct single-hop redirects.
+R7: GSC 'Pages' report: Data Required — request access. | GSC 'Crawled – not indexed' / 'Discovered – not indexed' checks: Data Required — likely affected by the 14 sitemap-missing URLs + button navigation (see T-01/T-02). | GSC 'Page indexing' report will confirm how Google renders the button-based navigation — run URL Inspection on /about and /blog after fixes.
+R9: Priority action: grant GSC access (Settings → Users & permissions → add SEO manager). Then export Pages / Sitemaps / Core Web Vitals / Queries reports into this sheet's format monthly.
+
+==========================================================================================
+SHEET: Services Pages  (12 rows x 7 cols)
+==========================================================================================
+R2: Services (Show Formats) — current state & page architecture plan
+R3: Reference template's 'Products Pages' sheet adapted to this service business: the six show formats are the 'products'. Today all six live as sections of /services — no dedicated URLs exist.
+R4: Show Format | Current Location | Primary Keyword | Proposed Dedicated URL | Priority | Evidence / Rationale
+R5: Wedding Magic | https://jadugarrajtilak.com/services#wedding (section) | wedding magician india / udaipur | /services/wedding-magic (or /wedding-magician-india) | High | Highest-value segment; marketplaces & illusionistsumit.com rank with dedicated pages; /services section cannot carry both national + local intent
+R6: Corporate Shows | https://jadugarrajtilak.com/services#corporate (section) | corporate magician india | /services/corporate-shows | High | Dealer meets / annual days are year-round; mentalism sub-angle already has blog support
+R7: Birthday & Kids | https://jadugarrajtilak.com/services#birthday (section) | birthday party magician | /services/birthday-kids | High | 2 dedicated blog posts already funnel here; highest volume of local enquiries
+R8: College & Stage | https://jadugarrajtilak.com/services#college (section) | college fest magician | /services/college-stage | Medium | Seasonal (Nov–Feb fests); blog support exists
+R9: Private & Luxury | https://jadugarrajtilak.com/services#private (section) | private party magician | /services/private-luxury | Medium | Udaipur destination-wedding & villa market fits luxury positioning
+R10: Online / Virtual | https://jadugarrajtilak.com/services#virtual (section) | virtual magic show | /services/virtual-magic | Medium | 1,368-word guide exists; evergreen corporate HR demand
+R12: Implementation: add real <a href> links from /services sections to the new pages (currently section cards are also buttons). Each new page: 700+ words, FAQ block, 3–4 gallery items, JSON-LD Service + Breadcrumb, internal links from related blog posts. Add all new URLs to sitemap.xml on day one.
+
+==========================================================================================
+SHEET: Services Title and descriptions  (13 rows x 9 cols)
+==========================================================================================
+R2: Recommended Meta for Proposed Service Pages + City Landing Page
+R3: Ready-to-implement metadata (titles 44–58ch, descriptions 138–155ch). Keep factual claims already verified on site (4.8★, 181 reviews, 500+ shows, 40+ cities).
+R4: URL | Category | Page | Primary Keyword | Meta Title | Title Characters | Meta Description | Description Characters
+R5: /services/wedding-magician | Wedding Magic | Wedding Magician | wedding magician india | Wedding Magician in India | Sangeet to Reception | Rajtilak | 56 | Wedding magic by Jadugar Rajtilak — sangeet close-up sets, cocktail roaming magic and a reception finale. 500+ shows across India. Check your date. | 149
+R6: /services/corporate-shows | Corporate Shows | Corporate Magic | corporate magician india | Corporate Magician for Events in India | Rajtilak | 48 | Corporate shows that hold the room — annual days, dealer meets, award nights. Mentalism and brand-woven illusions with full tech rider. Get a quote. | 152
+R7: /services/birthday-kids | Birthday & Kids | Birthday Magician | birthday party magician | Birthday Party Magician in Udaipur & India | Rajtilak | 52 | Age-calibrated birthday magic shows (4–12 years) — the golden window between snacks and cake. Every child leaves with a take-home trick. Check your date. | 150
+R8: /services/college-stage | College & Stage | College Fest Magician | college fest magician | College Fest Magician & Illusion Headliner | Rajtilak | 52 | Big-stage illusions built for 500–5,000 seat auditoriums — crowd work and a vertical-video finale your fest page can post on Monday. Book the date. | 148
+R9: /services/private-luxury | Private & Luxury | Private Party Magician | private party magician | Private & Luxury Event Magician | Rajtilak | 45 | Salon evenings, villa parties and destination celebrations — a close-up and parlour act scaled to your guest list. Discreet, polished, unforgettable. | 146
+R10: /services/virtual-magic | Online / Virtual | Virtual Magic Show | virtual magic show | Virtual Magic Shows for Online Events | Rajtilak | 46 | Camera-first virtual magic for remote teams and online events — tech checklist, Zoom-ready routines and honest formatting for 20–500 screens. | 144
+R11: /magician-in-udaipur (existing — keep) | City Landing | Magician in Udaipur | magician in udaipur | Magician in Udaipur | Wedding & Birthday Shows | 46 | Looking for a magician in Udaipur? Jadugar Rajtilak — 4.8★ on Google — performs at weddings, hotels, corporate events & birthdays. Check your date. | 149
+R13: Character counts are exact. Do not exceed 60 (title) / 160 (description). Once pages are built, re-run the crawler check and log live values in the 'Meta title and descriptions' sheet.
+
+==========================================================================================
+SHEET: Competitor Analysis  (13 rows x 12 cols)
+==========================================================================================
+R2: Competitor Metrix — organic search competitors (observed 28 Oct 2026)
+R3: Sources: live search-result tests for magician/entertainment queries. 'Observed' = seen in results; assumptions are labelled and not presented as verified data.
+R4: Competitor | Website | Core positioning | Service breadth | SEO content | Location SEO | Lead capture | Brand/trust | Key advantage vs Rajtilak | Weakness / opening for Rajtilak | Strategic threat
+R5: Jadugar Rajtilak (self) | https://jadugarrajtilak.com | Royal-stage magician; premium positioning; honest pricing voice | 6 formats, one /services page | 23 posts + 7 long guides (Oct 2026) | GBP 4.8★/181; Udaipur landing page ranks top-5 | WhatsApp-first + booking calendar + 72h soft-hold | 181 Google reviews; Justdial 192 ratings; YouTube/IG | — | — | —
+R6: StarClinch | starclinch.com | Artist marketplace (164+ magicians), aggressive programmatic SEO | Every city x event x language combination page | Massive templated guides (fees, how-to) | City landing pages everywhere | Marketplace enquiry funnel + phone | Marketplace trust badges; big inventory | Domain authority + page volume dominate commercial queries (observed ranking for Udaipur/Jaipur queries) | No personality, no verified local reviews for Udaipur performers; Rajtilak wins on authenticity + direct booking | Very High
+R7: Justdial | justdial.com | Local directory — dominates 'magician in <city>' SERPs | Category listings per locality | Thin listing pages, review-driven | Extremely strong local pack + organic | Call leads via directory | Millions of reviews incl. Rajtilak's own 4.8/192 listing | Ranks above individual sites for local queries (observed) | Rajtilak's own listing already ranks there — optimise the listing instead of fighting it | Very High
+R8: Venuelook | venuelook.com | Vendor marketplace with city/vendor-type pages | Magicians among many vendor categories | Listing pages with price bands | City pages (Jaipur/Jodhpur observed) | Get-quote flow | Verified-vendor badges | Ranks for 'magician Jodhpur/Jaipur' style queries (observed) | Generic listings — no show content depth; Rajtilak can outrank with real guides | High
+R9: Illusionist Sumit | illusionistsumit.com | Delhi-based wedding magician with dedicated service URLs | Dedicated /wedding-magician page (observed) | Service-page-led SEO | Delhi focus | Website enquiry forms | Wedding-niche positioning | Already runs the dedicated-service-page model Rajtilak lacks | Only Delhi-centric; Rajtilak owns Rajasthan + touring story | Medium-High
+R10: Local Udaipur magicians (Jadugar Anchal, Brio Weddings, Jain Jadugar, Magician Rocky) | Facebook pages / Justdial listings | Local entertainers on social & directories | Single-format acts mostly | No content SEO (FB/Justdial only) | Justdial local listings | FB Messenger / phone calls | Local word-of-mouth | Occupy local directory slots (observed in Justdial results) | No website/content moat — Rajtilak's site + reviews outcompete once crawlability fixes land | Low-Medium
+R11: City-specific magician sites (birthdaymagician.in Indore, kolkatamagician.com) | various | One-city, one-service microsites | Birthday/city focus | Small blogs (cost-per-city posts) | Their home city only | Phone/WhatsApp | Local Google reviews | Rank in their home cities for cost queries (observed) | Outside Rajasthan — irrelevant unless Rajtilak builds city pages | Low
+R13: Realistic read: Rajtilak cannot out-muscle StarClinch/Justdial on authority; the winnable game is (a) dedicated service + city pages with genuine content, (b) the review moat (181 Google reviews), (c) destination-wedding Udaipur angle nobody owns, (d) fixing crawlability so Google can credit the internal linking. No private analytics of competitors were accessed — all rows are from public search results.
+
+==========================================================================================
+SHEET: Console Queries (28 Oct 26)  (16 rows x 13 cols)
+==========================================================================================
+R2: Search Console Queries — Data Required (no access yet)
+R3: Structure matches reference template. Numbers will populate from GSC once access is granted.
+R4: Top queries (GSC export — Data Required)
+R5: Sr. NO. | Top queries | Clicks | Impressions | CTR | Position
+R6: 1 | jadugar rajtilak (brand — verified via web-search test: site + YouTube + Justdial + IG + FB visible) | NA | NA | NA | NA
+R7: 2 | magician in udaipur (site observed in top-5 results, 28 Oct 2026 web-search test) | NA | NA | NA | NA
+R8: 3 | All other queries — export from GSC Performance report after access | NA | NA | NA | NA
+R10: Top pages (GSC export — Data Required)
+R11: Top pages | Clicks | Impressions | CTR | Position
+R12: 1 | https://jadugarrajtilak.com/magician-in-udaipur (via legacy /blog/magician-in-udaipur-2026-booking-guide URL, observed ranking) | NA | NA | NA | NA
+R13: 2 | https://jadugarrajtilak.com/blog (and individual posts — found indexed in web-search tests) | NA | NA | NA | NA
+R14: 3 | https://jadugarrajtilak.com/ (homepage) | NA | NA | NA | NA
+R16: Setup: GSC → Performance → Search results → Export (CSV) → paste top 20 queries + pages monthly. Compare CTR by page to tune titles. GA4 (G-103JFH1Z6B) will supply sessions/conversions to join with query data.
+
+==========================================================================================
+SHEET: Keywords Mapping URLs  (23 rows x 6 cols)
+==========================================================================================
+R2: Keyword → URL Mapping (prevents cannibalisation)
+R4: Target URL | Primary Keywords | Intent | Page Role | SEO Recommendation
+R5: / | jadugar rajtilak; magician in rajasthan; magician india (brand) | Brand + broad commercial | Homepage | Retune from 'Magician in Udaipur & India' to India-wide positioning; let /magician-in-udaipur own the local term
+R6: /magician-in-udaipur | magician in udaipur; wedding magician udaipur; destination wedding magician udaipur | Local commercial | City landing page | Add to sitemap; expand with venue/FAQ section; internal links from every Udaipur-themed blog post
+R7: /services | magic show formats; wedding corporate birthday shows | Commercial hub | Service hub | Keep as overview; link each section to its future dedicated page with real anchors
+R8: /services/wedding-magician (proposed) | wedding magician india; wedding magician udaipur | Commercial | Service page | Build with sangeet/reception timeline content + gallery proof
+R9: /services/corporate-shows (proposed) | corporate magician india; corporate event entertainment | Commercial | Service page | Include tech rider, formats by event type; link mentalism blogs
+R10: /services/birthday-kids (proposed) | birthday party magician; kids magician udaipur | Commercial | Service page | Age-band format guide + parent FAQ; link birthday blogs
+R11: /services/college-stage (proposed) | college fest magician; fest headliner | Commercial | Service page | Seasonal push Nov–Feb; link fest blog
+R12: /services/virtual-magic (proposed) | virtual magic show; online magic show | Commercial | Service page | Tech checklist + corporate formats; link virtual blog
+R13: /services/private-luxury (proposed) | private party magician; luxury event entertainer | Commercial | Service page | Udaipur villa/destination angle; link destination-wedding blog
+R14: /packages | magic show packages; magic show price india | Commercial | Pricing | Add FAQ + price context (link cost blogs); enrich to 600+ words
+R15: /booking | book a magician; check date | Transactional | Conversion | Thin (186 words) is fine for conversion — add minimal indexable intro paragraph for context
+R16: /about | jadugar rajtilak story; 500+ shows | Brand/trust | E-E-A-T | Add awards detail, timeline, press mentions (only verified ones); author box on all blogs linking here
+R17: /testimonials | jadugar rajtilak reviews | Brand/trust | Proof | Link Google review profile visibly; add review schema only if individual reviews are verifiable on-page
+R18: /gallery | magic show photos; magician videos | Brand/proof | Proof | Keep video alts descriptive (already good); add city/event captions for image SEO
+R19: /blog/* | see Keywords Research sheet (23 posts) | Informational/commercial | Content cluster | Differentiate the 13 templated posts; every post links to 1 service page + /booking
+R20: /faq | magic show faq; magician booking questions | Informational | Support | Add FAQPage schema (only for on-page visible Q&A); link cost blogs
+R21: /legal | — | — | Legal | Noindex not required; keep sitemap-listed at low priority (current setup OK)
+R23: One keyword = one primary URL. Blogs support with long-tail variants and link up to the money page.
+
+==========================================================================================
+SHEET: Local Keywords Targeting  (20 rows x 8 cols)
+==========================================================================================
+R2: Local Keyword Grid — validate demand before building pages
+R3: Search volumes Not Verified (no keyword tool). Demand signals: schema areaServed lists Udaipur, Jaipur, Jodhpur, Ahmedabad; competitors rank with city pages; Justdial directory density.
+R4: Keyword | Base Keyword | Location | Intent | Type | Recommendation | Notes
+R5: magician in udaipur | magician | Udaipur | Commercial | Local/Regional | Page exists & ranks top-5 — strengthen, add to sitemap | HOME MARKET — top priority
+R6: wedding magician udaipur | wedding magician | Udaipur | Commercial | Local/Regional | Dedicated section on /magician-in-udaipur | Destination-wedding capital of India
+R7: magician for birthday party in udaipur | birthday party magician | Udaipur | Commercial | Local/Regional | Blog exists — expand & internally link
+R8: destination wedding entertainment udaipur | wedding entertainment | Udaipur | Commercial | Local/Regional | New content section (Nov calendar W1) | Highest-value gap
+R9: जादूगर उदयपुर | जादूगर | Udaipur | Commercial | Local Hindi | Hindi post exists — fix lang, add to sitemap | Expand Hindi cluster to 4–5 posts
+R10: magician in jaipur | magician | Jaipur | Commercial | Local/Regional | Blog ranks target; test dedicated /magician-in-jaipur page in Q1 | areaServed city
+R11: wedding magician jaipur | wedding magician | Jaipur | Commercial | Local/Regional | Cover inside Jaipur page if built
+R12: magician in jodhpur | magician | Jodhpur | Commercial | Local/Regional | Validate demand first (Keyword Planner) before creating | areaServed city
+R13: magician in ahmedabad | magician | Ahmedabad | Commercial | Local/Regional | Validate demand first | areaServed city
+R14: magician in rajasthan | magician | Rajasthan | Commercial | State | Homepage secondary target
+R15: wedding magician rajasthan | wedding magician | Rajasthan | Commercial | State | Blog exists (cost post)
+R16: magician for corporate events udaipur/rajasthan | corporate magician | Udaipur/Rajasthan | Commercial | Local/Regional | Cover in /services/corporate-shows copy
+R17: magician in delhi / mumbai / bengaluru | magician | Metro cities | Commercial | Local/Regional | NOT recommended yet — touring pages without local proof read as doorway pages | Only after Rajasthan dominance
+R18: college fest magician rajasthan | college fest magician | Rajasthan | Commercial | Local/Regional | Seasonal push on /services/college-stage | Nov–Feb window
+R20: Rule: one city = one genuinely useful page (venues served, travel notes, real photos). Never generate city x service permutations without unique value — that is the marketplace's game, not a solo brand's.
+
+==========================================================================================
+SHEET: New Pages Suggestions  (18 rows x 7 cols)
+==========================================================================================
+R2: New Page Suggestions — ranked by opportunity
+R4: Suggested URL | Page Topic | Target Keywords | Intent | Priority | Recommendation
+R5: /services/wedding-magician | Wedding Magician (national) | wedding magician india; wedding magician udaipur | Commercial | High | Build first — highest value; pull format from /services section + sangeet blog content
+R6: /services/corporate-shows | Corporate Magic Shows | corporate magician india | Commercial | High | Tech rider + formats; link mentalism posts
+R7: /services/birthday-kids | Birthday & Kids Magic | birthday party magician | Commercial | High | Age-band guide; parent FAQ
+R8: /magician-in-udaipur (exists — optimise) | City landing (Udaipur) | magician in udaipur | Commercial | High | Add to sitemap + venue section + internal links; observed top-5 — defend the position
+R9: /services/college-stage | College Fest Headliner | college fest magician | Commercial | Medium | Build before Nov–Feb fest season
+R10: /services/virtual-magic | Virtual Magic Shows | virtual magic show | Commercial | Medium | Evergreen corporate demand
+R11: /services/private-luxury | Private & Luxury Events | private party magician | Commercial | Medium | Udaipur villa/destination positioning
+R12: /destination-wedding-magician-udaipur | Destination Wedding Magician | destination wedding magician udaipur | Commercial | High | Differentiator no competitor owns; support with Nov W1 blog
+R13: /magician-in-jaipur | City landing (Jaipur) | magician in jaipur; wedding magician jaipur | Commercial | Medium | Q1 test — Jaipur post currently carries the term
+R14: /magician-in-jodhpur | City landing (Jodhpur) | magician in jodhpur | Commercial | Low | Only after Keyword Planner validates volume
+R15: /magician-in-ahmedabad | City landing (Ahmedabad) | magician in ahmedabad | Commercial | Low | Only after demand validation
+R16: Hindi cluster (4–5 posts) | जादूगर series | जादूगर उदयपुर; शादी मैजिक शो कीमत | Mixed | Medium | Fix existing Hindi post lang + add hreflang pair only if Hindi grows into a section
+R18: Sequence: fix T-01/T-02 (crawlability) BEFORE adding pages — new URLs on a button-nav site inherit the same discovery problem. Every new page ships with: unique meta, 700+ words, 3 internal links IN, sitemap entry on day one, GSC submission.
+
+==========================================================================================
+SHEET: Errors Technical & On Page  (26 rows x 10 cols)
+==========================================================================================
+R2: Technical & On-Page Findings Register — audited 28 Oct 2026
+R3: Every finding carries live-crawl evidence. Confirmed = reproduced during audit; Data Required = needs tool/account access.
+R4: ID | Page URL(s) | Issue / Status | Evidence & Diagnostic Method | SEO Impact | Recommended Correction | Priority | Responsible | Timeline
+R5: T-01 | All core pages (/, /services, /about, /packages, /gallery, /testimonials, /blog, /faq, /contact, /booking) | CONFIRMED — Navigation & footer use <button>, not <a href>: raw HTML contains ZERO crawlable internal links | curl of homepage: only 1 internal href (/sitemap.xml) survives; nav & footer items are <button> elements with JS routing (verified in <nav aria-label='Main navigation'> and footer markup) | No anchor text/link signals in raw HTML; non-JS crawlers (social scrapers, most AI answer-engine bots) cannot discover pages; weaker internal-link graph for ranking; users cannot open-in-new-tab | Replace nav + footer items with server-rendered Next.js <Link href> anchors (keep styling); validate via view-source + GSC URL Inspection (rendered HTML) | CRITICAL | Developer | Week 1–2
+R6: T-02 | sitemap.xml | CONFIRMED — Sitemap lists 21 of 35 discoverable URLs; 13 blog posts + /magician-in-udaipur missing | sitemap.xml fetch (21 URLs, all lastmod 2026-10-22) vs live inventory: 23 posts counted on rendered /blog + 1 landing page (each returns HTTP 200) | Delayed/incomplete discovery & indexation of newest content; GSC can't report on unsubmitted URLs; AI/search crawlers that lean on sitemaps miss 40% of site | Fix sitemap generation to include all published posts + landing pages automatically (likely the build script's post list is stale); resubmit in GSC; set realistic per-URL lastmod | CRITICAL | Developer | Week 1
+R7: T-03 | /blog | CONFIRMED — Blog listing cards are buttons; only 6 featured posts appear in raw HTML | Raw /blog HTML: no /blog/* hrefs; agent-browser DOM inspection: cards are <button aria-label='Read the full entry: …'>; post URLs only obtainable after JS click | Post discovery depends on JS rendering; category filters ('Weddings', 'Pricing'…) also JS-only | Render each post card as <a href> (Next.js Link) with the post title as anchor text | HIGH | Developer | Week 2
+R8: T-04 | /blog/magician-in-udaipur-2026-booking-guide → /magician-in-udaipur | CONFIRMED — Legacy blog URL 308-redirects to new landing page | curl -L test: 308 → /magician-in-udaipur (HTTP 200); Google still surfaces the legacy URL in results | None if kept — single-hop redirect is correct practice | Keep redirect permanently; add /magician-in-udaipur to sitemap; point internal links at the destination URL | LOW | SEO | Week 1 (with T-02)
+R9: T-05 | / and /magician-in-udaipur | CONFIRMED — Cannibalisation risk on 'magician in udaipur' | Homepage title 'Magician in Udaipur & India | Jadugar Rajtilak' AND landing page title 'Magician in Udaipur | Wedding & Birthday Shows' target the same head term; landing page is the one observed ranking top-5 | Split relevance between the two strongest pages; homepage may dilute the landing page's local win | Retune homepage to India-wide positioning ('Magician for Weddings, Corporate & Events across India'); landing page owns 'magician in udaipur' | MEDIUM | SEO + Content | Week 3
+R10: T-06 | 13 October-batch posts | CONFIRMED — Templated content: all 849–875 words, identical intro patterns, templated meta description tails ('— formats, honest pricing, the five checks…') | Word counts from crawl (13 posts in 849–875 range vs older posts 1,036–1,403); meta descriptions all exactly 154–155ch with shared tail; /blog rendered listing shows repeated 'A practical, honest guide for X' copy | Thin-ish, repetitive pages risk falling under 'scaled content abuse' scrutiny; weaker topical authority per post; poorer AI-answer quotability | Differentiate each post: real anecdotes, venue names, city price observations, photos; expand to 1,100+ words; rewrite meta descriptions individually | HIGH | Content | Weeks 2–6 (2–3 posts/week)
+R11: T-07 | /blog/jadugar-udaipur-shaadi-magic-show-guide | CONFIRMED — Hindi page declares lang='en-IN' | <html lang='en-IN'> on a Hindi-language page (title/H1/content in Hindi) | Search engines may mis-serve the page to English users; voice/assistive tech mispronounces | Set lang='hi-IN' on that route; if Hindi grows to a section, add en↔hi hreflang pair + hi entries in sitemap | LOW | Developer | Week 2
+R12: T-08 | 9 blog posts (magic-show-cost, magician-in-jaipur, etc.) | CONFIRMED — Meta descriptions exceed 160ch (163–196ch, longest: magician-in-jaipur at 196) | Crawl extraction with exact lengths (see Meta title and descriptions sheet) | Descriptions truncate in SERPs — CTR loss on informational queries | Rewrite to 140–155ch, keyword in first 90ch, unique benefit per post | LOW | SEO | Week 2
+R13: T-09 | Site-wide footer + JSON-LD sameAs | CONFIRMED — Instagram PROFILE never linked (only a single post URL); YouTube channel absent from sameAs | Footer links: instagram.com/p/DCJ3hBhg8xh/ (a post); schema sameAs contains the same post URL; YouTube channel @jadugarrajtilak2543 exists (search-verified) but is unlinked | Weaker entity consolidation for Google's knowledge graph; lost social-proof signals | Footer: link https://www.instagram.com/rajtilakjadagar/ + YouTube channel; update sameAs to profile URLs + add YouTube | LOW | Developer | Week 2
+R14: T-10 | All pages | CONFIRMED OK — Images: descriptive alt text on all content images; only 3 empty alts per page (decorative logo instances) | Crawl: e.g. hero alt 'Jadugar Rajtilak — royal portrait…'; gallery/logos verified; WebP + JPEG served, immutable 1-year cache, 5–91KB sizes | None — this is a strength | Optional: give the header logo alt='Jadugar Rajtilak — home' once for branding | LOW | Developer | Backlog
+R15: T-11 | Site-wide | CONFIRMED OK — Redirects & security: http→https (308), www→non-www (308), trailing-slash (308), 404 returns real 404; HSTS preload; CSP; permissions-policy; referrer-policy; nosniff | curl header tests on 5 URL variants + response headers | None — textbook setup (Vercel/Next.js defaults done right) | No action — monitor quarterly | INFO | — | —
+R16: T-12 | Footer | CONFIRMED — 'Admin' link visible in public footer | Footer markup contains Admin link (goes to robots-disallowed /admin) | Minor: exposes admin surface; crawl-budget noise | Remove from public footer (keep route, block via robots as now) | LOW | Developer | Week 2
+R17: T-13 | /services | CONFIRMED — No dedicated URLs for the 6 show formats (all are sections of one page) | sitemap + crawl: single /services page; 6 formats exist only as H3 sections | Cannot rank individually for 'wedding magician india' vs 'corporate magician india' etc.; competitors rank with dedicated pages (Illusionist Sumit model) | Build 6 service pages per New Pages Suggestions sheet, with internal links from /services sections and related blogs | HIGH | SEO + Developer + Content | Weeks 3–8
+R18: T-14 | /booking (186 words), /contact (357), /legal (345) | CONFIRMED — Thin indexable content on conversion pages | Word counts from crawl; /booking is a date-picker funnel | Minimal for conversion pages; slight context deficit for search engines | Add 2–3 sentence intro paragraphs (occasion types served, cities, response time); no major rewrite needed | LOW | Content | Week 3
+R19: T-15 | Site-wide | DATA REQUIRED — Core Web Vitals not verified (PageSpeed API quota exhausted during audit); GA4 conversion events unverified | Positive signals observed: SSR, font preloading, HTTP/2, edge CDN, image caching, WebP; GA4 tag G-103JFH1Z6B live on all pages | Unknown field data (LCP/INP/CLS) — mobile CWV report needed | Run PageSpeed Insights manually (homepage + /services + 1 blog, mobile); check GSC Core Web Vitals once access granted; verify GA4 events for WhatsApp clicks & form submissions | MEDIUM | SEO + Developer | Week 1–2
+R20: T-16 | External links (wa.me, facebook, justdial, instagram) | CONFIRMED — Bot-protection status codes on social/directory links (HTTP 400/403/429 to automated checkers) | curl status tests: facebook 400, justdial 403, instagram profile 429 (rate-limit), wa.me 200, instagram post 200, YouTube 200 | None for users — these platforms block bots, links work in browsers (FB page verified via search) | Manual browser verification once a quarter; not a defect | INFO | — | —
+R21: T-17 | JSON-LD (all pages) | CONFIRMED OK with minor gaps — EntertainmentBusiness+LocalBusiness graph (name, alternateName, NAP, geo, areaServed, priceRange, aggregateRating 4.8/181, sameAs, makesOffer) + WebSite + WebPage + BlogPosting/Article on posts | Extracted full JSON-LD from homepage & posts; validated structure | Strong rich-result eligibility already | Add FAQPage schema ONLY for the visible Q&A on /faq; fix sameAs (T-09); keep aggregateRating synced to the real GBP review count (181 today — update when it changes) | LOW | Developer | Week 3
+R22: L-01 | GBP / Justdial / site | DATA REQUIRED — NAP consistency: Justdial listing shows 'Opposite Hotel Rajkamal, Bhuwana / Indra Puri Colony' while site schema shows 'Shiv Colony, Bedla' | Justdial listing text (search-observed) vs site PostalAddress & /contact page | Inconsistent citations weaken local ranking signals | Confirm the canonical address with the owner; align GBP + Justdial + site exactly (same spelling, same phone format); requires GBP access | MEDIUM | SEO + Owner | Week 2
+R23: A-01 | Site-wide | OBSERVED — Authority profile: GBP 4.8★/181 reviews, Justdial 4.8/192, Instagram ~1.8K, YouTube channel — but near-zero third-party editorial links | Brand search tests show only own properties + directories | Weak link authority vs marketplaces (StarClinch) that outrank on commercial terms | Execute the ethical off-page plan (sheet: Off page activites): wedding-planner/venue collaborations, digital PR around 500+ shows story, Quora expertise | MEDIUM | SEO + Owner | Weeks 4–12
+R24: V-01 | /contact, /booking | CONFIRMED OK — Conversion readiness is strong: WhatsApp CTA sitewide, 72-hour soft-hold offer, live availability calendar, direct-booking letter form, phone Mon–Sat 10–19h | Rendered-page inspection of /contact & /booking | None — strength | Verify GA4 events fire on: WhatsApp clicks (all pages), form submit, date-check; set up as conversions + GA4 link to Google Ads if ever needed | LOW | Developer | Week 2
+R26: Confirmed = reproduced with live evidence during this audit. 'Observed' = seen in search results. 'Data Required' = cannot be verified without account/tool access (GSC, GA4 admin, GBP manager, keyword tool). No fabricated metrics are included anywhere in this register.
+
+==========================================================================================
+SHEET: Hreflang conflicts within page  (9 rows x 4 cols)
+==========================================================================================
+R2: Hreflang / Language Declarations
+R4: Page URL | Hreflang | Issue Type
+R5: All 35 URLs | None declared | OK — single-language site (en-IN); hreflang not required
+R6: /blog/jadugar-udaipur-shaadi-magic-show-guide | None declared | CONFIRMED ISSUE — Hindi content with lang='en-IN' declaration. Set lang='hi-IN' on this route. If a Hindi content section grows, add en↔hi hreflang pairs and hi-IN sitemap entries.
+R7: All other pages | None declared | OK — consistent English content; og:locale='en_IN' set correctly
+R9: No hreflang conflicts exist because no hreflang is used — appropriate for a single-language site. The only language-declaration defect is the Hindi post (T-07).
+
+==========================================================================================
+SHEET: Broken external links  (13 rows x 5 cols)
+==========================================================================================
+R2: External Link Status (as crawled by an automated checker, 28 Oct 2026)
+R3: 400/403/429 codes below are BOT-PROTECTION responses, not user-facing breakage — platforms block automated crawlers. wa.me and YouTube return clean 200s.
+R4: Page URL | Link URL | HTTP Code | Interpretation / Action
+R5: All pages (footer/CTA) | https://wa.me/919799468758 | 200 | OK — WhatsApp click-to-chat works
+R6: All pages | https://www.facebook.com/rajtilak.jadugar | 400 | Bot-blocked. Page exists (verified via search results showing the profile). Verify manually in browser quarterly
+R7: All pages | https://www.instagram.com/p/DCJ3hBhg8xh/ (single post — see T-09) | 200 | OK — but link the PROFILE instead of one post
+R8: All pages (footer) | Justdial listing URL | 403 | Bot-blocked (Justdial WAF). Listing live with 4.8/192 ratings (search-verified). Manual check quarterly
+R9: All pages | https://www.google.com/maps/search/?api=1&query=Jadugar+Rajtilak+Udaipur | 200 | OK — maps search deep link
+R10: All pages | https://www.google.com/search?kgmid=/g/11c1p4hlsk&q=… | 200 | OK — knowledge-graph deep link (evidence GBP/knowledge panel exists)
+R11: All pages | YouTube channel (NOT currently linked — add per T-09) | 200 | OK — channel live; add to footer + sameAs
+R13: No genuinely broken external links found. The reference template's wa.me 429 problem does not occur here (wa.me returns 200). Recommendation stands: replace the single Instagram POST link with the profile link.
+
+==========================================================================================
+SHEET: Low text to HTML ratio  (18 rows x 4 cols)
+==========================================================================================
+R2: Text-to-HTML Ratio (approximate, from raw SSR HTML)
+R3: Computed as visible-text characters ÷ HTML bytes. React/Next.js apps always score low on raw HTML; this site server-renders full content, so the low ratio is a payload artefact — not a content problem. Listed for template completeness, flagged 'Monitor only'.
+R4: Page URL | Ratio | Assessment
+R5: /booking | 0.019 | Monitor only — SSR content verified present (word counts healthy)
+R6: /contact | 0.031 | Monitor only — SSR content verified present (word counts healthy)
+R7: /testimonials | 0.035 | Monitor only — SSR content verified present (word counts healthy)
+R8: /packages | 0.036 | Monitor only — SSR content verified present (word counts healthy)
+R9: /faq | 0.039 | Monitor only — SSR content verified present (word counts healthy)
+R10: /legal | 0.039 | Monitor only — SSR content verified present (word counts healthy)
+R11: /gallery | 0.044 | Monitor only — SSR content verified present (word counts healthy)
+R12: /about | 0.053 | Monitor only — SSR content verified present (word counts healthy)
+R13: /blog | 0.059 | Monitor only — SSR content verified present (word counts healthy)
+R14: /services | 0.061 | Monitor only — SSR content verified present (word counts healthy)
+R15: / | 0.064 | Monitor only — SSR content verified present (word counts healthy)
+R16: /blog/how-to-choose-a-magician | 0.075 | Monitor only — SSR content verified present (word counts healthy)
+R18: Homepage ≈0.06, blogs ≈0.06–0.08. The payload is dominated by Next.js hydration data + inline styles. If the nav-link fix (T-01) lands, ratios rise slightly. Do NOT chase a ratio target — chase real content depth (see Low word count sheet).
+
+==========================================================================================
+SHEET: Low word count  (10 rows x 4 cols)
+==========================================================================================
+R2: Low Word Count Pages (<500 visible words)
+R4: Page URL | Words number | Recommendation
+R5: /booking | 186 | Conversion page — thin is acceptable. Add a 60–80 word intro (occasions, cities, response promise) for context. No rebuild.
+R6: /legal | 345 | Legal boilerplate — fine as-is; keep in sitemap at low priority.
+R7: /contact | 357 | Add short FAQ-style context block (already has mini-FAQ H3s — expand each to 2–3 sentences).
+R8: /packages | 411 | COMMERCIAL PRIORITY: only 411 words for the money page. Expand each package (Signature/Royal/Grand) with what's included, durations, ideal guest counts; add FAQ; target 700–900 words.
+R10: 13 October-batch posts sit at 849–875 words — above this sheet's threshold but below the older posts' 1,036–1,403 benchmark; they are tracked under finding T-06 instead.
+
+==========================================================================================
+SHEET: Long title element  (16 rows x 4 cols)
+==========================================================================================
+R2: Long Title Elements (>60 characters)
+R3: RESULT: none — all 35 titles pass. Top 10 longest listed for tracking.
+R4: Page URL | Title Length | Title (for reference)
+R5: /blog/mentalist-for-corporate-events-in-india-what-mind-reading-adds-to-your-evening | 65 | TOO LONG — Mentalist for Corporate Events in India: What Mind Reading Adds t
+R6: /blog/birthday-party-magician-cost-in-india-2026-city-wise-price-bands | 65 | TOO LONG — Birthday Party Magician Cost in India: 2026 City-Wise Price Bands
+R7: /blog/best-magician-in-india-for-corporate-events-the-2026-booking-guide | 65 | TOO LONG — Best Magician in India for Corporate Events: The 2026 Booking Gui
+R8: /blog/magician-for-wedding-in-india-what-top-hosts-book-and-what-they-avoid | 65 | TOO LONG — Magician for Wedding in India: What Top Hosts Book (and What They
+R9: /blog/wedding-magician-vs-dj-vs-band-what-udaipur-couples-actually-pick | 65 | TOO LONG — Wedding Magician vs DJ vs Band: What Udaipur Couples Actually Pic
+R10: /blog/corporate-annual-day-magic-show-the-45-minute-format-that-works | 64 | TOO LONG — Corporate Annual Day Magic Show: The 45-Minute Format That Works
+R11: /blog/close-up-magician-for-indian-weddings-roaming-magic-explained | 63 | TOO LONG — Close-Up Magician for Indian Weddings: Roaming Magic, Explained
+R12: /blog/magician-for-birthday-party-in-udaipur-full-planning-run-sheet | 63 | TOO LONG — Magician for Birthday Party in Udaipur: Full Planning Run-Sheet
+R13: /blog/destination-wedding-in-udaipur-add-a-magician-to-the-timeline | 62 | TOO LONG — Destination Wedding in Udaipur? Add a Magician to the Timeline
+R14: /blog/how-to-book-a-magician-in-india-the-complete-2026-checklist | 60 | OK (≤60) — How to Book a Magician in India: The Complete 2026 Checklist
+R16: Longest title on the site: 59 characters. Uniqueness verified across all 35 pages — no duplicates. This is a strength; keep the discipline when new service pages are built.
+
+==========================================================================================
+SHEET: Orphaned sitemap pages  (23 rows x 4 cols)
+==========================================================================================
+R2: Orphan & Sitemap-Coverage Analysis
+R3: Two-sided problem found: (A) live URLs missing FROM sitemap.xml; (B) pages with no crawlable (<a href>) inlinks in raw HTML because navigation is button-based (T-01).
+R4: Page URL | In sitemap? | Crawlable inlinks in raw HTML (audited)
+R5: /magician-in-udaipur | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R6: /blog/mentalist-for-corporate-events-in-india-what-mind-reading-adds-to-your-evening | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R7: /blog/close-up-magician-for-indian-weddings-roaming-magic-explained | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R8: /blog/birthday-party-magician-cost-in-india-2026-city-wise-price-bands | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R9: /blog/how-to-book-a-magician-in-india-the-complete-2026-checklist | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R10: /blog/best-magician-in-india-for-corporate-events-the-2026-booking-guide | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R11: /blog/magician-for-wedding-in-india-what-top-hosts-book-and-what-they-avoid | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R12: /blog/jadugar-udaipur-shaadi-magic-show-guide | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R13: /blog/destination-wedding-in-udaipur-add-a-magician-to-the-timeline | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R14: /blog/corporate-annual-day-magic-show-the-45-minute-format-that-works | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R15: /blog/magician-for-birthday-party-in-udaipur-full-planning-run-sheet | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R16: /blog/10-close-up-magic-moments-that-stop-a-sangeet-crowd | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R17: /blog/how-much-does-a-wedding-magician-cost-in-rajasthan | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R18: /blog/wedding-magician-vs-dj-vs-band-what-udaipur-couples-actually-pick | NO — add to sitemap (T-02) | 0–1 (blog-listing cards are buttons; only related-post contextual links crawlable)
+R19: /about, /gallery, /testimonials, /faq, /contact, /booking, /legal | YES (in sitemap) | 0 crawlable inlinks in raw HTML of any other page — nav/footer are buttons (T-01). Discovery currently relies on sitemap + JS rendering
+R20: /services | YES (in sitemap) | 3 crawlable inlinks (from newer blog posts' contextual links)
+R21: /, /blog, 10 sitemap-listed posts | YES (in sitemap) | Contextual links from related posts exist for most; /blog hub itself has 0 crawlable inlinks
+R23: Fix order: (1) add 14 missing URLs to sitemap; (2) convert nav/footer/blog-cards to real anchors — this converts every 'orphan-like' row above into normally-linked pages. After both fixes, re-run this analysis: every core page should have 8+ crawlable inlinks (header+footer sitewide).
+
+==========================================================================================
+SHEET: Multiple h1 tags  (41 rows x 4 cols)
+==========================================================================================
+R2: Multiple H1 Tags Check
+R3: RESULT: none — every page uses exactly one H1.
+R4: Page URL | H1 count | Notes
+R5: / | 1 | OK
+R6: /services | 1 | OK
+R7: /booking | 1 | OK
+R8: /about | 1 | OK
+R9: /packages | 1 | OK
+R10: /contact | 1 | OK
+R11: /gallery | 1 | OK
+R12: /testimonials | 1 | OK
+R13: /blog | 1 | OK
+R14: /faq | 1 | OK
+R15: /legal | 1 | OK
+R16: /blog/wedding-entertainment-ideas | 1 | OK
+R17: /blog/magic-show-cost-india | 1 | OK
+R18: /blog/college-fest-magic-headliner | 1 | OK
+R19: /blog/magician-in-jaipur | 1 | OK
+R20: /blog/virtual-magic-show-online-events | 1 | OK
+R21: /blog/mentalism-mind-reading-show-india | 1 | OK
+R22: /blog/sangeet-mehendi-entertainment-ideas | 1 | OK
+R23: /blog/how-to-choose-a-magician | 1 | OK
+R24: /blog/corporate-event-entertainment | 1 | OK
+R25: /blog/birthday-party-magician-timeline | 1 | OK
+R26: /magician-in-udaipur | 1 | OK
+R27: /blog/mentalist-for-corporate-events-in-india-what-mind-reading-adds-to-your-evening | 1 | OK
+R28: /blog/close-up-magician-for-indian-weddings-roaming-magic-explained | 1 | OK
+R29: /blog/birthday-party-magician-cost-in-india-2026-city-wise-price-bands | 1 | OK
+R30: /blog/how-to-book-a-magician-in-india-the-complete-2026-checklist | 1 | OK
+R31: /blog/best-magician-in-india-for-corporate-events-the-2026-booking-guide | 1 | OK
+R32: /blog/magician-for-wedding-in-india-what-top-hosts-book-and-what-they-avoid | 1 | OK
+R33: /blog/jadugar-udaipur-shaadi-magic-show-guide | 1 | OK
+R34: /blog/destination-wedding-in-udaipur-add-a-magician-to-the-timeline | 1 | OK
+R35: /blog/corporate-annual-day-magic-show-the-45-minute-format-that-works | 1 | OK
+R36: /blog/magician-for-birthday-party-in-udaipur-full-planning-run-sheet | 1 | OK
+R37: /blog/10-close-up-magic-moments-that-stop-a-sangeet-crowd | 1 | OK
+R38: /blog/how-much-does-a-wedding-magician-cost-in-rajasthan | 1 | OK
+R39: /blog/wedding-magician-vs-dj-vs-band-what-udaipur-couples-actually-pick | 1 | OK
+R41: All 35 pages: exactly 1 H1, keyword-relevant, unique. H2/H3 hierarchies are well-formed (e.g. homepage: 10 H2s; services: format H3s). No action needed.
+
+==========================================================================================
+SHEET: Pages with only one internal li  (12 rows x 4 cols)
+==========================================================================================
+R2: Pages With One (or Zero) Crawlable Internal Link
+R3: Counts ONLY server-rendered <a href> inlinks found across all 35 pages' raw HTML. Button-based navigation is excluded (see T-01) — that is precisely the problem.
+R4: Page URL | Crawlable inlinks | Root cause / Fix
+R5: /about, /gallery, /testimonials, /faq, /contact, /booking, /legal, /blog (hub) | 0 | Button nav + button footer + button blog cards (T-01/T-03). Fix = real anchors
+R6: / | 0 | Homepage receives no crawlable inlinks anywhere in raw HTML
+R7: 13 October-batch posts | 0 (not linked from any crawlable HTML) | Blog listing is JS-only + missing from sitemap (T-02). Double orphan risk
+R8: /services | 3 | Contextual links from newer blog posts only
+R9: /packages | 1 | One contextual link from /blog/magic-show-cost-india
+R10: /blog/magic-show-cost-india, /blog/wedding-entertainment-ideas, /blog/how-to-choose-a-magician | 5–6 each | Related-post links from other blog posts — the only healthy pattern on the site
+R12: After the T-01 fix, every page gains ~18 crawlable inlinks instantly (9 header nav + 9 footer links sitewide) — the single highest-leverage internal-linking action available.
+
+==========================================================================================
+SHEET: Blocked from crawling  (8 rows x 4 cols)
+==========================================================================================
+R2: Pages Blocked From Crawling (robots.txt)
+R4: Page URL | Blocked by | Assessment
+R5: /api/* | robots.txt: Disallow /api/ | INTENTIONAL & CORRECT — API endpoints carry no public content (comment in robots.txt confirms deliberate design)
+R6: /admin | robots.txt: Disallow /admin | INTENTIONAL & CORRECT — admin console. Also remove the public footer 'Admin' link (T-12)
+R8: robots.txt explicitly allows Googlebot, Bingbot, Twitterbot and facebookexternalhit and declares the sitemap — well-configured. No crawlable public content is blocked.
+
+==========================================================================================
+SHEET: Google Reviews  (9 rows x 7 cols)
+==========================================================================================
+R2: Google Reviews — observed aggregates (28 Oct 2026); individual review export Data Required
+R3: No Google Business Profile API access was available. Only publicly verifiable aggregates are recorded — no invented reviews.
+R4: Sr. No. | Source | Aggregate rating | Review count / evidence | Rating | Next action
+R5: 1 | Google Business Profile (via site badge + LocalBusiness schema aggregateRating) | 4.8 / 5 | 181 reviews (as displayed sitewide; knowledge-graph id /g/11c1p4hlsk) | 4.8 | Grant GBP manager access; export reviews; set up review-link short URL (g.page/r/…) for WhatsApp follow-ups
+R6: 2 | Justdial listing (search-observed) | 4.8 / 5 | 192 ratings on the Udaipur listing (Opp. Hotel Rajkamal, Bhuwana) | 4.8 | Reply to all pending reviews; align NAP with site (L-01)
+R7: 3 | Individual reviews | — | Data Required — needs GBP access or manual export | — | Then log: date, reviewer, event type, city, star rating (template format)
+R9: Growth play: reviews mentioning CITY + EVENT TYPE ('wedding in Udaipur', 'annual day in Jaipur') reinforce local relevance. Ask happy clients for a sentence mentioning the occasion — never incentivise or fabricate reviews (policy violation).
+
+==========================================================================================
+SHEET: Executive Summary & Scorecard  (60 rows x 5 cols)
+==========================================================================================
+R2: Executive Summary & SEO Scorecard — jadugarrajtilak.com (28 Oct 2026)
+R3: Supplementary to the reference template. Scores are evidence-based from the 28 Oct 2026 live crawl; dimensions without data are marked Not Assessed rather than guessed.
+R4: 1 · MOST IMPORTANT FINDINGS
+R5: F1 | CRITICAL — Site navigation, footer and blog cards are <button> elements with JavaScript routing. Raw HTML of core pages contains ZERO crawlable internal links. Google still indexes pages (via sitemap + JS rendering — pages are found in search), but anchor-text signals, non-Google crawlers and AI answer engines see a linkless site.
+R6: F2 | CRITICAL — sitemap.xml lists only 21 of 35 discoverable URLs: 13 October blog posts and the /magician-in-udaipur landing page were never added.
+R7: F3 | The site is otherwise in unusually strong technical shape: unique 37–59ch titles on all 35 pages, one H1 per page, correct canonicals, clean 308 redirect chain, HSTS+CSP, well-configured robots.txt, full EntertainmentBusiness/LocalBusiness schema with 4.8★/181-review aggregateRating.
+R8: F4 | 13 of 23 blog posts are templated (849–875 words, formulaic intros, near-identical meta tails) — a content quality/ scaled-content risk and a missed topical-authority opportunity.
+R9: F5 | No dedicated service pages: all six show formats (wedding/corporate/birthday/college/private/virtual) live as sections of one /services URL, while competitors (marketplaces + Illusionist Sumit) rank with dedicated pages.
+R10: 2 · MAIN GROWTH OPPORTUNITIES
+R11: O1 | Own the destination-wedding entertainment angle: Udaipur is India's wedding capital; no competitor owns 'destination wedding magician udaipur'. Landing page + blog cluster + planner collaborations.
+R12: O2 | Convert the review moat (181 Google + 192 Justdial, both 4.8★) into ranking strength: GBP optimisation, review-keyword acquisition (city + event type mentions), review display with schema sync.
+R13: O3 | Build 6 dedicated service pages to unlock 'wedding magician india', 'corporate magician india', 'birthday party magician' — each supported by existing blog content.
+R14: O4 | Hindi content cluster: the जादूगर उदयपुर post is a genuine differentiator vs all-English competitors.
+R15: O5 | AI-search readiness: with crawlable links + differentiated content, the honest-pricing posts are exactly the quotable material answer engines cite (cost breakdowns, checklists, timelines).
+R16: 3 · CRITICAL RISKS
+R17: R1 | Scaled-content risk: 13 templated posts published in one batch could trip spam-system filters or simply underperform — differentiate before adding net-new volume.
+R18: R2 | Cannibalisation: homepage and /magician-in-udaipur both target 'magician in udaipur'; the landing page currently ranks — dilute the homepage's local wording or the win could stall.
+R19: R3 | Dependency on JS rendering: any future rendering hiccup (like the 404 seen in one search-engine cache of the bare domain) would strand undiscovered URLs. The sitemap + anchor fixes remove this single point of failure.
+R20: 4 · SEO SCORECARD (0–100)
+R21: Dimension | Score | Basis for score
+R22: Technical SEO | 76 | Excellent infra (redirects, HSTS, canonicals, robots) minus sitemap coverage 60% (T-02) and button navigation (T-01)
+R23: On-page SEO | 84 | All 35 titles unique & in-range; single H1s; full meta coverage — minus 9 long descriptions + templated metas on 13 posts
+R24: Content quality | 68 | 10 strong posts (1,036–1,403 words, real voice) vs 13 templated posts (~860 words); good factual honesty (no invented claims found)
+R25: Keyword targeting | 72 | Commercial clusters covered by posts; no dedicated service pages; local head-term cannibalisation risk
+R26: Website architecture | 74 | Clean flat structure, logical URL names — six service formats lack own URLs
+R27: Internal linking | 45 | Weakest dimension: 0 crawlable inlinks on core pages; contextual links exist only inside blog posts
+R28: Mobile experience | Not Assessed | Responsive layout classes observed in markup; no field data (needs GSC CWV report / PSI run)
+R29: Performance (Core Web Vitals) | Not Assessed | PSI API quota exhausted during audit. Positive infra signals: SSR, edge CDN, preloaded fonts, WebP images, immutable caching
+R30: Authority & backlinks | 60 | Review moat + directories + socials; near-zero editorial/third-party links observed in brand searches
+R31: Conversion readiness | 86 | WhatsApp sitewide, live availability calendar, 72h soft-hold, direct contact forms, NAP in footer; GA4 events unverified
+R32: Local SEO (GBP) — supplementary | 78 | GBP 4.8★/181 reviews + top-5 observed for 'magician in udaipur'; NAP inconsistency with Justdial (L-01); no GBP posting cadence yet
+R33: OVERALL (average of 8 assessed dimensions) | 71 | Mobile & Performance excluded as Not Assessed. Re-score after Phase 1 fixes (expect Technical → ~90, Internal linking → ~80).
+R35: 5 · THE TEN HIGHEST-PRIORITY ACTIONS (in execution order)
+R36: # | Action | Why first
+R37: 1 | Grant GSC + GA4 + GBP manager access to the SEO team | Everything measurable depends on this — Day 1
+R38: 2 | Fix sitemap.xml to include all 35 URLs; resubmit in GSC | 14 URLs currently invisible to sitemap-driven discovery — biggest coverage win available
+R39: 3 | Convert header navigation from <button> to server-rendered <Link> anchors | Restores crawlable sitewide internal linking (9 links/page instantly)
+R40: 4 | Convert footer links + blog listing cards to real anchors | Completes the link graph; blog posts become discoverable without JS
+R41: 5 | Add /magician-in-udaipur to sitemap + strengthen page (venue section, FAQ, internal links) | It already ranks top-5 for the head local term — defend and extend
+R42: 6 | Retune homepage title/positioning to India-wide intent | Ends cannibalisation with the Udaipur landing page
+R43: 7 | Differentiate + expand the 13 templated blog posts (2–3 per week) | Removes scaled-content risk; builds real topical authority
+R44: 8 | Rewrite 9 over-length meta descriptions; fix Hindi post lang='hi-IN' | Quick CTR + language-correctness wins
+R45: 9 | Build /services/wedding-magician, /services/corporate-shows, /services/birthday-kids | Unlocks the three highest-value commercial keywords
+R46: 10 | Start GBP posting cadence (2/week) + align NAP across GBP/Justdial/site | Local pack visibility + citation consistency
+R47: 6 · RESOURCES & ACCESS REQUIRED
+R48: A1 | GSC user access (Settings → Users & permissions) — property for jadugarrajtilak.com
+R49: A2 | GA4 (G-103JFH1Z6B) viewer/admin access for reporting + conversion-event verification
+R50: A3 | GBP manager access (share link + invite) — for posts, services, Q&A, review responses
+R51: A4 | Developer time: ~2–3 days for T-01/T-02/T-03 anchor + sitemap fixes (highest-leverage engineering work)
+R52: A5 | Content capacity: 2 posts/week (differentiation first, then calendar); photographer/video clips from shows
+R53: A6 | Keyword tool (Keyword Planner free, or Ahrefs/Semrush trial) to quantify the Not Verified volumes
+R54: 7 · MEASUREMENT PLAN & 30/60/90 MILESTONES
+R55: M-30 | By 30 days (end Nov 2026): all 35 URLs in sitemap + submitted; crawlable nav live; GSC/GA4/GBP connected; rank-tracking baseline captured (19 keywords); 4 templated posts differentiated. LEADING INDICATORS: GSC 'Indexed pages' ≥ 35; impressions trending up week-over-week.
+R56: M-60 | By 60 days (end Dec 2026): 3 service pages live + 13 posts fully differentiated; GBP cadence running; first planner/venue outreach batch sent. INDICATORS: impressions for service keywords appear; target keywords entering top-20 range (directional, not guaranteed).
+R57: M-90 | By 90 days (end Jan 2027): 6 service pages live; 5+ quality referral links in pipeline; Hindi cluster at 4–5 posts. INDICATORS: qualified enquiry count in GA4 vs 60-day baseline; local pack appearances for Udaipur wedding-magician terms.
+R58: RULE | No numerical traffic/revenue targets are set until 60 days of GSC data exist (baseline-first rule). Separate leading indicators (fixes shipped, pages indexed, posts published) from business outcomes (qualified enquiries, bookings). Track monthly in this workbook's Reporting sheet.
+R60: Guarantees disclaimer: no one can guarantee rankings or traffic percentages. What this plan guarantees instead: every finding is evidence-based, every fix is validated after shipping, and measurement starts from a recorded baseline.
+
+==========================================================================================
+SHEET: Implementation Roadmap  (40 rows x 12 cols)
+==========================================================================================
+R2: Prioritised Implementation Roadmap — 5 phases (Nov 2026 – Feb 2027)
+R3: Quick wins first, dependencies respected. Effort: S = hours, M = days, L = 1–2 weeks.
+R4: Task ID | Specific task | Affected URL | Problem being solved | Expected benefit | Priority | Effort | Dependency | Owner | Deadline | Validation method
+R5: P1-01
+R6: T-02a | Fix sitemap generation to include all published URLs + landing pages (likely stale post list in build) | sitemap.xml | 14 of 35 URLs missing from sitemap | Full discovery coverage; GSC coverage report becomes meaningful | CRITICAL | S | — | Developer | Week 1 (by 2 Nov) | Fetch sitemap.xml → 35 URLs; GSC sitemap shows 35 submitted/35 indexed over following weeks
+R7: T-02b | Submit updated sitemap in GSC + URL-inspect the 14 previously-missing URLs | GSC | New URLs never submitted | Faster indexation of October posts + landing page | CRITICAL | S | T-02a + GSC access | SEO | Week 1 | GSC URL Inspection: 'URL is available to Google'
+R8: T-01a | Replace header nav <button> items with server-rendered Next.js <Link> anchors | All pages | Zero crawlable nav links in raw HTML | ~9 crawlable internal links on every page; anchor-text signals; non-JS crawlers can navigate | CRITICAL | M | — | Developer | Weeks 1–2 | view-source shows <a href>; GSC URL Inspection rendered HTML shows links
+R9: T-01b | Replace footer nav with real anchors; remove public 'Admin' link | All pages | Zero crawlable footer links; admin surface exposed | Second sitewide link block; cleaner footer | HIGH | S | — | Developer | Week 2 | view-source check
+R10: T-03 | Render blog listing cards as <a href> (title = anchor text) | /blog | Blog discovery depends on JS | All 23 posts crawlable from the hub page | HIGH | S | — | Developer | Week 2 | Raw /blog HTML contains 23 post hrefs
+R11: T-15a | Request & grant GSC / GA4 / GBP access; connect rank tracker (manual screenshots OK to start) | — | No measurement access | Baselines for queries, coverage, CWV, reviews | CRITICAL | S | Owner decision | Owner + SEO | Week 1 | Access confirmed; first baseline export logged
+R12: T-15b | Run PageSpeed Insights manually (mobile): /, /services, one blog post; record CWV | / | CWV not verified (PSI API quota) | Field/lab performance baseline + fixes list if needed | MEDIUM | S | — | SEO | Week 1–2 | PSI report scores archived in this workbook
+R13: P2-00
+R14: T-08 | Rewrite 9 over-length meta descriptions (140–155ch, keyword in first 90ch) | 9 blog posts | Descriptions truncate at 160ch+ | CTR improvement on informational queries | MEDIUM | S | — | SEO | Week 2 | Meta sheet re-crawl: all descriptions ≤160ch
+R15: T-07 | Set lang='hi-IN' on Hindi post route | /blog/jadugar-udaipur-shaadi-magic-show-guide | Language declaration mismatch | Correct language serving; Hindi query relevance | LOW | S | — | Developer | Week 2 | html lang attribute check
+R16: T-09 | Footer + schema sameAs: Instagram PROFILE link + YouTube channel (replace single-post IG link) | All pages | Wrong social entity links | Stronger entity consolidation in knowledge graph | LOW | S | — | Developer | Week 2 | sameAs contains profile URLs
+R17: T-05 | Retune homepage title & H1 to India-wide positioning (free 'magician in udaipur' for landing page) | / | Cannibalisation with /magician-in-udaipur | Landing page consolidates local rankings; homepage chases national terms | MEDIUM | S | — | SEO + Content | Week 3 | Rank tracking: one clear winner per keyword
+R18: T-14 | Enrich /packages with per-package detail (inclusions, durations, guest counts) to 700–900 words | /packages | 411 words on the pricing money page | Stronger relevance for package/price queries; better user qualification | MEDIUM | M | — | Content | Week 3 | Word count; time-on-page in GA4
+R19: T-17a | Add FAQPage schema for the visible Q&A on /faq | /faq | FAQ content exists without FAQ schema | Rich-result eligibility (not guaranteed) | LOW | S | — | Developer | Week 3 | Schema validator passes; GSC enhancements report
+R20: V-01b | Verify GA4 events: WhatsApp clicks, form submit, date-check → mark as conversions | /contact, /booking | Conversion events unverified | Lead measurement works in GA4 | MEDIUM | S | GA4 access | Developer | Week 2–3 | Real-time GA4 shows events on test clicks
+R21: P3-00
+R22: T-06a | Differentiate + expand 13 templated posts (2–3/week): real anecdotes, city specifics, unique metas, 1,100+ words | 13 blog posts | Templated/scaled-content risk; thin coverage | Topical authority + AI-answer quotability; removes spam-system exposure | HIGH | L (6 weeks) | — | Content | Weeks 2–6 (part of Nov calendar) | Per-post uniqueness check; word counts; impressions growth in GSC
+R23: T-06b | Add internal links from every Udaipur-themed post to /magician-in-udaipur (real anchors) | Blog posts | Landing page has no crawlable inlinks from content | Consolidates local ranking signals | HIGH | S | T-01a | SEO | Weeks 2–3 | Crawl shows inlinks to landing page
+R24: R-18 | Build /services/wedding-magician page (700+ words, gallery, FAQ, Service+Breadcrumb schema) | New page | No dedicated wedding page — biggest commercial gap | Ranks for 'wedding magician india/udaipur' | HIGH | M | T-01a, T-02a | SEO + Dev + Content | Week 3–4 | Indexed; top-100 → top-30 movement over 60 days
+R25: R-19 | Build /services/corporate-shows page | New page | No dedicated corporate page | Ranks for 'corporate magician india' | HIGH | M | T-01a, T-02a | SEO + Dev + Content | Week 4 | Indexed; impression growth
+R26: R-20 | Build /services/birthday-kids page | New page | No dedicated birthday page | Ranks for 'birthday party magician' | HIGH | M | T-01a, T-02a | SEO + Dev + Content | Week 4–5 | Indexed; impression growth
+R27: L-01 | Align NAP across GBP / Justdial / site (confirm canonical address with owner) | GBP, Justdial | Citation inconsistency (Bhuwana vs Bedla) | Local ranking strength; fewer confused customers | MEDIUM | S | GBP access | SEO + Owner | Week 2–3 | Identical NAP on all three sources
+R28: P4-00
+R29: R-22 | Build /services/college-stage, /services/virtual-magic, /services/private-luxury | New pages | Remaining formats lack URLs | Full service-page coverage | MEDIUM | M | Phase-3 pages shipped | SEO + Dev | Weeks 5–8 | All indexed; sitemap updated
+R30: O-01 | Destination-wedding cluster: page section + 3 blogs (Nov calendar W1 starts this) | /magician-in-udaipur | No competitor owns the Udaipur destination-wedding angle | High-value booking enquiries | HIGH | M | — | Content | Weeks 5–10 | Cluster ranks for destination-wedding terms
+R31: R-24 | Execute November content calendar (10 blogs incl. 2 Hindi, 8 GBP posts, 4 reels) | Blog + GBP + IG | Cadence & freshness | Coverage of long-tail; GBP activity signals | HIGH | L | GBP access | Content + SEO | November | Publishing log in this workbook
+R32: R-25 | Wedding-planner/venue collaboration outreach (5–10 quality links: 'preferred entertainer' listings) | Off-page | Near-zero editorial links | Real authority growth (1 planner link > 100 directory links) | MEDIUM | L | — | SEO + Owner | Weeks 5–12 | Referring domains in GSC links report
+R33: R-26 | Quora expertise answers + YouTube channel optimisation + one regional-press pitch (500+ shows story) | Off-page | Owned-channel SEO neglected; no PR | Referral traffic + brand search growth | MEDIUM | M | — | SEO | Weeks 6–12 | Quora answer views; YouTube impressions; any press pickup logged
+R34: R-27 | Jaipur city-landing test (promote blog first; dedicated page decision in Jan) | /magician-in-jaipur (potential) | Jaipur covered only by a blog post | Second-city visibility | MEDIUM | M | Keyword Planner validation | SEO | Jan 2027 | Rank movement for 'magician in jaipur'
+R35: P5-00
+R36: R-28 | Monthly GSC review: coverage, queries, CWV — log into Console Queries sheet of this workbook | GSC | No reporting rhythm yet | Data-driven iteration; catches regressions | HIGH | S | GSC access | SEO | Monthly from Dec | Sheet updated monthly
+R37: R-29 | GA4 conversion dashboard: WhatsApp clicks / form submits / enquiries by source; join with GSC in monthly report | GA4 | Business outcomes not yet measured | SEO tied to revenue; budget defence | HIGH | S | V-01b | SEO | Monthly from Dec | Monthly report row in Reporting sheet
+R38: R-30 | Quarterly re-audit: re-crawl site, re-score scorecard, refresh roadmap | Whole site | Audit decays over time | Compounding improvements; no regression creep | MEDIUM | M | — | SEO | Jan 2027 (then quarterly) | Updated scorecard vs this baseline (71/100)
+R40: Effort: S = same-day, M = 1–3 days, L = multi-week. Deadlines assume start 2 Nov 2026 and one developer + one content writer + the business owner (for access & show material). Quick wins (S) are front-loaded. No task modifies the live site without the owner's authorisation.
