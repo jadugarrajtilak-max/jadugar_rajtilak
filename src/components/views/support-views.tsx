@@ -540,19 +540,24 @@ function ArticleReader({
                 <nav aria-label="References and further reading" className="mt-8 rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-sand-light)]/30 p-6">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--jr-gold-dark)]">References &amp; further reading</p>
                   <ul className="mt-3 space-y-2">
-                    {post.backlinks.map((b) => (
-                      <li key={b.url} className="flex items-start gap-2 text-[13px] leading-6">
-                        <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--jr-gold)]" />
-                        <a
-                          href={b.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[var(--jr-ink)] underline decoration-[var(--jr-gold)]/50 underline-offset-4 transition-colors hover:text-[var(--jr-crimson)]"
-                        >
-                          {b.text}
-                        </a>
-                      </li>
-                    ))}
+                    {post.backlinks.map((b) => {
+                      // Internal backlinks (own domain) open in the same tab —
+                      // audit T-06b/R-18..R-22: no target=_blank / rel=noreferrer
+                      // on internal links so link equity and UX stay natural.
+                      const internal = /^https:\/\/jadugarrajtilak\.com\//i.test(b.url);
+                      return (
+                        <li key={b.url} className="flex items-start gap-2 text-[13px] leading-6">
+                          <span aria-hidden="true" className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--jr-gold)]" />
+                          <a
+                            href={b.url}
+                            {...(internal ? {} : { target: "_blank", rel: "noopener noreferrer" })}
+                            className="text-[var(--jr-ink)] underline decoration-[var(--jr-gold)]/50 underline-offset-4 transition-colors hover:text-[var(--jr-crimson)]"
+                          >
+                            {b.text}
+                          </a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </nav>
               ) : null}

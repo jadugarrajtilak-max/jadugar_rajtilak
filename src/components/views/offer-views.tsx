@@ -91,6 +91,35 @@ export function PackagesView({ navigate }: { navigate: (r: RouteId) => void }) {
         sub={text("packages.hero.sub")}
       />
 
+      {/* T-14 (manager audit, 2026-10-29): honest-pricing context before the
+          tiers — the /packages money page was 414 words; this intro + the FAQ
+          below bring it into the 700–900 word band the audit asked for.
+          Every figure is a verified published site fact. */}
+      <section className="mx-auto max-w-3xl px-4 pb-4 pt-14 sm:px-6" aria-labelledby="pkg-context">
+        <Reveal>
+          <h2 id="pkg-context" className="font-display text-display-md font-medium text-[var(--jr-plum)]">
+            How magic show pricing actually works
+          </h2>
+          <p className="mt-5 text-[16px] leading-8 text-[var(--jr-ink)]">
+            Three tiers, honest ranges, one rule: the quote you receive is written, line-itemised and delivered
+            within 24 hours — never a number improvised on a call. Professional magic shows in India start from
+            <strong> ₹25,000</strong> for the intimate Signature format and rise to ₹2,50,000+ for a full-evening
+            Grand production with crew. Four honest cost drivers move you between those points: performance
+            duration, travel and stay, crew size, and staging requirements. Every one of them appears as its own
+            line in the quote, so you always know which lever you are pulling.
+          </p>
+          <p className="mt-4 text-[16px] leading-8 text-[var(--jr-ink)]">
+            The tiers below are calibrated to occasions rather than budgets. A seventh birthday and a college-fest
+            finale need different things from the same craft — the Signature format carries birthdays, society
+            evenings and intimate gatherings; the Royal tier, the most-booked, is engineered for weddings and
+            corporate annual days where the evening needs both a headline show and roaming close-up; and the Grand
+            production is built for stages that demand spectacle — fests, galas and luxury celebrations. Your date
+            is held for 72 hours at no cost while you compare, and no advance is demanded before the quote is in
+            your hands.
+          </p>
+        </Reveal>
+      </section>
+
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
         <div className="grid gap-6 md:grid-cols-3">
           {tiers.map((p, i) => (
@@ -173,6 +202,41 @@ export function PackagesView({ navigate }: { navigate: (r: RouteId) => void }) {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* T-14: packages FAQ — the questions the enquiry flow actually gets. */}
+        <Reveal className="mt-16">
+          <div className="mx-auto max-w-3xl">
+            <p className="eyebrow text-center">Before you pick a tier</p>
+            <h2 className="font-display mt-3 text-center text-display-md font-medium text-[var(--jr-plum)]">
+              Package FAQ
+            </h2>
+            <div className="mt-8 space-y-4">
+              {[
+                {
+                  q: "Why are the prices ranges and not fixed numbers?",
+                  a: "Because duration, city, travel, crew and staging legitimately move the number — a 60-minute Royal evening in Udaipur and the same show flown to another city are different logistics. The range narrows to an exact figure in your written quote within 24 hours, with every driver broken out as its own line item.",
+                },
+                {
+                  q: "What does travel cost?",
+                  a: "Travel within your city is included in the Signature tier, and travel inside Udaipur city is included across every tier. Outstation travel and stay are quoted transparently as their own line — never bundled invisibly into the performance fee.",
+                },
+                {
+                  q: "Can we mix tiers or build a custom evening?",
+                  a: "Yes — the most common custom build is a Royal stage show with an extended close-up hour for long cocktail evenings. Tell the studio the shape of your run-sheet and the format is engineered around it; the tier list is a starting vocabulary, not a menu limit.",
+                },
+                {
+                  q: "What do we get in writing before paying anything?",
+                  a: "A line-itemised quote within 24 hours and a 72-hour soft hold on your date — both free, with no advance demanded before the quote. Corporate and institutional buyers additionally receive clean contract terms and a GST invoice that passes procurement.",
+                },
+              ].map((f) => (
+                <div key={f.q} className="rounded-2xl border border-[var(--jr-line)] bg-[var(--jr-card)] p-5">
+                  <h3 className="font-display text-lg font-semibold text-[var(--jr-plum)]">{f.q}</h3>
+                  <p className="mt-2 text-[15px] leading-8 text-[var(--jr-ink)]">{f.a}</p>
+                </div>
+              ))}
             </div>
           </div>
         </Reveal>

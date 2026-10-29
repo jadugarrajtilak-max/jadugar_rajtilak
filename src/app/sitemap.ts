@@ -16,7 +16,7 @@ const SITE = "https://jadugarrajtilak.com";
 const LAST_CONTENT_CHANGE: Record<string, string> = {
   "/": "2026-10-29",
   "/services": "2026-10-29",
-  "/packages": "2026-10-28",
+  "/packages": "2026-10-29",
   "/blog": "2026-10-29",
   "/magician-in-udaipur": "2026-10-28",
   "/about": "2026-10-22",
