@@ -747,7 +747,7 @@ export const VIEW_META: Record<RouteId, { title: string; description: string }> 
     // the verified home base for local proof.
     title: "Wedding & Corporate Magician in India | Jadugar Rajtilak",
     description:
-      "Hire Jadugar Rajtilak — wedding, corporate & birthday magician touring all India (500+ shows, 4.8★, 181 Google reviews). Based in Udaipur. Check your date.",
+      "Hire Jadugar Rajtilak — wedding, corporate & birthday magician across India (500+ shows, 4.8★, 181 Google reviews). Udaipur-based. Check your date.",
   },
   about: {
     title: "About Jadugar Rajtilak | Udaipur Magician, 12+ Years",
