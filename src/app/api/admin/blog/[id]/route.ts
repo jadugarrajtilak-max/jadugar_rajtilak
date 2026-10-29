@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isAdminRequest, unauthorized } from "@/lib/guard";
+import { submitToIndexNow } from "@/lib/indexnow";
 import { normalize, type PostInput } from "../route";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +34,11 @@ export async function PUT(
       return NextResponse.json({ ok: false, error: `Slug "${data.slug}" is already used by another post` }, { status: 409 });
     }
     const row = await db.blogPost.update({ where: { id }, data });
+    // SEO: a published post that just changed re-pings IndexNow so
+    // Bing re-crawls the fresh content quickly. Fire-and-forget.
+    if (row.status === "published") {
+      void submitToIndexNow([`https://jadugarrajtilak.com/blog/${row.slug}`]).catch(() => undefined);
+    }
     return NextResponse.json({ ok: true, post: row });
   } catch (e) {
     const notFound = e instanceof Error && /not found/i.test(e.message);

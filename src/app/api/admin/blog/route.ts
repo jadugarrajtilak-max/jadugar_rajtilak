@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { isAdminRequest, unauthorized } from "@/lib/guard";
 import { ensureBlogSeeded, slugify, toPublicPost, type Backlink } from "@/lib/blog";
+import { submitToIndexNow } from "@/lib/indexnow";
 import type { BlogSection } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
@@ -92,6 +93,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: `Slug "${data.slug}" is already used by another post` }, { status: 409 });
     }
     const row = await db.blogPost.create({ data });
+    // SEO: the moment a PUBLISHED post exists, tell IndexNow (Bing's
+    // instant-indexing ping) so the new URL is crawled within ~1-2
+    // days instead of waiting for natural discovery. Fire-and-forget:
+    // a failed ping never blocks the save.
+    if (row.status === "published") {
+      void submitToIndexNow([`https://jadugarrajtilak.com/blog/${row.slug}`]).catch(() => undefined);
+    }
     return NextResponse.json({ ok: true, post: toPublicPost(row) }, { status: 201 });
   } catch (e) {
     const msg = e instanceof Error && e.message.includes("Unique constraint")
