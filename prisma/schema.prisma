@@ -230,3 +230,24 @@ model CtaClick {
   @@index([createdAt])
   @@index([cta, createdAt])
 }
+
+// KeywordRank — daily organic position tracking for the 19 audit
+// keywords. Written by the /api/cron/rank-track job (Vercel Cron,
+// 06:15 UTC daily) which searches Bing (en-IN market) and records
+// where jadugarrajtilak.com appears in the top-30 organic results.
+// position = null means "checked, not found in top 30" — that is a
+// real signal, not an error. Manual checks (engine "websearch") can
+// be inserted the same way, so the admin Rankings card shows one
+// timeline regardless of who collected the row.
+model KeywordRank {
+  id        String   @id @default(cuid())
+  keyword   String
+  engine    String   @default("bing") // bing | websearch
+  position  Int? // 1-30, null = not in top 30
+  foundUrl  String? // which page of ours ranked
+  checkedAt DateTime @default(now())
+  notes     String? // e.g. "blocked by captcha — retry"
+
+  @@index([keyword, checkedAt])
+  @@index([checkedAt])
+}

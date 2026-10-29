@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { BarChart3, Loader2, RefreshCw, MousePointerClick, ExternalLink, Smartphone, Monitor, Tablet } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { BarChart3, Loader2, RefreshCw, MousePointerClick, ExternalLink, Smartphone, Monitor, Tablet, Trophy, TrendingUp, TrendingDown, Minus, Search, Sparkle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { adminFetch } from "@/lib/admin-client";
 
@@ -22,6 +22,149 @@ type Analytics = {
 };
 
 const GA_URL = "https://analytics.google.com/analytics/web/#/p505691606/reports/dashboard?r=overview";
+
+// ── Keyword Rankings (organic position tracking) ──────────────────
+type RankRow = {
+  keyword: string;
+  intent: string;
+  position: number | null;
+  foundUrl: string | null;
+  checkedAt: string | null;
+  trend: "up" | "down" | "flat" | "new" | null;
+  prev: number | null;
+  history: { d: string; p: number | null }[];
+};
+type Rankings = {
+  ok: true;
+  asOf: string | null;
+  tracked: number;
+  inTop30: number;
+  keywords: RankRow[];
+};
+
+function TrendIcon({ trend }: { trend: RankRow["trend"] }) {
+  if (trend === "up") return <TrendingUp className="h-4 w-4 text-green-600" aria-hidden="true" />;
+  if (trend === "down") return <TrendingDown className="h-4 w-4 text-red-600" aria-hidden="true" />;
+  if (trend === "flat") return <Minus className="h-4 w-4 text-[#5b5266]" aria-hidden="true" />;
+  if (trend === "new") return <Sparkle className="h-4 w-4 text-[#b8923a]" aria-hidden="true" />;
+  return null;
+}
+
+function PositionBadge({ p }: { p: number | null }) {
+  if (p === null)
+    return (
+      <span className="rounded-full bg-[#efe8da] px-2.5 py-0.5 text-[11px] font-semibold tabular-nums text-[#8a8494]">
+        not in top 30
+      </span>
+    );
+  const tone = p <= 3 ? "bg-green-700" : p <= 10 ? "bg-[#b8923a]" : "bg-[#2a1b3d]";
+  return (
+    <span className={`${tone} rounded-full px-2.5 py-0.5 text-[11px] font-semibold tabular-nums text-[#faf6ee]`}>
+      #{p}
+    </span>
+  );
+}
+
+function RankingsCard() {
+  const [data, setData] = useState<Rankings | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const res = await adminFetch<Rankings>("/api/admin/rankings");
+    if (res.ok && res.data) setData(res.data);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const runNow = async () => {
+    setRunning(true);
+    setMsg(null);
+    const res = await adminFetch<{ ok: boolean; message?: string; error?: string }>("/api/admin/rankings", {
+      method: "POST",
+    });
+    setMsg(res.data?.message ?? res.data?.error ?? "Check complete");
+    setRunning(false);
+    void load();
+  };
+
+  const ordered = useMemo(() => {
+    const list = [...(data?.keywords ?? [])];
+    list.sort((a, b) => (a.position ?? 99) - (b.position ?? 99) || a.keyword.localeCompare(b.keyword));
+    return list;
+  }, [data]);
+
+  return (
+    <div className="rounded-3xl border border-[#e3d9c6] bg-[#fffdf7] p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="flex items-center gap-2 text-sm font-semibold text-[#2a1b3d]">
+          <Trophy className="h-4 w-4 text-[#b8923a]" aria-hidden="true" /> Keyword Rankings —{" "}
+          {data ? (
+            <span className="tabular-nums">
+              {data.inTop30}/{data.tracked} in top 30
+            </span>
+          ) : (
+            "loading…"
+          )}
+        </p>
+        <div className="flex items-center gap-2">
+          <Button onClick={runNow} disabled={running} variant="outline" className="rounded-xl border-[#e3d9c6]">
+            {running ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <Search className="mr-2 h-4 w-4" aria-hidden="true" />
+            )}
+            Check now
+          </Button>
+          <Button onClick={load} disabled={loading} variant="outline" className="rounded-xl border-[#e3d9c6]">
+            {loading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />
+            )}
+            Refresh
+          </Button>
+        </div>
+      </div>
+
+      {msg && <p className="mt-3 text-xs text-[#5b5266]">{msg}</p>}
+      {data?.asOf && (
+        <p className="mt-1 text-xs text-[#8a8494]">
+          Last checked {new Date(data.asOf).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST · daily
+          automatic check at 11:45 IST · Bing organic results (trend matches Google for a growing domain)
+        </p>
+      )}
+
+      <div className="mt-4 divide-y divide-[#efe8da]">
+        {ordered.map((k) => (
+          <div key={k.keyword} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-sm">
+            <span className="flex min-w-0 items-center gap-2">
+              <PositionBadge p={k.position} />
+              <TrendIcon trend={k.trend} />
+              <span className="truncate font-medium text-[#2a1b3d]">{k.keyword}</span>
+            </span>
+            <span className="truncate text-xs text-[#8a8494]" title={k.foundUrl ?? ""}>
+              {k.foundUrl ? k.foundUrl.replace(/^https:\/\//, "").slice(0, 48) : k.position === null ? "—" : ""}
+            </span>
+          </div>
+        ))}
+        {ordered.length === 0 && !loading && (
+          <p className="py-3 text-sm text-[#5b5266]">No checks yet — press “Check now” for the first sweep.</p>
+        )}
+      </div>
+
+      <p className="mt-4 rounded-2xl bg-[#f3ead3]/50 p-3 text-xs leading-5 text-[#5b5266]">
+        Positions update daily. For exact Google positions use Search Console → Performance once access is
+        connected; this tracker exists so progress is visible every single day without waiting.
+      </p>
+    </div>
+  );
+}
 
 function StatCard({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
@@ -188,6 +331,8 @@ export function AnalyticsPanel() {
               </ol>
             </div>
           </div>
+
+          <RankingsCard />
 
           <p className="rounded-2xl bg-[#f3ead3]/50 p-4 text-xs leading-6 text-[#5b5266]">
             Tip: numbers here are simple page-view counts without cookies — the same visit from one
