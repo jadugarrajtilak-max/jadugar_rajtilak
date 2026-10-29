@@ -1,0 +1,15 @@
+▲ Next.js 16.1.3
+- Local:         http://localhost:3100
+- Network:       http://0.0.0.0:3100
+
+✓ Starting...
+✓ Ready in 68ms
+prisma:query SELECT "public"."SiteAsset"."id", "public"."SiteAsset"."key", "public"."SiteAsset"."src", "public"."SiteAsset"."alt", "public"."SiteAsset"."updatedAt" FROM "public"."SiteAsset" WHERE 1=1 OFFSET $1
+prisma:query SELECT "public"."SiteTheme"."id", "public"."SiteTheme"."key", "public"."SiteTheme"."value", "public"."SiteTheme"."updatedAt" FROM "public"."SiteTheme" WHERE 1=1 OFFSET $1
+prisma:query SELECT "public"."SiteText"."id", "public"."SiteText"."key", "public"."SiteText"."value", "public"."SiteText"."updatedAt" FROM "public"."SiteText" WHERE 1=1 OFFSET $1
+prisma:query INSERT INTO "public"."MediaAsset" ("id","mime","data","bytes","createdAt") VALUES ($1,$2,$3,$4,$5) RETURNING "public"."MediaAsset"."id", "public"."MediaAsset"."mime", "public"."MediaAsset"."data", "public"."MediaAsset"."bytes", "public"."MediaAsset"."createdAt"
+prisma:query SELECT "public"."MediaAsset"."id", "public"."MediaAsset"."mime", "public"."MediaAsset"."data", "public"."MediaAsset"."bytes", "public"."MediaAsset"."createdAt" FROM "public"."MediaAsset" WHERE ("public"."MediaAsset"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+prisma:query INSERT INTO "public"."SiteAsset" ("id","key","src","alt","updatedAt") VALUES ($1,$2,$3,$4,$5) ON CONFLICT ("key") DO UPDATE SET "src" = $6, "alt" = $7, "updatedAt" = $8 WHERE ("public"."SiteAsset"."key" = $9 AND 1=1) RETURNING "public"."SiteAsset"."id", "public"."SiteAsset"."key", "public"."SiteAsset"."src", "public"."SiteAsset"."alt", "public"."SiteAsset"."updatedAt"
+prisma:query SELECT "public"."SiteText"."id", "public"."SiteText"."key", "public"."SiteText"."value", "public"."SiteText"."updatedAt" FROM "public"."SiteText" WHERE 1=1 OFFSET $1
+prisma:query SELECT "public"."SiteAsset"."id", "public"."SiteAsset"."key", "public"."SiteAsset"."src", "public"."SiteAsset"."alt", "public"."SiteAsset"."updatedAt" FROM "public"."SiteAsset" WHERE 1=1 OFFSET $1
+prisma:query SELECT "public"."SiteTheme"."id", "public"."SiteTheme"."key", "public"."SiteTheme"."value", "public"."SiteTheme"."updatedAt" FROM "public"."SiteTheme" WHERE 1=1 OFFSET $1
